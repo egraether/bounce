@@ -3,9 +3,10 @@
 #include "ofMain.h"
 #include "Bounce.h"
 #include "ofAppGlutWindow.h"
+#include "constants.h"
 
 int main() {
     ofAppGlutWindow window;
-	ofSetupOpenGL(&window, 1024,768, OF_FULLSCREEN);
+	ofSetupOpenGL(&window, WIDTH, HEIGHT, OF_WINDOW);
 	ofRunApp(new Bounce());
 }

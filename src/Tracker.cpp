@@ -1,107 +1,196 @@
 #include "Tracker.h"
+#include "utilities.h"
 #include "constants.h"
 
 Tracker::Tracker() {
-    vidGrabber.setVerbose(true);
-    vidGrabber.initGrabber(320,240);
+    videoCapture.setVerbose(true);
+    videoCapture.initGrabber(WIDTH,HEIGHT);
 
-    colorImg.allocate(320,240);
-    hsvImg.allocate(320,240);
-    grayImage.allocate(320,240);
-    grayBg.allocate(320,240);
-    grayDiff.allocate(320,240);
+    colorImg.allocate(WIDTH,HEIGHT);
+    hsvImg.allocate(WIDTH,HEIGHT);
+    grayImg.allocate(WIDTH,HEIGHT);
+    grayBg.allocate(WIDTH,HEIGHT);
+    grayDiff.allocate(WIDTH,HEIGHT);
 
-    bLearnBakground = true;
-    threshold = BALL_HUE;
+    learnBackground = false;
+    newBackground = true;
+    isCalibrating = false;
+    
+    showGrayImg = false;
+    showGrayDiff = false;
+    
+    threshold = 80;//BALL_HUE;
 }
 
-Tracker::~Tracker() {}
+//Tracker::~Tracker() {}
 
 void Tracker::reset() {
-//    calibrate = false;
-//    allCalibrate = false;
-//    nextCalPoint = false;
-    
     for (int i = 0; i < 4; i++) {
         projCorner[i].set(0,0);
     }
     
-    int spacing = 50;
+    screenCorner[0].set(SCREEN_CORNER_DISTANCE, SCREEN_CORNER_DISTANCE);
+    screenCorner[1].set(WIDTH - SCREEN_CORNER_DISTANCE, SCREEN_CORNER_DISTANCE);
+    screenCorner[2].set(WIDTH - SCREEN_CORNER_DISTANCE, HEIGHT - SCREEN_CORNER_DISTANCE);
+    screenCorner[3].set(SCREEN_CORNER_DISTANCE, HEIGHT - SCREEN_CORNER_DISTANCE);
     
-//    screenCorner[0].set(spacing, spacing);
-//    screenCorner[1].set(imgWidth - spacing, spacing);
-//    screenCorner[2].set(imgWidth - spacing, imgHeight - spacing);
-//    screenCorner[3].set(spacing, imgHeight - spacing);
-//    
-//    cornerIndex = 0;
+    numCorners = 0;
+    counter = 0;
     
     hitPoint.set(0,0);
     dummyPoint.set(0,0);
-    camHitPoint.set(0,0);
     
-    //calCoefficient.set(0,0);
+    learnBackground = true;
+    isCalibrating = true;
+}
+
+void Tracker::calibrate() {
+    ofFill();
+    ofSetColor(0, 0, 0);    
+    for (int i = 0; i < numCorners; i++) {
+        ofCircle(projCorner[i].x, projCorner[i].y, PROJ_CORNER_SIZE);
+    }
+    
+    if (isCalibrating) {
+        if (learnBackground) {
+            if (contourFinder.nBlobs == 0) {
+                counter++;
+                
+                if (counter == 30) {
+                    counter = 0;
+                    learnBackground = false;
+                }
+            }
+            else {
+                counter = 0;
+                grayBg = grayImg;
+            }
+        }
+        else {
+            ofCircle(screenCorner[numCorners].x, screenCorner[numCorners].y, SCREEN_CORNER_SIZE);
+            
+            if (counter == 30) {
+                counter = 0;
+                
+                if (contourFinder.nBlobs == 1) {
+                    projCorner[numCorners].set(contourFinder.blobs[0].centroid.x, contourFinder.blobs[0].centroid.y);
+                    numCorners++;
+                    learnBackground = true;
+                    
+                    if (numCorners == 4) {
+                        getEyePoints();
+                        isCalibrating = false;
+                    }
+                }
+                else if (contourFinder.nBlobs > 1)
+                    reset();
+            }
+            counter++;
+        }
+    }
 }
 
 void Tracker::draw() {
-    ofBackground(100,100,100);
     
-    bool bNewFrame = false;
+    bool newFrame = false;
+    videoCapture.grabFrame();
+    newFrame = videoCapture.isFrameNew();
     
-    vidGrabber.grabFrame();
-    bNewFrame = vidGrabber.isFrameNew();
-    
-	if (bNewFrame) {
-        colorImg.setFromPixels(vidGrabber.getPixels(), 320, 240);
+    if (newFrame) {
+        colorImg.setFromPixels(videoCapture.getPixels(), WIDTH, HEIGHT);
+        grayImg = colorImg;
         
-        PixelRGB* pixRGB = (PixelRGB*)(colorImg.getPixels());
-        ofxCvBounceImage temp = colorImg;
-        PixelHSV* pixHSV = (PixelHSV*)(temp.getPixelsHSV());
-        for (int i = 0; i < 320 * 240; i++) {
-            if (pixHSV[i].h > threshold + 1 || pixHSV[i].h < threshold - 1)
-                pixRGB[i].set(0,0,0);
+        if (newBackground) {
+            grayBg = grayImg;
+            newBackground = false;
         }
-        hsvImg.setFromPixels((unsigned char*)(pixRGB), 320, 240);
         
-        grayImage = hsvImg;
-		if (bLearnBakground == true) {
-			grayBg = grayImage;
-			bLearnBakground = false;
-		}
+        grayDiff.absDiff(grayBg, grayImg);
+        //grayDiff.blur();
+        grayDiff.threshold(threshold);
+        //grayDiff.erode();
         
-        grayDiff = grayImage;
-		grayDiff.threshold(threshold);
-        grayDiff.erode();
-        
-		contourFinder.findContours(grayDiff, 100, (340*240)/3, 1, false);
-	}
-    
-    ofSetColor(0xffffff);
-    colorImg.draw(20,20);
-    grayImage.draw(360,20);
-    grayBg.draw(20,280);
-    grayDiff.draw(360,280);
-    hsvImg.draw(700, 20);
-    
-    ofFill();
-    ofSetColor(0x333333);
-    ofRect(360,540,320,240);
-    ofSetColor(0xffffff);
-
-    //contourFinder.draw(360,540);
-    for (int i = 0; i < contourFinder.nBlobs; i++) {
-        contourFinder.blobs[i].draw(360,540);
+        contourFinder.findContours(grayDiff, 20, (WIDTH * HEIGHT) / 3, 10, true);
     }
-
-    ofSetColor(0xffffff);
-    char reportStr[1024];
-    sprintf(reportStr, "bg subtraction and blob detection\npress ' ' to capture bg\nthreshold %i (press: +/-)\nnum blobs found %i, fps: %f", threshold, contourFinder.nBlobs, ofGetFrameRate());
-    ofDrawBitmapString(reportStr, 20, 600);
+    calibrate();
+    
+    ofSetColor(255, 255, 255);
+    if (showGrayImg)
+        grayImg.draw(0, 0);
+    if (showGrayDiff)
+        grayDiff.draw(0, 0);
+    
+    contourFinder.draw(0, 0);
+    
+    
+//    ofBackground(100,100,100);
+//    
+//    bool bNewFrame = false;
+//    
+//    vidGrabber.grabFrame();
+//    bNewFrame = vidGrabber.isFrameNew();
+//    
+//	if (bNewFrame) {
+//        colorImg.setFromPixels(vidGrabber.getPixels(), WIDTH, HEIGHT);
+//        
+//        PixelRGB* pixRGB = (PixelRGB*)(colorImg.getPixels());
+//        ofxCvBounceImage temp = colorImg;
+//        PixelHSV* pixHSV = (PixelHSV*)(temp.getPixelsHSV());
+//        for (int i = 0; i < WIDTH * HEIGHT; i++) {
+//            if (pixHSV[i].h > threshold + 1 || pixHSV[i].h < threshold - 1)
+//                pixRGB[i].set(0,0,0);
+//        }
+//        hsvImg.setFromPixels((unsigned char*)(pixRGB), WIDTH, HEIGHT);
+//        
+//        grayImage = hsvImg;
+//		if (bLearnBakground == true) {
+//			grayBg = grayImage;
+//			bLearnBakground = false;
+//		}
+//        
+//        grayDiff = grayImage;
+//		grayDiff.threshold(threshold);
+//        grayDiff.erode();
+//        
+//		contourFinder.findContours(grayDiff, 100, (WIDTH*HEIGHT)/3, 1, false);
+//	}
+//    
+//    ofSetColor(0xffffff);
+//    colorImg.draw(20,20);
+//    grayImage.draw(360,20);
+//    grayBg.draw(20,280);
+//    grayDiff.draw(360,280);
+//    hsvImg.draw(700, 20);
+//    
+//    ofFill();
+//    ofSetColor(0x333333);
+//    ofRect(360,540,WIDTH,HEIGHT);
+//    ofSetColor(0xffffff);
+//
+//    //contourFinder.draw(360,540);
+//    for (int i = 0; i < contourFinder.nBlobs; i++) {
+//        contourFinder.blobs[i].draw(360,540);
+//    }
+//
+//    ofSetColor(0xffffff);
+//    char reportStr[1024];
+//    sprintf(reportStr, "bg subtraction and blob detection\npress ' ' to capture bg\nthreshold %i (press: +/-)\nnum blobs found %i, fps: %f", threshold, contourFinder.nBlobs, ofGetFrameRate());
+//    ofDrawBitmapString(reportStr, 20, 600);
 }
 
 void Tracker::keyPressed(int key) {
 	switch (key){
 		case ' ':
-			bLearnBakground = true;
+			newBackground = true;
+			break;
+        case 'c':
+            reset();
+			break;
+        case 'g':
+            showGrayImg = !showGrayImg;
+			break;
+        case 'd':
+            showGrayDiff = !showGrayDiff;
 			break;
 		case '+':
 			threshold++;
@@ -112,32 +201,6 @@ void Tracker::keyPressed(int key) {
 			if (threshold < 0) threshold = 0;
 			break;
 	}
-}
-
-ofPoint Tracker::getVector(ofPoint &a, ofPoint&b) {
-    return ofPoint(b.x - a.x, b.y - a.y);
-}
-
-double Tracker::pointDistance(ofPoint &a, ofPoint&b) {
-    return sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y));
-}
-
-double Tracker::getCutParameter(ofPoint &a, ofPoint &va, ofPoint &c, ofPoint &vc) {
-    double divisor = va.x * vc.y - vc.x * va.y,
-    parameter = 0;
-    
-    if (divisor > 0.1 || divisor < -0.1)
-        parameter = (va.x * (a.y - c.y) + va.y * (c.x - a.x)) / divisor;
-    
-    return parameter;
-}
-
-ofPoint Tracker::getCutPoint(ofPoint &a, ofPoint &b, ofPoint &c, ofPoint &d) {
-    ofPoint va(b.x - a.x, b.y - a.y),
-        vc(d.x - c.x, d.y - c.y);
-    
-    double p = getCutParameter(a, va, c, vc);
-    return ofPoint(c.x + p * vc.x, c.y + p * vc.y);
 }
 
 void Tracker::getEyePoints() {
@@ -207,7 +270,7 @@ void Tracker::getEyePoints() {
     realLengthVector[1].set(param[1] * eyeVector.x, param[1] * eyeVector.y);
 }
 
-void Tracker::getHitPoint() {
+void Tracker::getHitPoint(ofPoint camHitPoint) {
     ofPoint edgeProjection[2] = {
         getCutPoint(eyePoint[0], camHitPoint, projCorner[index[1]], projCorner[cornerIndex]),
         getCutPoint(eyePoint[1], camHitPoint, projCorner[index[0]], projCorner[cornerIndex])

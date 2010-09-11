@@ -1,6 +1,8 @@
 #include "Bounce.h"
 
 void Bounce::setup() {
+    ofBackground(255, 255, 255);
+    ofSetVerticalSync(true);
 }
 
 void Bounce::update() {

@@ -25,44 +25,45 @@ private:
         }
     };
     
-    ofVideoGrabber vidGrabber;
+    ofVideoGrabber videoCapture;
     ofxCvBounceImage colorImg, hsvImg;
-    ofxCvGrayscaleImage grayImage, grayBg, grayDiff;
+    ofxCvGrayscaleImage grayImg, grayBg, grayDiff;
     ofxCvContourFinder contourFinder;
     
     int threshold;
-    bool bLearnBakground;
     
     ofPoint hitPoint;
     
+    bool isCalibrating;
+    bool learnBackground;
+    bool newBackground;
+    
+    bool showGrayImg;
+    bool showGrayDiff;
+    
+    int counter;
+    int numCorners;
+    
     ofPoint screenCorner[4];
     ofPoint projCorner[4];
-    
     int cornerIndex;
     
     ofPoint eyePoint[2];
-    
     ofPoint measurePoint[2];
     ofPoint realLengthVector[2];
     int index[2];
     
-    ofPoint camHitPoint;
-    ofPoint calCoefficient;
     ofPoint dummyPoint;
     
-    ofPoint getVector(ofPoint &a, ofPoint&b);
-    double pointDistance(ofPoint &a, ofPoint&b);
-    double getCutParameter(ofPoint &a, ofPoint &va, ofPoint &c, ofPoint &vc);
-    ofPoint getCutPoint(ofPoint &a, ofPoint &b, ofPoint &c, ofPoint &d);
-    
     void getEyePoints();
-    void getHitPoint();
+    void getHitPoint(ofPoint camHitPoint);
     
 public:
     Tracker();
-    ~Tracker();
+    //~Tracker();
     
     void reset();
+    void calibrate();
     void draw();
     void keyPressed(int key);
 };
