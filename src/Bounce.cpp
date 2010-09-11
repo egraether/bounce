@@ -18,7 +18,10 @@ void Bounce::keyPressed(int key) {
 }
 
 void Bounce::mouseMoved(int x, int y ) {}
-void Bounce::mousePressed(int x, int y, int button) {}
+void Bounce::mousePressed(int x, int y, int button) {
+    if (button == 0)
+        tracker.mousePressed(x, y);
+}
 void Bounce::mouseDragged(int x, int y, int button) {}
 void Bounce::mouseReleased(int x, int y, int button) {}
 void Bounce::windowResized(int w, int h) {}

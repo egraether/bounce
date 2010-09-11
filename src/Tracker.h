@@ -25,6 +25,8 @@ private:
         }
     };
     
+    enum {CALIBRATION_NULL, BACKGROUND, POINT, TEST, COMPLETE} mode;
+    
     ofVideoGrabber videoCapture;
     ofxCvBounceImage colorImg, hsvImg;
     ofxCvGrayscaleImage grayImg, grayBg, grayDiff;
@@ -34,8 +36,6 @@ private:
     
     ofPoint hitPoint;
     
-    bool isCalibrating;
-    bool learnBackground;
     bool newBackground;
     
     bool showGrayImg;
@@ -66,6 +66,7 @@ public:
     void calibrate();
     void draw();
     void keyPressed(int key);
+    void mousePressed(int x, int y);
 };
 
 #endif

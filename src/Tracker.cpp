@@ -12,14 +12,14 @@ Tracker::Tracker() {
     grayBg.allocate(WIDTH,HEIGHT);
     grayDiff.allocate(WIDTH,HEIGHT);
 
-    learnBackground = false;
     newBackground = true;
-    isCalibrating = false;
     
     showGrayImg = false;
     showGrayDiff = false;
     
     threshold = 80;//BALL_HUE;
+    
+    mode = CALIBRATION_NULL;
 }
 
 //Tracker::~Tracker() {}
@@ -40,8 +40,7 @@ void Tracker::reset() {
     hitPoint.set(0,0);
     dummyPoint.set(0,0);
     
-    learnBackground = true;
-    isCalibrating = true;
+    mode = BACKGROUND;
 }
 
 void Tracker::calibrate() {
@@ -51,22 +50,22 @@ void Tracker::calibrate() {
         ofCircle(projCorner[i].x, projCorner[i].y, PROJ_CORNER_SIZE);
     }
     
-    if (isCalibrating) {
-        if (learnBackground) {
+    switch (mode) {
+        case BACKGROUND:
             if (contourFinder.nBlobs == 0) {
                 counter++;
                 
                 if (counter == 30) {
                     counter = 0;
-                    learnBackground = false;
+                    mode = POINT;
                 }
             }
             else {
                 counter = 0;
                 grayBg = grayImg;
             }
-        }
-        else {
+            break;
+        case POINT:
             ofCircle(screenCorner[numCorners].x, screenCorner[numCorners].y, SCREEN_CORNER_SIZE);
             
             if (counter == 30) {
@@ -75,18 +74,43 @@ void Tracker::calibrate() {
                 if (contourFinder.nBlobs == 1) {
                     projCorner[numCorners].set(contourFinder.blobs[0].centroid.x, contourFinder.blobs[0].centroid.y);
                     numCorners++;
-                    learnBackground = true;
                     
                     if (numCorners == 4) {
                         getEyePoints();
-                        isCalibrating = false;
+                        mode = TEST;
                     }
+                    else
+                        mode = BACKGROUND;
                 }
                 else if (contourFinder.nBlobs > 1)
                     reset();
             }
             counter++;
-        }
+            break;
+        case TEST:
+            
+            if (dummyPoint.x)
+                ofCircle(dummyPoint.x, dummyPoint.y, 10);
+            
+            ofSetColor(100, 100, 100);
+            for (int i = 0; i < 4; i++)
+                for (int j = 0; j < 2; j++)
+                    ofLine(eyePoint[j].x, eyePoint[j].y, projCorner[i].x, projCorner[i].y);
+            
+            if (contourFinder.nBlobs) {
+                ofPoint camHitPoint(contourFinder.blobs[0].centroid.x, contourFinder.blobs[0].centroid.y);
+                getHitPoint(camHitPoint);
+                
+                ofSetColor(255, 255, 0);
+                ofLine(camHitPoint.x, camHitPoint.y, hitPoint.x, hitPoint.y);
+                ofSetColor(255, 0, 0);
+                ofCircle(camHitPoint.x, camHitPoint.y, 5);
+                ofSetColor(0, 255, 0);
+                ofCircle(hitPoint.x, hitPoint.y, 5);
+            }
+            break;
+        default:
+            break;
     }
 }
 
@@ -203,10 +227,14 @@ void Tracker::keyPressed(int key) {
 	}
 }
 
+void Tracker::mousePressed(int x, int y) {
+    dummyPoint.set(x, y);
+}
+
 void Tracker::getEyePoints() {
     
     eyePoint[0] = getCutPoint(projCorner[0], projCorner[1], projCorner[2], projCorner[3]);
-    eyePoint[1] = getCutPoint(projCorner[0], projCorner[2], projCorner[1], projCorner[3]);
+    eyePoint[1] = getCutPoint(projCorner[1], projCorner[2], projCorner[0], projCorner[3]);
     
     ofPoint eyeVector = getVector(eyePoint[1], eyePoint[0]);
     
