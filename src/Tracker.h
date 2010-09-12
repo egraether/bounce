@@ -4,6 +4,7 @@
 #include "ofMain.h"
 #include "ofxOpenCv.h"
 #include "ofxCvBounceImage.h"
+#include "CalibrationQuad.h"
 
 class Tracker {
 private:
@@ -25,7 +26,7 @@ private:
         }
     };
     
-    enum {CALIBRATION_NULL, BACKGROUND, POINT, TEST, COMPLETE} mode;
+    enum {CALIBRATION_NULL, BACKGROUND, COUNT, POINT, TEST, COMPLETE} mode;
     
     ofVideoGrabber videoCapture;
     ofxCvBounceImage colorImg, hsvImg;
@@ -35,7 +36,12 @@ private:
     int threshold;
     
     ofPoint hitPoint;
+    ofPoint* screenCorner;
+    ofPoint* projCorner;
     
+    CalibrationQuad calibrationQuad;
+    
+    bool countChecked;
     bool newBackground;
     
     bool showGrayImg;
@@ -44,19 +50,7 @@ private:
     int counter;
     int numCorners;
     
-    ofPoint screenCorner[4];
-    ofPoint projCorner[4];
-    int cornerIndex;
-    
-    ofPoint eyePoint[2];
-    ofPoint measurePoint[2];
-    ofPoint realLengthVector[2];
-    int index[2];
-    
     ofPoint dummyPoint;
-    
-    void getEyePoints();
-    void getHitPoint(ofPoint camHitPoint);
     
 public:
     Tracker();
