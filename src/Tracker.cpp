@@ -42,7 +42,6 @@ void Tracker::reset() {
     numCorners = 0;
     counter = 0;
     
-    hitPoint.set(0,0);
     dummyPoint.set(0,0);
     
     countChecked = false;
@@ -53,10 +52,8 @@ void Tracker::reset() {
 void Tracker::calibrate() {
     ofFill();
     ofSetColor(0, 0, 0);
-    if (mode == BACKGROUND || mode == POINT) {
-        for (int i = 0; i < numCorners; i++) {
-            ofCircle(projCorner[i].x, projCorner[i].y, PROJ_CORNER_SIZE);
-        }
+    for (int i = 0; i < numCorners; i++) {
+        ofCircle(projCorner[i].x, projCorner[i].y, PROJ_CORNER_SIZE);
     }
     
     switch (mode) {
@@ -106,7 +103,7 @@ void Tracker::calibrate() {
                     
                     if (numCorners == 4) {
                         calibrationQuad.getEyePoints(screenCorner, projCorner);
-                        mode = TEST;
+                        mode = COMPLETE;
                     }
                     else
                         mode = BACKGROUND;
@@ -116,15 +113,17 @@ void Tracker::calibrate() {
             }
             counter++;
             break;
-        case TEST:
+        case COMPLETE:
             if (dummyPoint.x) {
                 ofSetColor(0, 0, 0);
                 ofCircle(dummyPoint.x, dummyPoint.y, 10);
             }
             
+            getHueContour(30);
+            
             if (contourFinder.nBlobs) {
                 ofPoint camHitPoint(contourFinder.blobs[0].centroid.x, contourFinder.blobs[0].centroid.y);
-                hitPoint = calibrationQuad.getHitPoint(camHitPoint);
+                calibrationQuad.getHitPoint(camHitPoint);
             }
             
             calibrationQuad.draw();
@@ -136,27 +135,10 @@ void Tracker::calibrate() {
 
 void Tracker::draw() {
     
-    bool newFrame = false;
-    videoCapture.grabFrame();
-    newFrame = videoCapture.isFrameNew();
-    
-    if (newFrame) {
-        colorImg.setFromPixels(videoCapture.getPixels(), WIDTH, HEIGHT);
-        grayImg = colorImg;
-        
-        if (newBackground) {
-            grayBg = grayImg;
-            newBackground = false;
-        }
-        
-        grayDiff.absDiff(grayBg, grayImg);
-        //grayDiff.blur();
-        grayDiff.threshold(threshold);
-        //grayDiff.erode();
-        
-        contourFinder.findContours(grayDiff, 20, (WIDTH * HEIGHT) / 3, 10, true);
+    if (mode != CALIBRATION_NULL) {
+        getBrightnessContour(threshold);
+        calibrate();
     }
-    calibrate();
     
     ofSetColor(255, 255, 255);
     if (showGrayImg)
@@ -248,4 +230,63 @@ void Tracker::keyPressed(int key) {
 
 void Tracker::mousePressed(int x, int y) {
     dummyPoint.set(x, y);
+}
+
+ofPoint Tracker::getHitPoint() {
+    if (mode == COMPLETE) {
+        getHueContour(30);
+        
+        if (contourFinder.nBlobs) {
+            ofPoint camHitPoint(contourFinder.blobs[0].centroid.x, contourFinder.blobs[0].centroid.y);
+            calibrationQuad.getHitPoint(camHitPoint);
+        }
+    }
+}
+
+void Tracker::getBrightnessContour(int threshold) {
+    bool newFrame = false;
+    videoCapture.grabFrame();
+    newFrame = videoCapture.isFrameNew();
+    
+    if (newFrame) {
+        colorImg.setFromPixels(videoCapture.getPixels(), WIDTH, HEIGHT);
+        grayImg = colorImg;
+        
+        if (newBackground) {
+            grayBg = grayImg;
+            newBackground = false;
+        }
+        
+        grayDiff.absDiff(grayBg, grayImg);
+        //grayDiff.blur();
+        grayDiff.threshold(threshold);
+        //grayDiff.erode();
+        
+        contourFinder.findContours(grayDiff, 20, (WIDTH * HEIGHT) / 3, 10, true);
+    }
+}
+
+void Tracker::getHueContour(int hue) {
+    bool newFrame = false;
+    videoCapture.grabFrame();
+    newFrame = videoCapture.isFrameNew();
+    
+    if (newFrame) {
+        //colorImg.setFromPixels(videoCapture.getPixels(), WIDTH, HEIGHT);
+        
+        PixelRGB* pixRGB = (PixelRGB*)(videoCapture.getPixels());
+        ofxCvBounceImage temp = colorImg;
+        PixelHSV* pixHSV = (PixelHSV*)(temp.getPixelsHSV());
+        for (int i = 0; i < WIDTH * HEIGHT; i++) {
+            if (pixHSV[i].h > hue + 1 || pixHSV[i].h < hue - 1)
+                pixRGB[i].set(0,0,0);
+        }
+        colorImg.setFromPixels((unsigned char*)(pixRGB), WIDTH, HEIGHT);
+        
+        grayDiff = colorImg;
+		grayDiff.threshold(1);
+        //grayDiff.erode();
+        
+        contourFinder.findContours(grayDiff, 20, (WIDTH * HEIGHT) / 3, 10, false);
+    }
 }

@@ -10,6 +10,7 @@ void Bounce::update() {
 
 void Bounce::draw() {
     tracker.draw();
+    //tracker.getHitPoint();
 }
 
 

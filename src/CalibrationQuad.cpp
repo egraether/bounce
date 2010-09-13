@@ -4,12 +4,7 @@
 
 //CalibrationQuad::CalibrationQuad() {}
 
-void CalibrationQuad::draw() {
-    ofSetColor(0, 0, 0);
-    for (int i = 0; i < 4; i++) {
-        ofCircle(projCorner[i].x, projCorner[i].y, PROJ_CORNER_SIZE);
-    }
-    
+void CalibrationQuad::draw() {    
     ofSetColor(100, 100, 100);
     for (int i = 0; i < 4; i++) {
         for (int j = 0; j < 2; j++) {
@@ -23,31 +18,36 @@ void CalibrationQuad::draw() {
                projCorner[cornerIndex].x + realLengthVector[i].x, projCorner[cornerIndex].y + realLengthVector[i].y);
         ofLine(projCorner[cornerIndex].x , projCorner[cornerIndex].y, 
                projCorner[cornerIndex].x + realLengthVector[i].x, projCorner[cornerIndex].y + realLengthVector[i].y);
-        ofCircle(measurePoint[i].x, measurePoint[i].y, 3);
+        ofCircle(measurePoint[i].x, measurePoint[i].y, PROJ_CORNER_SIZE);
         ofCircle(projCorner[index[i]].x, projCorner[index[i]].y, PROJ_CORNER_SIZE);
         ofSetColor(255, 0, 255);
     }
     
-    ofSetColor(255, 255, 0);
+    ofSetColor(200, 200, 0);
     for (int i = 0; i < 2; i++) {
         ofLine(projCorner[cornerIndex].x , projCorner[cornerIndex].y, 
                projCorner[cornerIndex].x + realParam[i] * realLengthVector[i].x, 
                projCorner[cornerIndex].y + realParam[i] * realLengthVector[i].y);
-        ofSetColor(0, 255, 255);
+        ofLine(measurePoint[i].x , measurePoint[i].y, 
+               projCorner[cornerIndex].x + realParam[i] * realLengthVector[i].x, 
+               projCorner[cornerIndex].y + realParam[i] * realLengthVector[i].y);
+        ofCircle(projCorner[cornerIndex].x + realParam[i] * realLengthVector[i].x, 
+                 projCorner[cornerIndex].y + realParam[i] * realLengthVector[i].y, PROJ_CORNER_SIZE);
+        ofSetColor(0, 200, 200);
     }
     
     if (camHitPoint.x) {
-        ofSetColor(255, 255, 0);
-        ofLine(camHitPoint.x, camHitPoint.y, hitPoint.x, hitPoint.y);
         ofSetColor(255, 0, 0);
-        ofCircle(camHitPoint.x, camHitPoint.y, 5);
+        ofCircle(camHitPoint.x, camHitPoint.y, PROJ_CORNER_SIZE);
         ofSetColor(0, 255, 0);
-        ofCircle(hitPoint.x, hitPoint.y, 5);
+        ofCircle(hitPoint.x, hitPoint.y, PROJ_CORNER_SIZE);
         
         ofSetColor(255, 0, 0);
         ofLine(eyePoint[0].x, eyePoint[0].y, edgeProjection[0].x, edgeProjection[0].y);
+        ofCircle(edgeProjection[0].x, edgeProjection[0].y, PROJ_CORNER_SIZE);
         ofSetColor(0, 100, 255);
         ofLine(eyePoint[1].x, eyePoint[1].y, edgeProjection[1].x, edgeProjection[1].y);
+        ofCircle(edgeProjection[1].x, edgeProjection[1].y, PROJ_CORNER_SIZE);
     }
 }
 

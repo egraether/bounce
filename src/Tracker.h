@@ -26,7 +26,7 @@ private:
         }
     };
     
-    enum {CALIBRATION_NULL, BACKGROUND, COUNT, POINT, TEST, COMPLETE} mode;
+    enum {CALIBRATION_NULL, BACKGROUND, COUNT, POINT, COMPLETE} mode;
     
     ofVideoGrabber videoCapture;
     ofxCvBounceImage colorImg, hsvImg;
@@ -35,7 +35,6 @@ private:
     
     int threshold;
     
-    ofPoint hitPoint;
     ofPoint* screenCorner;
     ofPoint* projCorner;
     
@@ -52,6 +51,9 @@ private:
     
     ofPoint dummyPoint;
     
+    void getBrightnessContour(int threshold);
+    void getHueContour(int hue);
+    
 public:
     Tracker();
     //~Tracker();
@@ -61,6 +63,7 @@ public:
     void draw();
     void keyPressed(int key);
     void mousePressed(int x, int y);
+    ofPoint getHitPoint();
 };
 
 #endif
