@@ -2,7 +2,22 @@
 #include "utilities.h"
 #include "constants.h"
 
-Tracker::Tracker(Console* c) {
+Tracker::Tracker(Infobox* i, Console* c) {
+    mode = CALIBRATION_NULL;
+    
+    threshold = 80;
+    hue = 30;
+    minBlobSize = 20;
+    maxBlobSize = 1000;
+    
+    console = c;
+    console->addRegulation("threshold", &threshold, 0, 255);
+    console->addRegulation("hue", &hue, 0, 255);
+    console->addRegulation("minBlobSize", &minBlobSize, 0, WIDTH * HEIGHT);
+    console->addRegulation("maxBlobSize", &maxBlobSize, 0, WIDTH * HEIGHT);
+    
+    infobox = i;
+    
     videoCapture.setVerbose(true);
     videoCapture.initGrabber(WIDTH,HEIGHT);
 
@@ -20,19 +35,6 @@ Tracker::Tracker(Console* c) {
     
     screenCorner = new ofPoint[4];
     projCorner = new ofPoint[4];
-    
-    mode = CALIBRATION_NULL;
-    
-    threshold = 80;
-    hue = 30;
-    minBlobSize = 20;
-    maxBlobSize = 1000;
-    
-    console = c;
-    console->addRegulation("threshold", &threshold, 0, 255);
-    console->addRegulation("hue", &hue, 0, 255);
-    console->addRegulation("minBlobSize", &minBlobSize, 0, WIDTH * HEIGHT);
-    console->addRegulation("maxBlobSize", &maxBlobSize, 0, WIDTH * HEIGHT);
 }
 
 //Tracker::~Tracker() {}
@@ -96,7 +98,7 @@ void Tracker::calibrate() {
                 if (contourFinder.nBlobs == 4)
                     countChecked = true;
                 else
-                    cout << "count failed\n";
+                    infobox->set("counting of corners fails, check if camera is directed to screen");
             }
             break;
         case POINT:
@@ -139,15 +141,18 @@ void Tracker::calibrate() {
     }
 }
 
-void Tracker::draw() {
+void Tracker::draw(bool hit, ofPoint hitPoint) {
     
-    if (mode != CALIBRATION_NULL) {
-        if (mode == COMPLETE)
-            getHueContour(hue);
-        else
-            getBrightnessContour(threshold);
+    if (!infobox->draw(hit, hitPoint)) {
         
-        calibrate();
+        if (mode != CALIBRATION_NULL) {
+            if (mode == COMPLETE)
+                getHueContour(hue);
+            else
+                getBrightnessContour(threshold);
+            
+            calibrate();
+        }
     }
     
     ofSetColor(255, 255, 255);

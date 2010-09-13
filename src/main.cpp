@@ -1,8 +1,8 @@
 #define USE_CAMERA_TRACKING
 
 #include "ofMain.h"
-#include "Bounce.h"
 #include "ofAppGlutWindow.h"
+#include "Bounce.h"
 #include "constants.h"
 
 int main() {

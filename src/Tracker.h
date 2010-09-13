@@ -6,6 +6,7 @@
 #include "ofxCvBounceImage.h"
 #include "CalibrationQuad.h"
 #include "Console.h"
+#include "Infobox.h"
 
 class Tracker {
 private:
@@ -55,18 +56,19 @@ private:
     
     ofPoint dummyPoint;
     
+    Infobox* infobox;
     Console* console;
     
     void getBrightnessContour(int threshold);
     void getHueContour(int hue);
     
 public:
-    Tracker(Console* c);
+    Tracker(Infobox* i, Console* c);
     //~Tracker();
     
     void reset();
     void calibrate();
-    void draw();
+    void draw(bool hit, ofPoint hitPoint);
     void keyPressed(int key);
     bool getHitPoint(ofPoint hitPoint);
 };

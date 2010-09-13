@@ -1,13 +1,16 @@
 #include "Bounce.h"
 #include "constants.h"
 
-Bounce::Bounce() : tracker(&console) {}
+Bounce::Bounce() : 
+    tracker(&infobox, &console), 
+    calibrateButton(WIDTH - WIDTH / 4, HEIGHT - HEIGHT / 5, WIDTH / 5, HEIGHT / 6, "calibrate"),
+    mode(MENU),
+    hit(false) {
+}
 
 void Bounce::setup() {
     ofBackground(255, 255, 255);
     ofSetVerticalSync(true);
-    
-    hit = false;
     
     // audio
     ofSoundStreamSetup(0, 1, this);
@@ -28,7 +31,21 @@ void Bounce::draw() {
         bang = false;
     }
     
-    tracker.draw();
+    switch (mode) {
+        case MENU:
+            calibrateButton.draw();
+            
+            if (hit && calibrateButton.isHit(hitPoint)) {
+                tracker.reset();
+                mode = CALIBRATE;
+            }
+            break;
+        case CALIBRATE:
+            tracker.draw(hit, hitPoint);
+            break;
+        default:
+            break;
+    }
     
     ofFill();
     ofSetColor(0, 255, 0);

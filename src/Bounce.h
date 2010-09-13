@@ -4,14 +4,21 @@
 #include "ofMain.h"
 #include "Tracker.h"
 #include "Console.h"
+#include "Infobox.h"
+#include "PushButton.h"
 
 class Bounce : public ofBaseApp{
 private:
     ofPoint hitPoint;
     bool hit;
     
+    enum {MENU, CALIBRATE, GAME} mode;
+    
+    Infobox infobox;
     Console console;
     Tracker tracker;
+    
+    PushButton calibrateButton;
     
     // audio
     void audioReceived(float* input, int bufferSize, int nChannels);
