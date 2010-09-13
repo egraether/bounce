@@ -1,4 +1,5 @@
 #include "Tracker.h"
+#include "Infobox.h"
 #include "utilities.h"
 #include "constants.h"
 
@@ -35,6 +36,13 @@ Tracker::Tracker(Infobox* i, Console* c) {
     
     screenCorner = new ofPoint[4];
     projCorner = new ofPoint[4];
+    
+    menuButton.set(
+        "Menu", 
+        WIDTH - 10 - PushButton::measure[PushButton::SMALL].x, 
+        HEIGHT - 10 - PushButton::measure[PushButton::SMALL].y, 
+        PushButton::SMALL
+    );
 }
 
 //Tracker::~Tracker() {}
@@ -98,7 +106,7 @@ void Tracker::calibrate() {
                 if (contourFinder.nBlobs == 4)
                     countChecked = true;
                 else
-                    infobox->set("counting of corners fails, check if camera is directed to screen");
+                    infobox->set("counting of corners fails, check if camera is directed to screen", Infobox::CHECK);
             }
             break;
         case POINT:
@@ -141,19 +149,25 @@ void Tracker::calibrate() {
     }
 }
 
-void Tracker::draw(bool hit, ofPoint hitPoint) {
+bool Tracker::draw(bool hit, ofPoint hitPoint) {
     
-    if (!infobox->draw(hit, hitPoint)) {
-        
+    infobox->draw(hit, hitPoint);
+    if (!infobox->isAlive) {
         if (mode != CALIBRATION_NULL) {
-            if (mode == COMPLETE)
+            if (mode == COMPLETE) {
                 getHueContour(hue);
+                
+                if (menuButton.draw(hit, hitPoint))
+                    return false;
+            }
             else
                 getBrightnessContour(threshold);
             
             calibrate();
         }
     }
+    else if (menuButton.draw(hit, hitPoint))
+        return false;
     
     ofSetColor(255, 255, 255);
     if (showGrayImg)
@@ -162,6 +176,8 @@ void Tracker::draw(bool hit, ofPoint hitPoint) {
         grayDiff.draw(0, 0);
     
     contourFinder.draw(0, 0);
+    
+    return true;
 }
 
 void Tracker::keyPressed(int key) {

@@ -2,15 +2,24 @@
 #define _PUSH_BUTTON_
 
 #include "ofMain.h"
+#include "constants.h"
 
 class PushButton {
-private:
-    int posX, posY, width, height;
-    string name;
 public:
-    PushButton(int x, int y, int w, int h, string n);
-    void draw();
-    bool isHit(ofPoint hitPoint);
+    enum Size {SMALL, BIG};
+
+private:
+    int posX, posY;
+    string name;
+    Size size;
+    bool isHit(ofPoint &hitPoint);
+    
+public:
+    PushButton();
+    void set(string n, int x, int y, Size s);
+    bool draw(bool hit, ofPoint &hitPoint);
+    
+    static ofPoint measure[2];
 };
 
 #endif

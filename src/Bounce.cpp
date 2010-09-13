@@ -2,8 +2,7 @@
 #include "constants.h"
 
 Bounce::Bounce() : 
-    tracker(&infobox, &console), 
-    calibrateButton(WIDTH - WIDTH / 4, HEIGHT - HEIGHT / 5, WIDTH / 5, HEIGHT / 6, "calibrate"),
+    tracker(&infobox, &console),
     mode(MENU),
     hit(false) {
 }
@@ -20,6 +19,13 @@ void Bounce::setup() {
     
     console.addInformation("lastBang", &lastBang);
     console.addRegulation("bangLevel", &bangLevel, 0, 15);
+    
+    calibrateButton.set(
+        "calibrate", 
+        WIDTH - 10 - PushButton::measure[PushButton::SMALL].x, 
+        HEIGHT - 10 - PushButton::measure[PushButton::SMALL].y, 
+        PushButton::SMALL
+    );
 }
 
 void Bounce::update() {
@@ -33,15 +39,17 @@ void Bounce::draw() {
     
     switch (mode) {
         case MENU:
-            calibrateButton.draw();
-            
-            if (hit && calibrateButton.isHit(hitPoint)) {
+            if (calibrateButton.draw(hit, hitPoint)) {
                 tracker.reset();
                 mode = CALIBRATE;
+                infobox.isAlive = false;
             }
             break;
         case CALIBRATE:
-            tracker.draw(hit, hitPoint);
+            if (!tracker.draw(hit, hitPoint)) {
+                mode = MENU;
+                infobox.isAlive = false;
+            }
             break;
         default:
             break;

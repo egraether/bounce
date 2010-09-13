@@ -7,6 +7,7 @@
 #include "CalibrationQuad.h"
 #include "Console.h"
 #include "Infobox.h"
+#include "PushButton.h"
 
 class Tracker {
 private:
@@ -62,13 +63,15 @@ private:
     void getBrightnessContour(int threshold);
     void getHueContour(int hue);
     
+    PushButton menuButton;
+    
 public:
     Tracker(Infobox* i, Console* c);
     //~Tracker();
     
     void reset();
     void calibrate();
-    void draw(bool hit, ofPoint hitPoint);
+    bool draw(bool hit, ofPoint hitPoint);
     void keyPressed(int key);
     bool getHitPoint(ofPoint hitPoint);
 };
