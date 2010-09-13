@@ -15,6 +15,8 @@ private:
     ofPoint measurePoint[2];
     ofPoint realLengthVector[2];
     int index[2];
+    double realParam[2];
+    ofPoint edgeProjection[2];
     
 public:
     CalibrationQuad() {}

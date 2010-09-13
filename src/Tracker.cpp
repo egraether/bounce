@@ -19,6 +19,8 @@ Tracker::Tracker() {
     
     threshold = 80;//BALL_HUE;
     
+    numCorners = 0;
+    
     screenCorner = new ofPoint[4];
     projCorner = new ofPoint[4];
     
@@ -50,9 +52,11 @@ void Tracker::reset() {
 
 void Tracker::calibrate() {
     ofFill();
-    ofSetColor(0, 0, 0);    
-    for (int i = 0; i < numCorners; i++) {
-        ofCircle(projCorner[i].x, projCorner[i].y, PROJ_CORNER_SIZE);
+    ofSetColor(0, 0, 0);
+    if (mode == BACKGROUND || mode == POINT) {
+        for (int i = 0; i < numCorners; i++) {
+            ofCircle(projCorner[i].x, projCorner[i].y, PROJ_CORNER_SIZE);
+        }
     }
     
     switch (mode) {
@@ -60,7 +64,7 @@ void Tracker::calibrate() {
             if (contourFinder.nBlobs == 0) {
                 counter++;
                 
-                if (counter == 30) {
+                if (counter == CALIBRATION_WAIT_FRAMES) {
                     counter = 0;
                     
                     if (countChecked)
@@ -80,7 +84,7 @@ void Tracker::calibrate() {
             }
             counter++;
             
-            if (counter == 30) {
+            if (counter == CALIBRATION_WAIT_FRAMES) {
                 counter = 0;
                 mode = BACKGROUND;
                 
@@ -93,7 +97,7 @@ void Tracker::calibrate() {
         case POINT:
             ofCircle(screenCorner[numCorners].x, screenCorner[numCorners].y, SCREEN_CORNER_SIZE);
             
-            if (counter == 30) {
+            if (counter == CALIBRATION_WAIT_FRAMES) {
                 counter = 0;
                 
                 if (contourFinder.nBlobs == 1) {
@@ -113,10 +117,10 @@ void Tracker::calibrate() {
             counter++;
             break;
         case TEST:
-            ofSetColor(100, 100, 100);
-            
-            if (dummyPoint.x)
+            if (dummyPoint.x) {
+                ofSetColor(0, 0, 0);
                 ofCircle(dummyPoint.x, dummyPoint.y, 10);
+            }
             
             if (contourFinder.nBlobs) {
                 ofPoint camHitPoint(contourFinder.blobs[0].centroid.x, contourFinder.blobs[0].centroid.y);

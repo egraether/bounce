@@ -9,6 +9,8 @@
 
 #define PROJ_CORNER_SIZE 8
 
+#define CALIBRATION_WAIT_FRAMES 20
+
 #define BALL_HUE 30
 
 #endif
