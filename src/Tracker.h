@@ -5,6 +5,7 @@
 #include "ofxOpenCv.h"
 #include "ofxCvBounceImage.h"
 #include "CalibrationQuad.h"
+#include "Console.h"
 
 class Tracker {
 private:
@@ -50,6 +51,8 @@ private:
     int numCorners;
     
     ofPoint dummyPoint;
+    
+    Console console;
     
     void getBrightnessContour(int threshold);
     void getHueContour(int hue);

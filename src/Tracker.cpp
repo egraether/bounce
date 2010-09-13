@@ -25,6 +25,8 @@ Tracker::Tracker() {
     projCorner = new ofPoint[4];
     
     mode = CALIBRATION_NULL;
+    
+    console.add("threshold", &threshold, 0, 255);
 }
 
 //Tracker::~Tracker() {}
@@ -119,8 +121,6 @@ void Tracker::calibrate() {
                 ofCircle(dummyPoint.x, dummyPoint.y, 10);
             }
             
-            getHueContour(30);
-            
             if (contourFinder.nBlobs) {
                 ofPoint camHitPoint(contourFinder.blobs[0].centroid.x, contourFinder.blobs[0].centroid.y);
                 calibrationQuad.getHitPoint(camHitPoint);
@@ -135,10 +135,14 @@ void Tracker::calibrate() {
 
 void Tracker::draw() {
     
-    if (mode != CALIBRATION_NULL) {
-        getBrightnessContour(threshold);
+    //if (mode != CALIBRATION_NULL) {
+        if (mode == COMPLETE)
+            getHueContour(30);
+        else
+            getBrightnessContour(threshold);
+        
         calibrate();
-    }
+    //}
     
     ofSetColor(255, 255, 255);
     if (showGrayImg)
@@ -147,55 +151,9 @@ void Tracker::draw() {
         grayDiff.draw(0, 0);
     
     contourFinder.draw(0, 0);
+    
+    console.draw();
 
-//    ofBackground(100,100,100);
-//    
-//    bool bNewFrame = false;
-//    
-//    vidGrabber.grabFrame();
-//    bNewFrame = vidGrabber.isFrameNew();
-//    
-//	if (bNewFrame) {
-//        colorImg.setFromPixels(vidGrabber.getPixels(), WIDTH, HEIGHT);
-//        
-//        PixelRGB* pixRGB = (PixelRGB*)(colorImg.getPixels());
-//        ofxCvBounceImage temp = colorImg;
-//        PixelHSV* pixHSV = (PixelHSV*)(temp.getPixelsHSV());
-//        for (int i = 0; i < WIDTH * HEIGHT; i++) {
-//            if (pixHSV[i].h > threshold + 1 || pixHSV[i].h < threshold - 1)
-//                pixRGB[i].set(0,0,0);
-//        }
-//        hsvImg.setFromPixels((unsigned char*)(pixRGB), WIDTH, HEIGHT);
-//        
-//        grayImage = hsvImg;
-//		if (bLearnBakground == true) {
-//			grayBg = grayImage;
-//			bLearnBakground = false;
-//		}
-//        
-//        grayDiff = grayImage;
-//		grayDiff.threshold(threshold);
-//        grayDiff.erode();
-//        
-//		contourFinder.findContours(grayDiff, 100, (WIDTH*HEIGHT)/3, 1, false);
-//	}
-//    
-//    ofSetColor(0xffffff);
-//    colorImg.draw(20,20);
-//    grayImage.draw(360,20);
-//    grayBg.draw(20,280);
-//    grayDiff.draw(360,280);
-//    hsvImg.draw(700, 20);
-//    
-//    ofFill();
-//    ofSetColor(0x333333);
-//    ofRect(360,540,WIDTH,HEIGHT);
-//    ofSetColor(0xffffff);
-//
-//    //contourFinder.draw(360,540);
-//    for (int i = 0; i < contourFinder.nBlobs; i++) {
-//        contourFinder.blobs[i].draw(360,540);
-//    }
 //
 //    ofSetColor(0xffffff);
 //    char reportStr[1024];
@@ -216,6 +174,21 @@ void Tracker::keyPressed(int key) {
 			break;
         case 'd':
             showGrayDiff = !showGrayDiff;
+			break;
+        case 'k':
+            console.show = !console.show;
+			break;
+        case OF_KEY_LEFT:
+            console.next(false);
+			break;
+        case OF_KEY_RIGHT:
+            console.next(true);
+			break;
+        case OF_KEY_UP:
+            console.change(true);
+			break;
+        case OF_KEY_DOWN:
+            console.change(false);
 			break;
 		case '+':
 			threshold++;
