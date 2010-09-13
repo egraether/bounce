@@ -6,24 +6,34 @@
 
 class Console {
 private:
-    struct Argument {
+    struct Information {
+        string name;
+        int* value;
+        Information(string n, int* v) : 
+            name(n), value(v) {
+        }
+    };
+    
+    struct Regulation {
         string name;
         int* value;
         int min, max;
-        Argument(string n, int* v, int m, int x) : 
+        Regulation(string n, int* v, int m, int x) : 
             name(n), value(v), min(m), max(x) {
         }
     };
     
-    vector<Argument> values;
-    vector<Argument>::iterator it;
+    vector<Information> infos;
+    vector<Regulation> values;
+    vector<Regulation>::iterator it;
     
 public:
     bool show;
     
     Console();
     void draw();
-    void add(string name, int* value, int min, int max);
+    void addInformation(string name, int* value);
+    void addRegulation(string name, int* value, int min, int max);
     void next(bool toNext);
     void change(bool increase);
     //~Console() {}

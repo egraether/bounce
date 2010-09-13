@@ -5,7 +5,6 @@
 
 class CalibrationQuad {
 private:
-    ofPoint hitPoint;
     ofPoint camHitPoint;
     ofPoint* projCorner;
     ofPoint* screenCorner;

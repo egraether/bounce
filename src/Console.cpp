@@ -10,12 +10,20 @@ Console::Console() :
 void Console::draw() {
     if (show) {
         ofSetColor(0, 0, 0);
-        ofDrawBitmapString(it->name + " " + ofToString(*it->value), 15, 15);
+        ofDrawBitmapString(it->name + " " + ofToString(*it->value), 15, HEIGHT - 20);
+        
+        for (int i = 0; i < infos.size(); i++) {
+            ofDrawBitmapString(infos[i].name + " " + ofToString(*infos[i].value), 15, 25 + i * 20);
+        }
     }
 } 
 
-void Console::add(string name, int* value, int min, int max) {
-    values.push_back(Argument(name, value, min, max));
+void Console::addInformation(string name, int* value) {
+    infos.push_back(Information(name, value));
+}
+
+void Console::addRegulation(string name, int* value, int min, int max) {
+    values.push_back(Regulation(name, value, min, max));
     it = values.begin();
 }
 

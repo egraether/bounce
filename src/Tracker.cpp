@@ -2,12 +2,11 @@
 #include "utilities.h"
 #include "constants.h"
 
-Tracker::Tracker() {
+Tracker::Tracker(Console* c) {
     videoCapture.setVerbose(true);
     videoCapture.initGrabber(WIDTH,HEIGHT);
 
     colorImg.allocate(WIDTH,HEIGHT);
-    hsvImg.allocate(WIDTH,HEIGHT);
     grayImg.allocate(WIDTH,HEIGHT);
     grayBg.allocate(WIDTH,HEIGHT);
     grayDiff.allocate(WIDTH,HEIGHT);
@@ -17,8 +16,6 @@ Tracker::Tracker() {
     showGrayImg = false;
     showGrayDiff = false;
     
-    threshold = 80;//BALL_HUE;
-    
     numCorners = 0;
     
     screenCorner = new ofPoint[4];
@@ -26,7 +23,16 @@ Tracker::Tracker() {
     
     mode = CALIBRATION_NULL;
     
-    console.add("threshold", &threshold, 0, 255);
+    threshold = 80;
+    hue = 30;
+    minBlobSize = 20;
+    maxBlobSize = 1000;
+    
+    console = c;
+    console->addRegulation("threshold", &threshold, 0, 255);
+    console->addRegulation("hue", &hue, 0, 255);
+    console->addRegulation("minBlobSize", &minBlobSize, 0, WIDTH * HEIGHT);
+    console->addRegulation("maxBlobSize", &maxBlobSize, 0, WIDTH * HEIGHT);
 }
 
 //Tracker::~Tracker() {}
@@ -135,14 +141,14 @@ void Tracker::calibrate() {
 
 void Tracker::draw() {
     
-    //if (mode != CALIBRATION_NULL) {
+    if (mode != CALIBRATION_NULL) {
         if (mode == COMPLETE)
-            getHueContour(30);
+            getHueContour(hue);
         else
             getBrightnessContour(threshold);
         
         calibrate();
-    //}
+    }
     
     ofSetColor(255, 255, 255);
     if (showGrayImg)
@@ -151,14 +157,6 @@ void Tracker::draw() {
         grayDiff.draw(0, 0);
     
     contourFinder.draw(0, 0);
-    
-    console.draw();
-
-//
-//    ofSetColor(0xffffff);
-//    char reportStr[1024];
-//    sprintf(reportStr, "bg subtraction and blob detection\npress ' ' to capture bg\nthreshold %i (press: +/-)\nnum blobs found %i, fps: %f", threshold, contourFinder.nBlobs, ofGetFrameRate());
-//    ofDrawBitmapString(reportStr, 20, 600);
 }
 
 void Tracker::keyPressed(int key) {
@@ -175,45 +173,23 @@ void Tracker::keyPressed(int key) {
         case 'd':
             showGrayDiff = !showGrayDiff;
 			break;
-        case 'k':
-            console.show = !console.show;
-			break;
-        case OF_KEY_LEFT:
-            console.next(false);
-			break;
-        case OF_KEY_RIGHT:
-            console.next(true);
-			break;
-        case OF_KEY_UP:
-            console.change(true);
-			break;
-        case OF_KEY_DOWN:
-            console.change(false);
-			break;
-		case '+':
-			threshold++;
-			if (threshold > 255) threshold = 255;
-			break;
-		case '-':
-			threshold--;
-			if (threshold < 0) threshold = 0;
-			break;
+        default:
+            break;
 	}
 }
 
-void Tracker::mousePressed(int x, int y) {
-    dummyPoint.set(x, y);
-}
-
-ofPoint Tracker::getHitPoint() {
+bool Tracker::getHitPoint(ofPoint hitPoint) {
     if (mode == COMPLETE) {
-        getHueContour(30);
+        //getHueContour(hue);
+        getBrightnessContour(threshold);
         
         if (contourFinder.nBlobs) {
             ofPoint camHitPoint(contourFinder.blobs[0].centroid.x, contourFinder.blobs[0].centroid.y);
-            calibrationQuad.getHitPoint(camHitPoint);
+            hitPoint = calibrationQuad.getHitPoint(camHitPoint);
+            return true;
         }
     }
+    return false;
 }
 
 void Tracker::getBrightnessContour(int threshold) {
@@ -260,6 +236,6 @@ void Tracker::getHueContour(int hue) {
 		grayDiff.threshold(1);
         //grayDiff.erode();
         
-        contourFinder.findContours(grayDiff, 20, (WIDTH * HEIGHT) / 3, 10, false);
+        contourFinder.findContours(grayDiff, minBlobSize, maxBlobSize, 1, false);
     }
 }

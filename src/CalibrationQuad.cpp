@@ -39,8 +39,6 @@ void CalibrationQuad::draw() {
     if (camHitPoint.x) {
         ofSetColor(255, 0, 0);
         ofCircle(camHitPoint.x, camHitPoint.y, PROJ_CORNER_SIZE);
-        ofSetColor(0, 255, 0);
-        ofCircle(hitPoint.x, hitPoint.y, PROJ_CORNER_SIZE);
         
         ofSetColor(255, 0, 0);
         ofLine(eyePoint[0].x, eyePoint[0].y, edgeProjection[0].x, edgeProjection[0].y);
@@ -133,6 +131,8 @@ ofPoint CalibrationQuad::getHitPoint(ofPoint cHitPoint) {
     
     realParam[0] = getCutParameter(measurePoint[0], projectionVector[1], projCorner[cornerIndex], realLengthVector[0]); 
     realParam[1] = getCutParameter(measurePoint[1], projectionVector[0], projCorner[cornerIndex], realLengthVector[1]);
+    
+    ofPoint hitPoint;
     
     if (screenCorner[cornerIndex].x > screenCorner[index[0]].x)
         hitPoint.x = screenCorner[1].x - realParam[0] * (screenCorner[1].x - screenCorner[0].x);
