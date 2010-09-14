@@ -4,12 +4,14 @@
 #include "ofMain.h"
 #include "PushButton.h"
 
+#include <vector>
+
 class Infobox {
 public:
     enum Type {CHECK, CHOICE};
     
 private:
-    string message;
+    vector<string> message;
     int width, height;
     Type type;
     PushButton a, b;

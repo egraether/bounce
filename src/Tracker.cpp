@@ -39,9 +39,8 @@ Tracker::Tracker(Infobox* i, Console* c) {
     
     menuButton.set(
         "Menu", 
-        WIDTH - 10 - PushButton::measure[PushButton::SMALL].x, 
-        HEIGHT - 10 - PushButton::measure[PushButton::SMALL].y, 
-        PushButton::SMALL
+        WIDTH - 10 - PushButton::size.x, 
+        HEIGHT - 10 - PushButton::size.y
     );
 }
 
@@ -106,7 +105,7 @@ void Tracker::calibrate() {
                 if (contourFinder.nBlobs == 4)
                     countChecked = true;
                 else
-                    infobox->set("counting of corners fails, check if camera is directed to screen", Infobox::CHECK);
+                    infobox->set("counting of corners failed$check if camera is directed to screen", Infobox::CHECK);
             }
             break;
         case POINT:

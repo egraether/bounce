@@ -22,9 +22,8 @@ void Bounce::setup() {
     
     calibrateButton.set(
         "calibrate", 
-        WIDTH - 10 - PushButton::measure[PushButton::SMALL].x, 
-        HEIGHT - 10 - PushButton::measure[PushButton::SMALL].y, 
-        PushButton::SMALL
+        WIDTH - 10 - PushButton::size.x, 
+        HEIGHT - 10 - PushButton::size.y
     );
 }
 
