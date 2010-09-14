@@ -14,19 +14,16 @@ void PushButton::set(string n, int x, int y) {
     posY = y;
 }
 
-bool PushButton::draw(bool hit, ofPoint &hitPoint) {
-    if (hit && isHit(hitPoint))
-        return true;
-    
+void PushButton::draw() {
     ofNoFill();
     ofSetColor(0, 0, 0);
     ofRect(posX, posY, size.x, size.y);
     ofDrawBitmapString(name, posX + 10, posY + 20);
-    return false;
 }
 
-bool PushButton::isHit(ofPoint &hitPoint) {
-    if (hitPoint.x > posX && hitPoint.x < posX + size.x &&
+bool PushButton::checkHit(bool hit, ofPoint &hitPoint) {
+    if (hit && 
+        hitPoint.x > posX && hitPoint.x < posX + size.x &&
         hitPoint.y > posY && hitPoint.y < posY + size.y)
         return true;
     else

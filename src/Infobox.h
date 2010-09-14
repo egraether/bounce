@@ -9,21 +9,23 @@
 class Infobox {
 public:
     enum Type {CHECK, CHOICE};
+    enum State {ALIVE, ONE_HIT, TWO_HIT, DEAD};
     
 private:
     vector<string> message;
     int width, height;
     Type type;
-    PushButton a, b;
+    State state;
+    PushButton one, two;
     
 public:
-    bool isAlive;
-    
     Infobox();
     //~Infobox();
     
     void set(string m, Type t);
-    int draw(bool hit, ofPoint &hitPoint);
+    void draw();
+    State checkState(bool hit, ofPoint &hitPoint);
+    void kill();
 };
 
 #endif

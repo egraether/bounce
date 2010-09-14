@@ -7,12 +7,12 @@ class PushButton {
 private:
     int posX, posY;
     string name;
-    bool isHit(ofPoint &hitPoint);
     
 public:
     PushButton();
     void set(string n, int x, int y);
-    bool draw(bool hit, ofPoint &hitPoint);
+    void draw();
+    bool checkHit(bool hit, ofPoint &hitPoint);
     
     static ofPoint size;
 };

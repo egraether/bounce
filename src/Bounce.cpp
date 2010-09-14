@@ -38,21 +38,24 @@ void Bounce::draw() {
     
     switch (mode) {
         case MENU:
-            if (calibrateButton.draw(hit, hitPoint)) {
+            calibrateButton.draw();
+            if (calibrateButton.checkHit(hit, hitPoint)) {
                 tracker.reset();
                 mode = CALIBRATE;
-                infobox.isAlive = false;
+                infobox.kill();
             }
             break;
         case CALIBRATE:
             if (!tracker.draw(hit, hitPoint)) {
                 mode = MENU;
-                infobox.isAlive = false;
+                infobox.kill();
             }
             break;
         default:
             break;
     }
+    
+    infobox.draw();
     
     ofFill();
     ofSetColor(0, 255, 0);

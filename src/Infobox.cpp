@@ -1,7 +1,7 @@
 #include "Infobox.h"
 #include "constants.h"
 
-Infobox::Infobox() : isAlive(false) {}
+Infobox::Infobox() : state(DEAD) {}
 
 void Infobox::set(string m, Type t) {
     message.clear();
@@ -19,7 +19,7 @@ void Infobox::set(string m, Type t) {
     }
     
     type = t;
-    isAlive = true;
+    state = ALIVE;
     
     switch (type) {
         case CHECK: {
@@ -32,7 +32,7 @@ void Infobox::set(string m, Type t) {
             }
             width = 40 + message[maxLength].length() * 8;
             height = 40 + message.size() * 20 + PushButton::size.y;
-            a.set("OK", (WIDTH - PushButton::size.x) / 2, HEIGHT / 2);
+            one.set("OK", (WIDTH - PushButton::size.x) / 2, HEIGHT / 2);
             break;
         }
         default:
@@ -40,8 +40,8 @@ void Infobox::set(string m, Type t) {
     }
 }
 
-int Infobox::draw(bool hit, ofPoint &hitPoint) {
-    if (isAlive) {
+void Infobox::draw() {
+    if (state == ALIVE) {
         switch (type) {
             case CHECK:
                 ofFill();
@@ -57,13 +57,33 @@ int Infobox::draw(bool hit, ofPoint &hitPoint) {
                     );
                 }
                 
-                if (a.draw(hit, hitPoint))
-                    isAlive = false;
+                one.draw();
                 break;
             default:
                 break;
         }
     }
-    
-    return 0;
+}
+
+Infobox::State Infobox::checkState(bool hit, ofPoint &hitPoint) {
+    if (state == ALIVE) {
+        switch (type) {
+            case CHECK:
+                if (one.checkHit(hit, hitPoint)) {
+                    state = DEAD;
+                    return ONE_HIT;
+                }
+                break;
+            default:
+                break;
+        }
+        
+        return ALIVE;
+    }
+    else
+        return DEAD;
+}
+
+void Infobox::kill() {
+    state = DEAD;
 }

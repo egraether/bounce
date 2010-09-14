@@ -150,13 +150,13 @@ void Tracker::calibrate() {
 
 bool Tracker::draw(bool hit, ofPoint hitPoint) {
     
-    infobox->draw(hit, hitPoint);
-    if (!infobox->isAlive) {
+    if (infobox->checkState(hit, hitPoint) != Infobox::ALIVE) {
         if (mode != CALIBRATION_NULL) {
             if (mode == COMPLETE) {
                 getHueContour(hue);
                 
-                if (menuButton.draw(hit, hitPoint))
+                menuButton.draw();
+                if (menuButton.checkHit(hit, hitPoint))
                     return false;
             }
             else
@@ -165,8 +165,12 @@ bool Tracker::draw(bool hit, ofPoint hitPoint) {
             calibrate();
         }
     }
-    else if (menuButton.draw(hit, hitPoint))
-        return false;
+    else {
+        menuButton.draw();
+        
+        if (menuButton.checkHit(hit, hitPoint))
+            return false;
+    }
     
     ofSetColor(255, 255, 255);
     if (showGrayImg)
