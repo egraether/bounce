@@ -25,6 +25,7 @@ void Console::addInformation(string name, int* value) {
 void Console::addRegulation(string name, int* value, int min, int max) {
     values.push_back(Regulation(name, value, min, max));
     it = values.begin();
+    addInformation(name, value);
 }
 
 void Console::next(bool toNext) {

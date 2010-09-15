@@ -12,13 +12,16 @@ private:
     ofPoint hitPoint;
     bool hit;
     
-    enum {MENU, CALIBRATE, GAME} mode;
+    enum Mode {MENU, CALIBRATE, TARGET} mode;
+    void changeMode(Mode m);
     
     Infobox infobox;
     Console console;
     Tracker tracker;
     
     PushButton calibrateButton;
+    PushButton menuButton;
+    PushButton targetButton;
     
     // audio
     void audioReceived(float* input, int bufferSize, int nChannels);

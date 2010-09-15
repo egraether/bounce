@@ -3,21 +3,33 @@
 #include "utilities.h"
 #include "constants.h"
 
-Tracker::Tracker(Infobox* i, Console* c) {
+Tracker::Tracker(Infobox* i, PushButton* m, Console* c) : 
+    infobox(i), menuButton(m), console(c) {
+        
     mode = CALIBRATION_NULL;
     
     threshold = 80;
     hue = 30;
+    hueVariance = 3;
+    saturation = 100;
+    saturationVariance = 20;
+    value = 100;
+    valueVariance = 20;
     minBlobSize = 20;
-    maxBlobSize = 1000;
+    maxBlobSize = 100 * 100;
+    lastBlobSize = 0;
     
-    console = c;
     console->addRegulation("threshold", &threshold, 0, 255);
     console->addRegulation("hue", &hue, 0, 255);
+    console->addRegulation("hueVariance", &hueVariance, 0, 25);
+    //console->addRegulation("value", &value, 0, 255);
+    //console->addRegulation("valueVariance", &valueVariance, 0, 25);
+    console->addRegulation("saturation", &saturation, 0, 255);
+    console->addRegulation("saturationVariance", &saturationVariance, 0, 25);
     console->addRegulation("minBlobSize", &minBlobSize, 0, WIDTH * HEIGHT);
     console->addRegulation("maxBlobSize", &maxBlobSize, 0, WIDTH * HEIGHT);
     
-    infobox = i;
+    console->addInformation("lastBlobSize", *lastBlobSize);
     
     videoCapture.setVerbose(true);
     videoCapture.initGrabber(WIDTH,HEIGHT);
@@ -29,6 +41,7 @@ Tracker::Tracker(Infobox* i, Console* c) {
 
     newBackground = true;
     
+    showColorImg = false;
     showGrayImg = false;
     showGrayDiff = false;
     
@@ -36,12 +49,6 @@ Tracker::Tracker(Infobox* i, Console* c) {
     
     screenCorner = new ofPoint[4];
     projCorner = new ofPoint[4];
-    
-    menuButton.set(
-        "Menu", 
-        WIDTH - 10 - PushButton::size.x, 
-        HEIGHT - 10 - PushButton::size.y
-    );
 }
 
 //Tracker::~Tracker() {}
@@ -58,8 +65,6 @@ void Tracker::reset() {
     
     numCorners = 0;
     counter = 0;
-    
-    dummyPoint.set(0,0);
     
     countChecked = false;
     
@@ -131,11 +136,6 @@ void Tracker::calibrate() {
             counter++;
             break;
         case COMPLETE:
-            if (dummyPoint.x) {
-                ofSetColor(0, 0, 0);
-                ofCircle(dummyPoint.x, dummyPoint.y, 10);
-            }
-            
             if (contourFinder.nBlobs) {
                 ofPoint camHitPoint(contourFinder.blobs[0].centroid.x, contourFinder.blobs[0].centroid.y);
                 calibrationQuad.getHitPoint(camHitPoint);
@@ -153,10 +153,10 @@ bool Tracker::draw(bool hit, ofPoint hitPoint) {
     if (infobox->checkState(hit, hitPoint) != Infobox::ALIVE) {
         if (mode != CALIBRATION_NULL) {
             if (mode == COMPLETE) {
-                getHueContour(hue);
+                getHueContour();
                 
-                menuButton.draw();
-                if (menuButton.checkHit(hit, hitPoint))
+                menuButton->draw();
+                if (menuButton->checkHit(hit, hitPoint))
                     return false;
             }
             else
@@ -166,13 +166,15 @@ bool Tracker::draw(bool hit, ofPoint hitPoint) {
         }
     }
     else {
-        menuButton.draw();
+        menuButton->draw();
         
-        if (menuButton.checkHit(hit, hitPoint))
+        if (menuButton->checkHit(hit, hitPoint))
             return false;
     }
     
     ofSetColor(255, 255, 255);
+    if (showColorImg)
+        colorImg.draw(0, 0);
     if (showGrayImg)
         grayImg.draw(0, 0);
     if (showGrayDiff)
@@ -192,6 +194,9 @@ void Tracker::keyPressed(int key) {
             reset();
 			break;
         case 'g':
+            showColorImg = !showColorImg;
+			break;
+        case 'f':
             showGrayImg = !showGrayImg;
 			break;
         case 'd':
@@ -204,8 +209,8 @@ void Tracker::keyPressed(int key) {
 
 bool Tracker::getHitPoint(ofPoint hitPoint) {
     if (mode == COMPLETE) {
-        //getHueContour(hue);
-        getBrightnessContour(threshold);
+        getHueContour();
+        //getBrightnessContour(threshold);
         
         if (contourFinder.nBlobs) {
             ofPoint camHitPoint(contourFinder.blobs[0].centroid.x, contourFinder.blobs[0].centroid.y);
@@ -216,13 +221,20 @@ bool Tracker::getHitPoint(ofPoint hitPoint) {
     return false;
 }
 
-void Tracker::getBrightnessContour(int threshold) {
+bool Tracker::getNewImage() {
     bool newFrame = false;
     videoCapture.grabFrame();
     newFrame = videoCapture.isFrameNew();
     
     if (newFrame) {
         colorImg.setFromPixels(videoCapture.getPixels(), WIDTH, HEIGHT);
+        return true;
+    }
+    return false;
+}
+
+void Tracker::getBrightnessContour(int threshold) {
+    if (getNewImage()) {
         grayImg = colorImg;
         
         if (newBackground) {
@@ -239,27 +251,24 @@ void Tracker::getBrightnessContour(int threshold) {
     }
 }
 
-void Tracker::getHueContour(int hue) {
-    bool newFrame = false;
-    videoCapture.grabFrame();
-    newFrame = videoCapture.isFrameNew();
-    
-    if (newFrame) {
-        //colorImg.setFromPixels(videoCapture.getPixels(), WIDTH, HEIGHT);
-        
-        PixelRGB* pixRGB = (PixelRGB*)(videoCapture.getPixels());
-        ofxCvBounceImage temp = colorImg;
-        PixelHSV* pixHSV = (PixelHSV*)(temp.getPixelsHSV());
+void Tracker::getHueContour() {
+    if (getNewImage()) {
+        PixelRGB* pixRGB = (PixelRGB*)(colorImg.getPixels());
+        PixelHSV* pixHSV = (PixelHSV*)(colorImg.getPixelsHSV());
         for (int i = 0; i < WIDTH * HEIGHT; i++) {
-            if (pixHSV[i].h > hue + 1 || pixHSV[i].h < hue - 1)
+            if (pixHSV[i].h > hue + hueVariance || pixHSV[i].h < hue - hueVariance ||
+                pixHSV[i].s > saturation + saturationVariance || pixHSV[i].s < saturation - saturationVariance)
                 pixRGB[i].set(0,0,0);
         }
         colorImg.setFromPixels((unsigned char*)(pixRGB), WIDTH, HEIGHT);
         
         grayDiff = colorImg;
 		grayDiff.threshold(1);
-        //grayDiff.erode();
+        grayDiff.erode();
         
         contourFinder.findContours(grayDiff, minBlobSize, maxBlobSize, 1, false);
+        
+        if (contourFinder.nBlobs)
+            lastBlobSize = countourFinder.blobs[0].area;
     }
 }

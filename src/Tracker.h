@@ -36,8 +36,15 @@ private:
     ofxCvContourFinder contourFinder;
     
     int threshold;
-    int hue;
+    int hue, hueVariance;
+    int saturation, saturationVariance;
+    int value, valueVariance;
     int minBlobSize, maxBlobSize;
+    int lastBlobSize;
+    
+    bool getNewImage();
+    void getBrightnessContour(int threshold);
+    void getHueContour();
     
     // calibration
     ofPoint* screenCorner;
@@ -52,21 +59,17 @@ private:
     
     // other
     bool newBackground;
+    bool showColorImg;
     bool showGrayImg;
     bool showGrayDiff;
-    
-    ofPoint dummyPoint;
     
     Infobox* infobox;
     Console* console;
     
-    void getBrightnessContour(int threshold);
-    void getHueContour(int hue);
-    
-    PushButton menuButton;
+    PushButton* menuButton;
     
 public:
-    Tracker(Infobox* i, Console* c);
+    Tracker(Infobox* i, PushButton* m, Console* c);
     //~Tracker();
     
     void reset();

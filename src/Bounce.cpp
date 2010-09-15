@@ -2,13 +2,13 @@
 #include "constants.h"
 
 Bounce::Bounce() : 
-    tracker(&infobox, &console),
+    tracker(&infobox, &menuButton, &console),
     mode(MENU),
     hit(false) {
 }
 
 void Bounce::setup() {
-    ofBackground(255, 255, 255);
+    ofBackground(220, 220, 255);
     ofSetVerticalSync(true);
     
     // audio
@@ -25,6 +25,18 @@ void Bounce::setup() {
         WIDTH - 10 - PushButton::size.x, 
         HEIGHT - 10 - PushButton::size.y
     );
+    
+    menuButton.set(
+        "Menu", 
+        WIDTH - 10 - PushButton::size.x, 
+        HEIGHT - 10 - PushButton::size.y
+    );
+    
+    targetButton.set(
+        "Target", 
+        10, 
+        100
+    );
 }
 
 void Bounce::update() {
@@ -39,21 +51,30 @@ void Bounce::draw() {
     switch (mode) {
         case MENU:
             calibrateButton.draw();
+            targetButton.draw();
+            
             if (calibrateButton.checkHit(hit, hitPoint)) {
+                changeMode(CALIBRATE);
                 tracker.reset();
-                mode = CALIBRATE;
-                infobox.kill();
             }
+            else if (targetButton.checkHit(hit, hitPoint))
+                changeMode(TARGET);
+                //target.reset();
             break;
         case CALIBRATE:
-            if (!tracker.draw(hit, hitPoint)) {
-                mode = MENU;
-                infobox.kill();
-            }
+            if (!tracker.draw(hit, hitPoint))
+                changeMode(MENU);
+            break;
+        case TARGET:
+            //if (!target.draw(hit, hitPoint))
+                //changeMode(MENU);
             break;
         default:
             break;
     }
+    
+    if (mode != MENU && mode != CALIBRATE)
+        menuButton.draw();
     
     infobox.draw();
     
@@ -107,3 +128,8 @@ void Bounce::mousePressed(int x, int y, int button) {
 void Bounce::mouseDragged(int x, int y, int button) {}
 void Bounce::mouseReleased(int x, int y, int button) {}
 void Bounce::windowResized(int w, int h) {}
+
+void Bounce::changeMode(Mode m) {
+    mode = m;
+    infobox.kill();
+}
