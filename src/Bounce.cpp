@@ -43,6 +43,10 @@ void Bounce::update() {
 }
 
 void Bounce::draw() {
+    // save actual image
+    tracker.update();
+    
+    // if loud noise, check if ball is in picture
     if (bang) {
         hit = tracker.getHitPoint(hitPoint);
         bang = false;

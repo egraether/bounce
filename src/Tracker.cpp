@@ -23,16 +23,19 @@ Tracker::Tracker(Infobox* i, PushButton* m, Console* c) :
     console->addRegulation("hue", &hue, 0, 255);
     console->addRegulation("hueVariance", &hueVariance, 0, 25);
     //console->addRegulation("value", &value, 0, 255);
-    //console->addRegulation("valueVariance", &valueVariance, 0, 25);
+    //console->addRegulation("valueVariance", &valueVariance, 0, 50);
     console->addRegulation("saturation", &saturation, 0, 255);
-    console->addRegulation("saturationVariance", &saturationVariance, 0, 25);
+    console->addRegulation("saturationVariance", &saturationVariance, 0, 50);
     console->addRegulation("minBlobSize", &minBlobSize, 0, WIDTH * HEIGHT);
     console->addRegulation("maxBlobSize", &maxBlobSize, 0, WIDTH * HEIGHT);
     
-    console->addInformation("lastBlobSize", *lastBlobSize);
+    console->addInformation("lastBlobSize", &lastBlobSize);
     
     videoCapture.setVerbose(true);
     videoCapture.initGrabber(WIDTH,HEIGHT);
+        
+    storeSize = 5;
+    console->addRegulation("storeSize", &storeSize, 1, 10);
 
     colorImg.allocate(WIDTH,HEIGHT);
     grayImg.allocate(WIDTH,HEIGHT);
@@ -52,6 +55,11 @@ Tracker::Tracker(Infobox* i, PushButton* m, Console* c) :
 }
 
 //Tracker::~Tracker() {}
+
+void Tracker::update() {
+    if (mode == COMPLETE)
+        getNewImage();
+}
 
 void Tracker::reset() {
     for (int i = 0; i < 4; i++) {
@@ -228,6 +236,12 @@ bool Tracker::getNewImage() {
     
     if (newFrame) {
         colorImg.setFromPixels(videoCapture.getPixels(), WIDTH, HEIGHT);
+        storeImg.push_back(colorImg);
+        
+        while (storeImg.size() > storeSize) {
+            storeImg.pop_front();
+        }
+        
         return true;
     }
     return false;
@@ -252,23 +266,21 @@ void Tracker::getBrightnessContour(int threshold) {
 }
 
 void Tracker::getHueContour() {
-    if (getNewImage()) {
-        PixelRGB* pixRGB = (PixelRGB*)(colorImg.getPixels());
-        PixelHSV* pixHSV = (PixelHSV*)(colorImg.getPixelsHSV());
-        for (int i = 0; i < WIDTH * HEIGHT; i++) {
-            if (pixHSV[i].h > hue + hueVariance || pixHSV[i].h < hue - hueVariance ||
-                pixHSV[i].s > saturation + saturationVariance || pixHSV[i].s < saturation - saturationVariance)
-                pixRGB[i].set(0,0,0);
-        }
-        colorImg.setFromPixels((unsigned char*)(pixRGB), WIDTH, HEIGHT);
-        
-        grayDiff = colorImg;
-		grayDiff.threshold(1);
-        grayDiff.erode();
-        
-        contourFinder.findContours(grayDiff, minBlobSize, maxBlobSize, 1, false);
-        
-        if (contourFinder.nBlobs)
-            lastBlobSize = countourFinder.blobs[0].area;
+    PixelRGB* pixRGB = (PixelRGB*)(storeImg.front().getPixels());
+    PixelHSV* pixHSV = (PixelHSV*)(storeImg.front().getPixelsHSV());
+    for (int i = 0; i < WIDTH * HEIGHT; i++) {
+        if (pixHSV[i].h > hue + hueVariance || pixHSV[i].h < hue - hueVariance ||
+            pixHSV[i].s > saturation + saturationVariance || pixHSV[i].s < saturation - saturationVariance)
+            pixRGB[i].set(0,0,0);
     }
+    colorImg.setFromPixels((unsigned char*)(pixRGB), WIDTH, HEIGHT);
+    
+    grayDiff = colorImg;
+    grayDiff.threshold(1);
+    grayDiff.erode();
+    
+    contourFinder.findContours(grayDiff, minBlobSize, maxBlobSize, 1, false);
+    
+    if (contourFinder.nBlobs)
+        lastBlobSize = contourFinder.blobs[0].area;
 }

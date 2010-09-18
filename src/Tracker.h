@@ -9,6 +9,8 @@
 #include "Infobox.h"
 #include "PushButton.h"
 
+#include <deque>
+
 class Tracker {
 private:
     struct PixelRGB {
@@ -30,6 +32,10 @@ private:
     // image capture
     ofVideoGrabber videoCapture;
     ofxCvBounceImage colorImg;
+    
+    deque<ofxCvBounceImage> storeImg;
+    int storeSize;
+    
     ofxCvGrayscaleImage grayImg, grayBg, grayDiff;
     
     // contour
@@ -39,6 +45,7 @@ private:
     int hue, hueVariance;
     int saturation, saturationVariance;
     int value, valueVariance;
+    
     int minBlobSize, maxBlobSize;
     int lastBlobSize;
     
@@ -72,6 +79,7 @@ public:
     Tracker(Infobox* i, PushButton* m, Console* c);
     //~Tracker();
     
+    void update();
     void reset();
     void calibrate();
     bool draw(bool hit, ofPoint hitPoint);

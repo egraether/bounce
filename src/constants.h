@@ -1,8 +1,8 @@
 #ifndef _CONSTANTS_
 #define _CONSTANTS_
 
-#define WIDTH 640
-#define HEIGHT 480
+#define WIDTH 640  //1280
+#define HEIGHT 480  //800
 
 #define HITPOINT_SIZE 3
 
@@ -11,6 +11,6 @@
 
 #define PROJ_CORNER_SIZE 5
 
-#define CALIBRATION_WAIT_FRAMES 15
+#define CALIBRATION_WAIT_FRAMES 20
 
 #endif
