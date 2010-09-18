@@ -20,9 +20,17 @@ void ShootingCans::reset() {
    
 bool ShootingCans::draw(bool hit, Vector hitPoint) {
     ofPushMatrix();
-    ofTranslate(hitPoint.x + sprite.getWidth() / 2, hitPoint.y + sprite.getHeight() / 2, 0.0);
-    ofRotateZ(3.6 * counter);
-    ofTranslate(-hitPoint.x - sprite.getWidth() / 2, -hitPoint.y - sprite.getHeight() / 2, 0.0);
+    ofTranslate(hitPoint.x, hitPoint.y, 0.0);
+    
+    Vector a(0, 1), b(WIDTH / 2, HEIGHT);
+    Vector c = Vector::getVector(hitPoint, b);
+    float angle = Vector::angle(c, a) / PI * 180 + 180;
+    
+    if (hitPoint.x < WIDTH / 2)
+        angle *= -1;
+    
+    ofRotateZ(angle);
+    ofTranslate(-hitPoint.x, -hitPoint.y, 0.0);
     sprite.draw(hitPoint.x, hitPoint.y);
     ofPopMatrix();
     

@@ -14,7 +14,7 @@ private:
     Vector hitPoint;
     bool hit;
     
-    enum Mode {MENU, CALIBRATE, TARGET} mode;
+    enum Mode {MENU, CALIBRATE, SHOOTING_CANS, ROBOT_DEFENSE, BALLOON_HUNT} mode;
     void changeMode(Mode m);
     
     Infobox infobox;

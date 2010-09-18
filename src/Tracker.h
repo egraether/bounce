@@ -66,7 +66,6 @@ private:
     int numCorners;
     
     // other
-    bool newBackground;
     bool showColorImg;
     bool showGrayImg;
     bool showGrayDiff;
@@ -79,7 +78,7 @@ private:
     
 public:
     Tracker(Infobox* i, PushButton* m, Console* c);
-    //~Tracker();
+    ~Tracker();
     
     void update();
     void reset();

@@ -21,29 +21,9 @@ void Bounce::setup() {
     console.addInformation("lastBang", &lastBang);
     console.addRegulation("bangLevel", &bangLevel, 0, 15);
     
-    calibrateButton.set(
-        "calibrate", 
-        WIDTH - 10 - WIDTH / 5, 
-        HEIGHT - 10 - WIDTH / 5,
-        WIDTH / 5,
-        WIDTH / 5
-    );
-    
-    menuButton.set(
-        "Menu", 
-        WIDTH - 10 - WIDTH / 5, 
-        HEIGHT - 10 - WIDTH / 5,
-        WIDTH / 5,
-        WIDTH / 5
-    );
-    
-    shootingCansButton.set(
-        "shootingCans", 
-        10, 
-        100,
-        WIDTH / 5,
-        WIDTH / 5
-    );
+    calibrateButton.set("calibrate", WIDTH - 10 - WIDTH / 5, HEIGHT - 10 - WIDTH / 5,WIDTH / 5,WIDTH / 5);
+    menuButton.set("Menu", WIDTH - 10 - WIDTH / 5, HEIGHT - 10 - WIDTH / 5,WIDTH / 5,WIDTH / 5);
+    shootingCansButton.set("shootingCans", 10, 100, WIDTH / 5, WIDTH / 5);
 }
 
 void Bounce::update() {
@@ -69,14 +49,14 @@ void Bounce::draw() {
                 tracker.reset();
             }
             else if (shootingCansButton.checkHit(hit, hitPoint))
-                changeMode(TARGET);
+                changeMode(SHOOTING_CANS);
                 shootingCans.reset();
             break;
         case CALIBRATE:
             if (!tracker.draw(hit, hitPoint))
                 changeMode(MENU);
             break;
-        case TARGET:
+        case SHOOTING_CANS:
             if (!shootingCans.draw(hit, hitPoint))
                 changeMode(MENU);
             break;
@@ -96,6 +76,8 @@ void Bounce::draw() {
     hit = false;
     
     console.draw();
+    ofSetColor(0x000000);
+    ofDrawBitmapString("Framerate: " + ofToString(ofGetFrameRate()), WIDTH - 150, 20);
 }
 
 void Bounce::audioReceived (float* input, int bufferSize, int nChannels) {

@@ -1,8 +1,8 @@
 #ifndef _CONSTANTS_
 #define _CONSTANTS_
 
-#define WIDTH 640  //1280
-#define HEIGHT 480  //800
+#define WIDTH 1280
+#define HEIGHT 800
 
 #define HITPOINT_SIZE 3
 
@@ -13,7 +13,7 @@
 
 #define CALIBRATION_WAIT_FRAMES 20
 
-#define THRESHOLD 80
+#define THRESHOLD 33
 #define HUE 30
 #define HUE_VARIANCE 3
 #define SATURATION 100
@@ -21,7 +21,7 @@
 #define VALUE 100
 #define VALUE_VARIANCE 20
 #define MIN_BLOB_SIZE 20
-#define MAX_BLOB_SIZE 10000
+#define MAX_BLOB_SIZE 120000
 
 #define ANIMATION_SPEED 20
 

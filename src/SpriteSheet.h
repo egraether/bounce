@@ -30,7 +30,12 @@ public:
         if (animate && actualPic < 10/*numPics - 1*/ && counter == speed)
             actualPic++;
         
-        tex->draw(x, y, tex->width, tex->height / numPics, 0.0, actualPic * 1.0 / numPics, 1.0, 1.0 / numPics);
+        tex->draw(
+            x - tex->width / 2, y - tex->height / numPics / 2, 
+            tex->width, tex->height / numPics, 
+            0.0, actualPic * 1.0 / numPics, 
+            1.0, 1.0 / numPics
+        );
     }
     
     int getWidth() {

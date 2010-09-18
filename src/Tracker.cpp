@@ -13,7 +13,8 @@ Tracker::Tracker(Infobox* i, PushButton* m, Console* c) :
     valueVariance(VALUE_VARIANCE),
     minBlobSize(MIN_BLOB_SIZE),
     maxBlobSize(MAX_BLOB_SIZE),
-    lastBlobSize(0) {
+    lastBlobSize(0),
+    storeSize(5) {
     
     console->addRegulation("threshold", &threshold, 0, 255);
     console->addRegulation("hue", &hue, 0, 179);
@@ -26,12 +27,11 @@ Tracker::Tracker(Infobox* i, PushButton* m, Console* c) :
     console->addRegulation("maxBlobSize", &maxBlobSize, 0, WIDTH * HEIGHT);
     
     console->addInformation("lastBlobSize", &lastBlobSize);
+        
+    console->addRegulation("storeSize", &storeSize, 1, 10);
     
     videoCapture.setVerbose(true);
     videoCapture.initGrabber(WIDTH,HEIGHT);
-        
-    storeSize = 5;
-    console->addRegulation("storeSize", &storeSize, 1, 10);
 
     colorImg.allocate(WIDTH,HEIGHT);
     grayImg.allocate(WIDTH,HEIGHT);
@@ -39,8 +39,6 @@ Tracker::Tracker(Infobox* i, PushButton* m, Console* c) :
     grayDiff.allocate(WIDTH,HEIGHT);
         
     colorButton.set("calibration Complete", 10, 10, WIDTH / 5, WIDTH / 5);
-
-    newBackground = true;
     
     showColorImg = false;
     showGrayImg = false;
@@ -52,7 +50,10 @@ Tracker::Tracker(Infobox* i, PushButton* m, Console* c) :
     projCorner = new Vector[4];
 }
 
-//Tracker::~Tracker() {}
+Tracker::~Tracker() {
+    delete [] screenCorner;
+    delete [] projCorner;
+}
 
 void Tracker::update() {
     if (mode == COMPLETE)
@@ -156,9 +157,9 @@ void Tracker::calibrate() {
             ofxCvBounceImage hsvImg;
             hsvImg.allocate(WIDTH, HEIGHT);
             hsvImg.setFromPixels((unsigned char*)(pixHSV), WIDTH, HEIGHT);
-            colorImg.setFromPixels(hsvImg.getPixelsRGB(), WIDTH, HEIGHT);
+            hsvImg.setFromPixels(hsvImg.getPixelsRGB(), WIDTH, HEIGHT);
             ofSetColor(0xffffff);
-            colorImg.draw(0, 0);
+            hsvImg.draw(0, 0);
             colorButton.draw();
             getHueContour();
             break;
@@ -198,6 +199,7 @@ bool Tracker::draw(bool hit, Vector hitPoint) {
         }
     }
     else {
+        getNewImage();
         menuButton->draw();
         
         if (menuButton->checkHit(hit, hitPoint))
@@ -222,9 +224,6 @@ bool Tracker::draw(bool hit, Vector hitPoint) {
 
 void Tracker::keyPressed(int key) {
 	switch (key){
-		case ' ':
-			newBackground = true;
-			break;
         case 'c':
             reset();
 			break;
@@ -278,25 +277,19 @@ void Tracker::getBrightnessContour(int threshold) {
     if (getNewImage()) {
         grayImg = colorImg;
         
-        if (newBackground) {
-            grayBg = grayImg;
-            newBackground = false;
-        }
-        
         grayDiff.absDiff(grayBg, grayImg);
-        //grayDiff.blur();
         grayDiff.threshold(threshold);
-        //grayDiff.erode();
         
         contourFinder.findContours(grayDiff, 20, (WIDTH * HEIGHT) / 3, 10, true);
     }
 }
 
 void Tracker::getHueContour() {
-//    PixelRGB* pixRGB = (PixelRGB*)(storeImg.front().getPixels());
-//    PixelHSV* pixHSV = (PixelHSV*)(storeImg.front().getPixelsHSV());
-    PixelRGB* pixRGB = (PixelRGB*)(colorImg.getPixels());
-    PixelHSV* pixHSV = (PixelHSV*)(colorImg.getPixelsHSV());
+    PixelRGB* pixRGB = (PixelRGB*)(storeImg.front().getPixels());
+    PixelHSV* pixHSV = (PixelHSV*)(storeImg.front().getPixelsHSV());
+//    PixelRGB* pixRGB = (PixelRGB*)(colorImg.getPixels());
+//    PixelHSV* pixHSV = (PixelHSV*)(colorImg.getPixelsHSV());
+    
     for (int i = 0; i < WIDTH * HEIGHT; i++) {
         if (pixHSV[i].h > hue + hueVariance || pixHSV[i].h < hue - hueVariance ||
             pixHSV[i].s > saturation + saturationVariance || pixHSV[i].s < saturation - saturationVariance)

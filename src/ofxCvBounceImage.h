@@ -22,12 +22,14 @@ public:
             pixelsHeight = height;
         }
         
-        // copy from ROI to pixels
         for( int i = 0; i < height; i++ ) {
-            memcpy( pixels + (i*width*3),
-                   cvImageTemp->imageData + (i*cvImageTemp->widthStep),
-                   width*3 );
+            memcpy(
+                pixels + (i*width*3),
+                cvImageTemp->imageData + (i*cvImageTemp->widthStep),
+                width*3
+            );
         }
+        
         return pixels;
     }
     
@@ -48,10 +50,13 @@ public:
         }
         
         for( int i = 0; i < height; i++ ) {
-            memcpy( pixels + (i*width*3),
-                   cvImageTemp->imageData + (i*cvImageTemp->widthStep),
-                   width*3 );
+            memcpy(
+                pixels + (i*width*3),
+                cvImageTemp->imageData + (i*cvImageTemp->widthStep),
+                width*3
+            );
         }
+        
         return pixels;
     }
 };

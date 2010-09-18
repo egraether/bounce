@@ -63,18 +63,22 @@ public:
     static double angle(Vector u, Vector v) {
         return acos(dot(u, v)/(norm(u)*norm(v)));
     }
+    
     static Vector toLength(Vector u, double l) {
         return mul(div(u, norm(u)), l);
     }
+    
     static double distance(Vector a, Vector b) {
         return norm(sub(a,b));
     }
-//    double distanceToLine(Vector a, Vector b) {
-//        assert(b.x || b.y || b.z);
-//        double t = (b.x * (x - a.x) + b.y * (y - a.y) + b.z * (z - a.z)) / (b.x * b.x + b.y * b.y + b.z * b.z);
-//        Vector c(a.x + b.x * t - x, a.y + b.y * t - y, a.z + b.z * t - z);
-//        return norm(c);
-//    }
+    
+    double distanceToLine(Vector a, Vector b) {
+        assert(b.x || b.y);
+        double t = (b.x * (x - a.x) + b.y * (y - a.y)) / (b.x * b.x + b.y * b.y);
+        Vector c(a.x + b.x * t - x, a.y + b.y * t - y);
+        return norm(c);
+    }
+    
     static Vector projectionVector(Vector a, Vector b) {
         return mul(b, dot(a, b) / dot(b, b));
     }

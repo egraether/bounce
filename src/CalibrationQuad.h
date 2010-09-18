@@ -14,12 +14,13 @@ private:
     Vector measurePoint[2];
     Vector realLengthVector[2];
     int index[2];
+    
     double realParam[2];
     Vector edgeProjection[2];
+    int* directionIndex[2];
     
 public:
     CalibrationQuad() {}
-    //~CalibrationQuad() {}
     
     void draw();
     void getEyePoints(Vector* sCorners, Vector* pCorners);
