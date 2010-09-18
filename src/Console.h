@@ -1,8 +1,9 @@
 #ifndef _CONSOLE_
 #define _CONSOLE_
 
-#include <vector>
 #include "ofMain.h"
+
+#include <vector>
 
 class Console {
 private:

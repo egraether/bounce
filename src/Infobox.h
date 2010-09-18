@@ -1,10 +1,13 @@
 #ifndef _INFOBOX_
 #define _INFOBOX_
 
-#include "ofMain.h"
 #include "PushButton.h"
+#include "Vector.h"
 
 #include <vector>
+#include <cstring>
+
+using namespace std;
 
 class Infobox {
 public:
@@ -24,7 +27,7 @@ public:
     
     void set(string m, Type t);
     void draw();
-    State checkState(bool hit, ofPoint &hitPoint);
+    State checkState(bool hit, Vector &hitPoint);
     void kill();
 };
 

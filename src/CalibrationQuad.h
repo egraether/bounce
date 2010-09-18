@@ -1,29 +1,29 @@
 #ifndef _CALIBRATION_QUAD_
 #define _CALIBRATION_QUAD_
 
-#include "ofMain.h"
+#include "Vector.h"
 
 class CalibrationQuad {
 private:
-    ofPoint camHitPoint;
-    ofPoint* projCorner;
-    ofPoint* screenCorner;
+    Vector camHitPoint;
+    Vector* projCorner;
+    Vector* screenCorner;
     int cornerIndex;
     
-    ofPoint eyePoint[2];
-    ofPoint measurePoint[2];
-    ofPoint realLengthVector[2];
+    Vector eyePoint[2];
+    Vector measurePoint[2];
+    Vector realLengthVector[2];
     int index[2];
     double realParam[2];
-    ofPoint edgeProjection[2];
+    Vector edgeProjection[2];
     
 public:
     CalibrationQuad() {}
     //~CalibrationQuad() {}
     
     void draw();
-    void getEyePoints(ofPoint* sCorners, ofPoint* pCorners);
-    ofPoint getHitPoint(ofPoint camHitPoint);
+    void getEyePoints(Vector* sCorners, Vector* pCorners);
+    Vector getHitPoint(Vector camHitPoint);
 };
 
 #endif

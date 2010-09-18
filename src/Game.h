@@ -1,7 +1,7 @@
 #ifndef _GAME_
 #define _GAME_
 
-#include "ofMain.h"
+#include "Vector.h"
 #include "PushButton.h"
 #include "Infobox.h"
 
@@ -15,7 +15,7 @@ public:
     //~Game()
     
     virtual void reset() = 0;
-    virtual bool draw(bool hit, ofPoint hitPoint) = 0;
+    virtual bool draw(bool hit, Vector hitPoint) = 0;
 };
 
 #endif

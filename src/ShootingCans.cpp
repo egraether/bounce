@@ -1,4 +1,5 @@
 #include "ShootingCans.h"
+#include "ofMain.h"
 
 ShootingCans::ShootingCans(Infobox* i, PushButton* m) : Game(i, m) {
     ofImage image;
@@ -17,7 +18,7 @@ void ShootingCans::reset() {
     counter = 0;
 }
    
-bool ShootingCans::draw(bool hit, ofPoint hitPoint) {
+bool ShootingCans::draw(bool hit, Vector hitPoint) {
     ofPushMatrix();
     ofTranslate(hitPoint.x + sprite.getWidth() / 2, hitPoint.y + sprite.getHeight() / 2, 0.0);
     ofRotateZ(3.6 * counter);

@@ -2,6 +2,7 @@
 #define _BOUNCE_
 
 #include "ofMain.h"
+#include "Vector.h"
 #include "Tracker.h"
 #include "Console.h"
 #include "Infobox.h"
@@ -10,7 +11,7 @@
 
 class Bounce : public ofBaseApp{
 private:
-    ofPoint hitPoint;
+    Vector hitPoint;
     bool hit;
     
     enum Mode {MENU, CALIBRATE, TARGET} mode;

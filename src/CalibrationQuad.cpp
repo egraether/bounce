@@ -1,5 +1,5 @@
 #include "CalibrationQuad.h"
-#include "utilities.h"
+#include "ofMain.h"
 #include "constants.h"
 
 //CalibrationQuad::CalibrationQuad() {}
@@ -49,20 +49,20 @@ void CalibrationQuad::draw() {
     }
 }
 
-void CalibrationQuad::getEyePoints(ofPoint* sCorners, ofPoint* pCorners) {
+void CalibrationQuad::getEyePoints(Vector* sCorners, Vector* pCorners) {
     screenCorner = sCorners;
     projCorner = pCorners;
     
-    eyePoint[0] = getCutPoint(projCorner[0], projCorner[1], projCorner[2], projCorner[3]);
-    eyePoint[1] = getCutPoint(projCorner[1], projCorner[2], projCorner[0], projCorner[3]);
+    eyePoint[0] = Vector::getCutPoint(projCorner[0], projCorner[1], projCorner[2], projCorner[3]);
+    eyePoint[1] = Vector::getCutPoint(projCorner[1], projCorner[2], projCorner[0], projCorner[3]);
     
-    ofPoint eyeVector = getVector(eyePoint[1], eyePoint[0]);
+    Vector eyeVector = Vector::getVector(eyePoint[1], eyePoint[0]);
     
     float hypotenuse = sqrt(eyeVector.x * eyeVector.x + eyeVector.y * eyeVector.y),
     length = 0;
     
     for (int i = 0; i < 4; i++) {
-        double newLength = pointDistance(projCorner[i], eyePoint[0]) + pointDistance(projCorner[i], eyePoint[1]);
+        double newLength = Vector::pointDistance(projCorner[i], eyePoint[0]) + Vector::pointDistance(projCorner[i], eyePoint[1]);
         
         if ( newLength > length ) {
             length = newLength;
@@ -95,7 +95,7 @@ void CalibrationQuad::getEyePoints(ofPoint* sCorners, ofPoint* pCorners) {
         length = hypotenuse;
         
         for (int j = 0; j < 4; j++) {
-            double newLength = pointDistance(projCorner[j], eyePoint[i]);
+            double newLength = Vector::pointDistance(projCorner[j], eyePoint[i]);
             
             if (newLength < length) {
                 length = newLength;
@@ -104,35 +104,35 @@ void CalibrationQuad::getEyePoints(ofPoint* sCorners, ofPoint* pCorners) {
         }
     }
     
-    ofPoint measureVector[2] = {
-        getVector(measurePoint[0], projCorner[index[0]]),
-        getVector(measurePoint[1], projCorner[index[1]])
+    Vector measureVector[2] = {
+        Vector::getVector(measurePoint[0], projCorner[index[0]]),
+        Vector::getVector(measurePoint[1], projCorner[index[1]])
     };
     
     double param[2] = {
-        getCutParameter(measurePoint[0], measureVector[0], projCorner[cornerIndex], eyeVector), 
-        getCutParameter(measurePoint[1], measureVector[1], projCorner[cornerIndex], eyeVector)
+        Vector::getCutParameter(measurePoint[0], measureVector[0], projCorner[cornerIndex], eyeVector), 
+        Vector::getCutParameter(measurePoint[1], measureVector[1], projCorner[cornerIndex], eyeVector)
     };
     
     realLengthVector[0].set(param[0] * eyeVector.x, param[0] * eyeVector.y);
     realLengthVector[1].set(param[1] * eyeVector.x, param[1] * eyeVector.y);
 }
 
-ofPoint CalibrationQuad::getHitPoint(ofPoint cHitPoint) {
+Vector CalibrationQuad::getHitPoint(Vector cHitPoint) {
     camHitPoint = cHitPoint;
     
-    edgeProjection[0] = getCutPoint(eyePoint[0], camHitPoint, projCorner[index[1]], projCorner[cornerIndex]);
-    edgeProjection[1] = getCutPoint(eyePoint[1], camHitPoint, projCorner[index[0]], projCorner[cornerIndex]);
+    edgeProjection[0] = Vector::getCutPoint(eyePoint[0], camHitPoint, projCorner[index[1]], projCorner[cornerIndex]);
+    edgeProjection[1] = Vector::getCutPoint(eyePoint[1], camHitPoint, projCorner[index[0]], projCorner[cornerIndex]);
     
-    ofPoint projectionVector[2] = {
-        getVector(measurePoint[1], edgeProjection[0]),
-        getVector(measurePoint[0], edgeProjection[1])
+    Vector projectionVector[2] = {
+        Vector::getVector(measurePoint[1], edgeProjection[0]),
+        Vector::getVector(measurePoint[0], edgeProjection[1])
     };
     
-    realParam[0] = getCutParameter(measurePoint[0], projectionVector[1], projCorner[cornerIndex], realLengthVector[0]); 
-    realParam[1] = getCutParameter(measurePoint[1], projectionVector[0], projCorner[cornerIndex], realLengthVector[1]);
+    realParam[0] = Vector::getCutParameter(measurePoint[0], projectionVector[1], projCorner[cornerIndex], realLengthVector[0]); 
+    realParam[1] = Vector::getCutParameter(measurePoint[1], projectionVector[0], projCorner[cornerIndex], realLengthVector[1]);
     
-    ofPoint hitPoint;
+    Vector hitPoint;
     
     if (screenCorner[cornerIndex].x > screenCorner[index[0]].x)
         hitPoint.x = screenCorner[1].x - realParam[0] * (screenCorner[1].x - screenCorner[0].x);

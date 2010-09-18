@@ -1,4 +1,5 @@
 #include "Infobox.h"
+#include "ofMain.h"
 #include "constants.h"
 
 Infobox::Infobox() : state(DEAD) {}
@@ -65,7 +66,7 @@ void Infobox::draw() {
     }
 }
 
-Infobox::State Infobox::checkState(bool hit, ofPoint &hitPoint) {
+Infobox::State Infobox::checkState(bool hit, Vector &hitPoint) {
     if (state == ALIVE) {
         switch (type) {
             case CHECK:

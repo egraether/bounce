@@ -1,7 +1,6 @@
 #ifndef _SPRITE_SHEET_
 #define _SPRITE_SHEET_
 
-#include "ofMain.h"
 #include "Texture.h"
 #include "constants.h"
 

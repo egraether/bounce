@@ -4,6 +4,7 @@
 #include "ofMain.h"
 #include "ofxOpenCv.h"
 #include "ofxCvBounceImage.h"
+#include "Vector.h"
 #include "CalibrationQuad.h"
 #include "Console.h"
 #include "Infobox.h"
@@ -54,8 +55,8 @@ private:
     void getHueContour();
     
     // calibration
-    ofPoint* screenCorner;
-    ofPoint* projCorner;
+    Vector* screenCorner;
+    Vector* projCorner;
     
     CalibrationQuad calibrationQuad;
     
@@ -82,9 +83,9 @@ public:
     void update();
     void reset();
     void calibrate();
-    bool draw(bool hit, ofPoint hitPoint);
+    bool draw(bool hit, Vector hitPoint);
     void keyPressed(int key);
-    bool getHitPoint(ofPoint hitPoint);
+    bool getHitPoint(Vector hitPoint);
 };
 
 #endif

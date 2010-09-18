@@ -2,7 +2,6 @@
 #define _SHOOTING_CANS_
 
 #include "Game.h"
-#include "ofMain.h"
 #include "Texture.h"
 #include "SpriteSheet.h"
 #include "PushButton.h"
@@ -20,7 +19,7 @@ public:
     //~Game()
     
     virtual void reset();
-    virtual bool draw(bool hit, ofPoint hitPoint);
+    virtual bool draw(bool hit, Vector hitPoint);
 };
 
 #endif

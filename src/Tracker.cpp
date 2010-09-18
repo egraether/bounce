@@ -1,6 +1,4 @@
 #include "Tracker.h"
-#include "Infobox.h"
-#include "utilities.h"
 #include "constants.h"
 
 Tracker::Tracker(Infobox* i, PushButton* m, Console* c) : 
@@ -50,8 +48,8 @@ Tracker::Tracker(Infobox* i, PushButton* m, Console* c) :
     
     numCorners = 0;
     
-    screenCorner = new ofPoint[4];
-    projCorner = new ofPoint[4];
+    screenCorner = new Vector[4];
+    projCorner = new Vector[4];
 }
 
 //Tracker::~Tracker() {}
@@ -145,8 +143,12 @@ void Tracker::calibrate() {
             break;
         case COMPLETE:
             if (contourFinder.nBlobs) {
-                ofPoint camHitPoint(contourFinder.blobs[0].centroid.x, contourFinder.blobs[0].centroid.y);
-                calibrationQuad.getHitPoint(camHitPoint);
+                Vector camHitPoint(contourFinder.blobs[0].centroid.x, contourFinder.blobs[0].centroid.y);
+                Vector hitPoint = calibrationQuad.getHitPoint(camHitPoint);
+                
+                ofSetColor(0, 255, 0);
+                ofFill();
+                ofCircle(hitPoint.x, hitPoint.y, 10);
             }
             
             calibrationQuad.draw();
@@ -156,7 +158,7 @@ void Tracker::calibrate() {
     }
 }
 
-bool Tracker::draw(bool hit, ofPoint hitPoint) {
+bool Tracker::draw(bool hit, Vector hitPoint) {
     
     if (infobox->checkState(hit, hitPoint) != Infobox::ALIVE) {
         if (mode != CALIBRATION_NULL) {
@@ -215,13 +217,13 @@ void Tracker::keyPressed(int key) {
 	}
 }
 
-bool Tracker::getHitPoint(ofPoint hitPoint) {
+bool Tracker::getHitPoint(Vector hitPoint) {
     if (mode == COMPLETE) {
         getHueContour();
         //getBrightnessContour(threshold);
         
         if (contourFinder.nBlobs) {
-            ofPoint camHitPoint(contourFinder.blobs[0].centroid.x, contourFinder.blobs[0].centroid.y);
+            Vector camHitPoint(contourFinder.blobs[0].centroid.x, contourFinder.blobs[0].centroid.y);
             hitPoint = calibrationQuad.getHitPoint(camHitPoint);
             return true;
         }
