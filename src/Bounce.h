@@ -8,6 +8,7 @@
 #include "Infobox.h"
 #include "PushButton.h"
 #include "ShootingCans.h"
+#include "RobotDefense.h"
 
 class Bounce : public ofBaseApp{
 private:
@@ -22,10 +23,12 @@ private:
     Tracker tracker;
     
     ShootingCans shootingCans;
+    RobotDefense robotDefense;
     
     PushButton calibrateButton;
     PushButton menuButton;
     PushButton shootingCansButton;
+    PushButton robotDefenseButton;
     
     // audio
     void audioReceived(float* input, int bufferSize, int nChannels);

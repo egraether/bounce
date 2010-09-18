@@ -9,7 +9,7 @@ ShootingCans::ShootingCans(Infobox* i, PushButton* m) : Game(i, m) {
         throw "Failed to load numberImage";
     }
     numbers.load(image, GL_CLAMP, GL_CLAMP);
-    sprite.load(&numbers, 32);
+    sprite.load(&numbers, 100, 100, 32);
     
     counter = 0;
 }

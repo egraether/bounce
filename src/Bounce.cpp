@@ -5,12 +5,15 @@ Bounce::Bounce() :
     tracker(&infobox, &menuButton, &console),
     mode(MENU),
     hit(false),
-    shootingCans(&infobox, &menuButton) {
+    shootingCans(&infobox, &menuButton),
+    robotDefense(&infobox, &menuButton) {
 }
 
 void Bounce::setup() {
     ofBackground(220, 220, 255);
     ofSetVerticalSync(true);
+    
+    srand(time(NULL));
     
     // audio
     ofSoundStreamSetup(0, 1, this);
@@ -24,6 +27,7 @@ void Bounce::setup() {
     calibrateButton.set("calibrate", WIDTH - 10 - WIDTH / 5, HEIGHT - 10 - WIDTH / 5,WIDTH / 5,WIDTH / 5);
     menuButton.set("Menu", WIDTH - 10 - WIDTH / 5, HEIGHT - 10 - WIDTH / 5,WIDTH / 5,WIDTH / 5);
     shootingCansButton.set("shootingCans", 10, 100, WIDTH / 5, WIDTH / 5);
+    robotDefenseButton.set("robotDefense", 20 + WIDTH / 5, 100, WIDTH / 5, WIDTH / 5);
 }
 
 void Bounce::update() {
@@ -43,14 +47,20 @@ void Bounce::draw() {
         case MENU:
             calibrateButton.draw();
             shootingCansButton.draw();
+            robotDefenseButton.draw();
             
             if (calibrateButton.checkHit(hit, hitPoint)) {
                 changeMode(CALIBRATE);
                 tracker.reset();
             }
-            else if (shootingCansButton.checkHit(hit, hitPoint))
+            else if (shootingCansButton.checkHit(hit, hitPoint)) {
                 changeMode(SHOOTING_CANS);
                 shootingCans.reset();
+            }
+            else if (robotDefenseButton.checkHit(hit, hitPoint)) {
+                changeMode(ROBOT_DEFENSE);
+                robotDefense.reset();
+            }
             break;
         case CALIBRATE:
             if (!tracker.draw(hit, hitPoint))
@@ -58,6 +68,10 @@ void Bounce::draw() {
             break;
         case SHOOTING_CANS:
             if (!shootingCans.draw(hit, hitPoint))
+                changeMode(MENU);
+            break;
+        case ROBOT_DEFENSE:
+            if (!robotDefense.draw(hit, hitPoint))
                 changeMode(MENU);
             break;
         default:

@@ -7,6 +7,7 @@
 class SpriteSheet {
 private:
     Texture* tex;
+    int width, height;
     int numPics, actualPic;
     int speed, counter;
     bool animate;
@@ -16,34 +17,41 @@ public:
         actualPic(0), animate(false), counter(0) {
     }
     
-    void load(Texture* t, int n, int s = ANIMATION_SPEED) { 
+    void load(Texture* t, int w, int h, int n, int s = ANIMATION_SPEED) { 
         tex = t;
+        width = w;
+        height = h;
         numPics = n;
         speed = s;
     }
     
-    void draw(int x, int y) {
+    bool draw(int x, int y) {
         counter++;
         if (counter > speed)
             counter = 0;
         
-        if (animate && actualPic < 10/*numPics - 1*/ && counter == speed)
+        if (animate && counter == speed)
             actualPic++;
         
+        if (actualPic == 10)
+            return false;
+        
         tex->draw(
-            x - tex->width / 2, y - tex->height / numPics / 2, 
-            tex->width, tex->height / numPics, 
+            x - width / 2, y - height / 2, 
+            width, height, 
             0.0, actualPic * 1.0 / numPics, 
             1.0, 1.0 / numPics
         );
+        
+        return true;
     }
     
     int getWidth() {
-        return tex->width;
+        return width;
     }
     
     int getHeight() {
-        return tex->height / numPics;
+        return height;
     }
     
     void startAnimation() {
