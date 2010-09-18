@@ -2,26 +2,24 @@
 #include "constants.h"
 
 Tracker::Tracker(Infobox* i, PushButton* m, Console* c) : 
-    infobox(i), menuButton(m), console(c) {
-        
-    mode = CALIBRATION_NULL;
-    
-    threshold = 80;
-    hue = 30;
-    hueVariance = 3;
-    saturation = 100;
-    saturationVariance = 20;
-    value = 100;
-    valueVariance = 20;
-    minBlobSize = 20;
-    maxBlobSize = 100 * 100;
-    lastBlobSize = 0;
+    infobox(i), menuButton(m), console(c),
+    mode(CALIBRATION_NULL),
+    threshold(THRESHOLD),
+    hue(HUE),
+    hueVariance(HUE_VARIANCE),
+    saturation(SATURATION),
+    saturationVariance(SATURATION_VARIANCE),
+    value(VALUE),
+    valueVariance(VALUE_VARIANCE),
+    minBlobSize(MIN_BLOB_SIZE),
+    maxBlobSize(MAX_BLOB_SIZE),
+    lastBlobSize(0) {
     
     console->addRegulation("threshold", &threshold, 0, 255);
-    console->addRegulation("hue", &hue, 0, 255);
+    console->addRegulation("hue", &hue, 0, 179);
     console->addRegulation("hueVariance", &hueVariance, 0, 25);
-    //console->addRegulation("value", &value, 0, 255);
-    //console->addRegulation("valueVariance", &valueVariance, 0, 50);
+    console->addRegulation("value", &value, 0, 255);
+    console->addRegulation("valueVariance", &valueVariance, 0, 50);
     console->addRegulation("saturation", &saturation, 0, 255);
     console->addRegulation("saturationVariance", &saturationVariance, 0, 50);
     console->addRegulation("minBlobSize", &minBlobSize, 0, WIDTH * HEIGHT);
@@ -39,6 +37,8 @@ Tracker::Tracker(Infobox* i, PushButton* m, Console* c) :
     grayImg.allocate(WIDTH,HEIGHT);
     grayBg.allocate(WIDTH,HEIGHT);
     grayDiff.allocate(WIDTH,HEIGHT);
+        
+    colorButton.set("calibration Complete", 10, 10, WIDTH / 5, WIDTH / 5);
 
     newBackground = true;
     
@@ -131,7 +131,7 @@ void Tracker::calibrate() {
                     
                     if (numCorners == 4) {
                         calibrationQuad.getEyePoints(screenCorner, projCorner);
-                        mode = COMPLETE;
+                        mode = COLOR;
                     }
                     else
                         mode = BACKGROUND;
@@ -141,6 +141,28 @@ void Tracker::calibrate() {
             }
             counter++;
             break;
+        case COLOR: {
+            PixelHSV pixHSV[WIDTH * HEIGHT];
+            int a = 0;
+            for (int i = 0; i < HEIGHT - 50; i++) {
+                for (int j = 0; j < WIDTH; j++) {
+                    pixHSV[a].set(j * 179 / WIDTH, i * 255 / (HEIGHT - 50), value);
+                    a++;
+                }
+            }
+            for (; a < HEIGHT * WIDTH; a++) {
+                    pixHSV[a].set(hue, saturation, value);
+            }
+            ofxCvBounceImage hsvImg;
+            hsvImg.allocate(WIDTH, HEIGHT);
+            hsvImg.setFromPixels((unsigned char*)(pixHSV), WIDTH, HEIGHT);
+            colorImg.setFromPixels(hsvImg.getPixelsRGB(), WIDTH, HEIGHT);
+            ofSetColor(0xffffff);
+            colorImg.draw(0, 0);
+            colorButton.draw();
+            getHueContour();
+            break;
+        }
         case COMPLETE:
             if (contourFinder.nBlobs) {
                 Vector camHitPoint(contourFinder.blobs[0].centroid.x, contourFinder.blobs[0].centroid.y);
@@ -181,6 +203,9 @@ bool Tracker::draw(bool hit, Vector hitPoint) {
         if (menuButton->checkHit(hit, hitPoint))
             return false;
     }
+    
+    if (mode == COLOR && colorButton.checkHit(hit, hitPoint))
+        mode = COMPLETE;
     
     ofSetColor(255, 255, 255);
     if (showColorImg)
@@ -268,8 +293,10 @@ void Tracker::getBrightnessContour(int threshold) {
 }
 
 void Tracker::getHueContour() {
-    PixelRGB* pixRGB = (PixelRGB*)(storeImg.front().getPixels());
-    PixelHSV* pixHSV = (PixelHSV*)(storeImg.front().getPixelsHSV());
+//    PixelRGB* pixRGB = (PixelRGB*)(storeImg.front().getPixels());
+//    PixelHSV* pixHSV = (PixelHSV*)(storeImg.front().getPixelsHSV());
+    PixelRGB* pixRGB = (PixelRGB*)(colorImg.getPixels());
+    PixelHSV* pixHSV = (PixelHSV*)(colorImg.getPixelsHSV());
     for (int i = 0; i < WIDTH * HEIGHT; i++) {
         if (pixHSV[i].h > hue + hueVariance || pixHSV[i].h < hue - hueVariance ||
             pixHSV[i].s > saturation + saturationVariance || pixHSV[i].s < saturation - saturationVariance)
@@ -279,6 +306,7 @@ void Tracker::getHueContour() {
     
     grayDiff = colorImg;
     grayDiff.threshold(1);
+    grayDiff.dilate();
     grayDiff.erode();
     
     contourFinder.findContours(grayDiff, minBlobSize, maxBlobSize, 1, false);

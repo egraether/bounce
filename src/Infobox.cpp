@@ -32,8 +32,8 @@ void Infobox::set(string m, Type t) {
                 }
             }
             width = 40 + message[maxLength].length() * 8;
-            height = 40 + message.size() * 20 + PushButton::size.y;
-            one.set("OK", (WIDTH - PushButton::size.x) / 2, HEIGHT / 2);
+            height = 40 + message.size() * 20 + WIDTH / 5;
+            one.set("OK", WIDTH * 2 / 5, HEIGHT / 2, WIDTH / 5, WIDTH / 5);
             break;
         }
         default:

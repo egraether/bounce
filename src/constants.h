@@ -13,6 +13,16 @@
 
 #define CALIBRATION_WAIT_FRAMES 20
 
+#define THRESHOLD 80
+#define HUE 30
+#define HUE_VARIANCE 3
+#define SATURATION 100
+#define SATURATION_VARIANCE 20
+#define VALUE 100
+#define VALUE_VARIANCE 20
+#define MIN_BLOB_SIZE 20
+#define MAX_BLOB_SIZE 10000
+
 #define ANIMATION_SPEED 20
 
 #endif

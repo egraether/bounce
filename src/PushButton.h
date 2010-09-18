@@ -10,15 +10,14 @@ using namespace std;
 class PushButton {
 private:
     int posX, posY;
+    int width, height;
     string name;
     
 public:
     PushButton();
-    void set(string n, int x, int y);
+    void set(string n, int x, int y, int w, int h);
     void draw();
     bool checkHit(bool hit, Vector &hitPoint);
-    
-    static Vector size;
 };
 
 #endif

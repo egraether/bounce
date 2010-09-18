@@ -23,20 +23,26 @@ void Bounce::setup() {
     
     calibrateButton.set(
         "calibrate", 
-        WIDTH - 10 - PushButton::size.x, 
-        HEIGHT - 10 - PushButton::size.y
+        WIDTH - 10 - WIDTH / 5, 
+        HEIGHT - 10 - WIDTH / 5,
+        WIDTH / 5,
+        WIDTH / 5
     );
     
     menuButton.set(
         "Menu", 
-        WIDTH - 10 - PushButton::size.x, 
-        HEIGHT - 10 - PushButton::size.y
+        WIDTH - 10 - WIDTH / 5, 
+        HEIGHT - 10 - WIDTH / 5,
+        WIDTH / 5,
+        WIDTH / 5
     );
     
     shootingCansButton.set(
         "shootingCans", 
         10, 
-        100
+        100,
+        WIDTH / 5,
+        WIDTH / 5
     );
 }
 

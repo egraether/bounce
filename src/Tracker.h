@@ -28,7 +28,7 @@ private:
         }
     };
     
-    enum {CALIBRATION_NULL, BACKGROUND, COUNT, POINT, COMPLETE} mode;
+    enum {CALIBRATION_NULL, BACKGROUND, COUNT, POINT, COLOR, COMPLETE} mode;
     
     // image capture
     ofVideoGrabber videoCapture;
@@ -75,6 +75,7 @@ private:
     Console* console;
     
     PushButton* menuButton;
+    PushButton colorButton;
     
 public:
     Tracker(Infobox* i, PushButton* m, Console* c);
