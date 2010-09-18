@@ -8,31 +8,27 @@ ShootingCans::ShootingCans(Infobox* i, PushButton* m) : Game(i, m) {
         throw "Failed to load numberImage";
     }
     numbers.load(image, GL_CLAMP, GL_CLAMP);
+    sprite.load(&numbers, 32);
     
     counter = 0;
-    actual = 0;
 }
 
 void ShootingCans::reset() {
     counter = 0;
-    actual = 0;
 }
    
 bool ShootingCans::draw(bool hit, ofPoint hitPoint) {
     ofPushMatrix();
-    ofTranslate(hitPoint.x + numbers.width / 2, hitPoint.y + numbers.height / 64, 0.0);
+    ofTranslate(hitPoint.x + sprite.getWidth() / 2, hitPoint.y + sprite.getHeight() / 2, 0.0);
     ofRotateZ(3.6 * counter);
-    ofTranslate(-hitPoint.x - numbers.width / 2, -hitPoint.y - numbers.height / 64, 0.0);
-    numbers.draw(hitPoint.x, hitPoint.y, numbers.width, numbers.height / 32, 0.0, actual * 1.0 / 32, 1.0, 1.0 / 32);
+    ofTranslate(-hitPoint.x - sprite.getWidth() / 2, -hitPoint.y - sprite.getHeight() / 2, 0.0);
+    sprite.draw(hitPoint.x, hitPoint.y);
     ofPopMatrix();
     
     counter++;
     if (counter == 100) {
+        sprite.startAnimation();
         counter = 0;
-        actual++;
-        if (actual == 10) {
-            actual = 0;
-        }
     }
     return true;
 }

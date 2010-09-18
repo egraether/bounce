@@ -13,4 +13,6 @@
 
 #define CALIBRATION_WAIT_FRAMES 20
 
+#define ANIMATION_SPEED 20
+
 #endif

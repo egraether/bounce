@@ -4,12 +4,14 @@
 #include "Game.h"
 #include "ofMain.h"
 #include "Texture.h"
+#include "SpriteSheet.h"
 #include "PushButton.h"
 #include "Infobox.h"
 
 class ShootingCans : public Game {
 private:
     Texture numbers;
+    SpriteSheet sprite;
     int counter, actual;
     
     
