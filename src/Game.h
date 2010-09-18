@@ -14,7 +14,8 @@ public:
     Game(Infobox* i, PushButton* m) : infobox(i), menuButton(m) {}
     //~Game()
     
-    bool draw(bool hit, ofPoint hitPoint) = 0;
+    virtual void reset() = 0;
+    virtual bool draw(bool hit, ofPoint hitPoint) = 0;
 };
 
 #endif

@@ -4,7 +4,8 @@
 Bounce::Bounce() : 
     tracker(&infobox, &menuButton, &console),
     mode(MENU),
-    hit(false) {
+    hit(false),
+    shootingCans(&infobox, &menuButton) {
 }
 
 void Bounce::setup() {
@@ -32,8 +33,8 @@ void Bounce::setup() {
         HEIGHT - 10 - PushButton::size.y
     );
     
-    targetButton.set(
-        "Target", 
+    shootingCansButton.set(
+        "shootingCans", 
         10, 
         100
     );
@@ -55,23 +56,23 @@ void Bounce::draw() {
     switch (mode) {
         case MENU:
             calibrateButton.draw();
-            targetButton.draw();
+            shootingCansButton.draw();
             
             if (calibrateButton.checkHit(hit, hitPoint)) {
                 changeMode(CALIBRATE);
                 tracker.reset();
             }
-            else if (targetButton.checkHit(hit, hitPoint))
+            else if (shootingCansButton.checkHit(hit, hitPoint))
                 changeMode(TARGET);
-                //target.reset();
+                shootingCans.reset();
             break;
         case CALIBRATE:
             if (!tracker.draw(hit, hitPoint))
                 changeMode(MENU);
             break;
         case TARGET:
-            //if (!target.draw(hit, hitPoint))
-                //changeMode(MENU);
+            if (!shootingCans.draw(hit, hitPoint))
+                changeMode(MENU);
             break;
         default:
             break;
