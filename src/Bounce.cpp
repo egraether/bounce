@@ -6,7 +6,8 @@ Bounce::Bounce() :
     mode(MENU),
     hit(false),
     shootingCans(&infobox, &menuButton),
-    robotDefense(&infobox, &menuButton) {
+    robotDefense(&infobox, &menuButton),
+    balloonHunt(&infobox, &menuButton) {
 }
 
 void Bounce::setup() {
@@ -28,6 +29,7 @@ void Bounce::setup() {
     menuButton.set("Menu", WIDTH - 10 - WIDTH / 5, HEIGHT - 10 - WIDTH / 5,WIDTH / 5,WIDTH / 5);
     shootingCansButton.set("shootingCans", 10, 100, WIDTH / 5, WIDTH / 5);
     robotDefenseButton.set("robotDefense", 20 + WIDTH / 5, 100, WIDTH / 5, WIDTH / 5);
+    balloonHuntButton.set("balloonHunt", 30 + 2 * WIDTH / 5, 100, WIDTH / 5, WIDTH / 5);
 }
 
 void Bounce::update() {
@@ -48,6 +50,7 @@ void Bounce::draw() {
             calibrateButton.draw();
             shootingCansButton.draw();
             robotDefenseButton.draw();
+            balloonHuntButton.draw();
             
             if (calibrateButton.checkHit(hit, hitPoint)) {
                 changeMode(CALIBRATE);
@@ -60,6 +63,10 @@ void Bounce::draw() {
             else if (robotDefenseButton.checkHit(hit, hitPoint)) {
                 changeMode(ROBOT_DEFENSE);
                 robotDefense.reset();
+            }
+            else if (balloonHuntButton.checkHit(hit, hitPoint)) {
+                changeMode(BALLOON_HUNT);
+                balloonHunt.reset();
             }
             break;
         case CALIBRATE:
@@ -74,12 +81,13 @@ void Bounce::draw() {
             if (!robotDefense.draw(hit, hitPoint))
                 changeMode(MENU);
             break;
+        case BALLOON_HUNT:
+            if (!balloonHunt.draw(hit, hitPoint))
+                changeMode(MENU);
+            break;
         default:
             break;
     }
-    
-    if (mode != MENU && mode != CALIBRATE)
-        menuButton.draw();
     
     infobox.draw();
     
@@ -104,7 +112,10 @@ void Bounce::audioReceived (float* input, int bufferSize, int nChannels) {
 }
 
 void Bounce::keyPressed(int key) {
-    switch (key){
+    switch (key) {
+        case 'm':
+            changeMode(MENU);
+            break;
         case 'k':
             console.show = !console.show;
             break;
