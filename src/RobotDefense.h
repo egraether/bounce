@@ -11,13 +11,7 @@
 
 class RobotDefense : public Game {
 private:
-    struct Robot {
-        Vector pos;
-        SpriteSheet sprite;
-        bool stop;
-        Robot(Vector p, SpriteSheet s) : pos(p), sprite(s), stop(false) {}
-    };
-    
+    class Robot;
     Texture numbers;
     vector<Robot> robots;
     int counter, period, laserTime;
@@ -28,6 +22,50 @@ public:
     RobotDefense(Infobox* i, PushButton* m);
     virtual void reset();
     virtual bool draw(bool hit, Vector hitPoint);
+};
+
+class RobotDefense::Robot {
+private:
+    Vector pos;
+    SpriteSheet sprite;
+    bool stop;
+    
+public:
+    Robot(int x, int y, int w, int h, Texture* t, int n) : 
+        pos(x, y), sprite(t, w, h, n), stop(false) {
+    }
+    
+    bool draw(Vector &cannon) {
+        float angle = Vector::angle(cannon - pos, Vector(0, 1)) / PI * 180 + 180;
+        if (pos.x < cannon.x)
+            angle *= -1;
+        
+        ofPushMatrix();
+        
+        ofTranslate(pos.x, pos.y, 0.0);
+        ofRotateZ(angle);
+        ofTranslate(-pos.x, -pos.y, 0.0);
+        
+        bool destroyed = sprite.draw(pos.x, pos.y);
+        
+        ofPopMatrix();
+        
+        return destroyed;
+    }
+    
+    double move(Vector &goal, float speed) {
+        if (!stop)
+            pos = Vector::toLength(goal - pos, speed) + pos;
+        
+        return Vector::distance(goal, pos);
+    }
+    
+    void checkHit(Vector &cannon, Vector &hitPoint) {
+        if (pos.distanceToLine(hitPoint, cannon - hitPoint) < 50) {
+            sprite.startAnimation();
+            stop = true;
+        }
+    }
 };
 
 #endif

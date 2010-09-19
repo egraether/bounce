@@ -23,8 +23,7 @@ bool ShootingCans::draw(bool hit, Vector hitPoint) {
     ofTranslate(hitPoint.x, hitPoint.y, 0.0);
     
     Vector a(0, 1), b(WIDTH / 2, HEIGHT);
-    Vector c = Vector::getVector(hitPoint, b);
-    float angle = Vector::angle(c, a) / PI * 180 + 180;
+    float angle = Vector::angle(b - hitPoint, a) / PI * 180 + 180;
     
     if (hitPoint.x < WIDTH / 2)
         angle *= -1;

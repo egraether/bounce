@@ -27,12 +27,8 @@ bool RobotDefense::draw(bool hit, Vector hitPoint) {
     // destroy hit robots
     if (hit) {
         laserTime = 0;
-        Vector laser = Vector::getVector(hitPoint, cannon);
         for (int i = 0; i < robots.size(); i++) {
-            if (robots[i].pos.distanceToLine(hitPoint, laser) < 50) {
-                robots[i].sprite.startAnimation();
-                robots[i].stop = true;
-            }
+            robots[i].checkHit(cannon, hitPoint);
         }
     }
     
@@ -40,45 +36,29 @@ bool RobotDefense::draw(bool hit, Vector hitPoint) {
     counter++;
     if (counter == period) {
         float angle = float(rand() % 61 + 30) / 180 * PI;
-        Vector pos(cannon.x + cos(angle) * WIDTH * (rand() % 2 ? 1 : -1), cannon.y - sin(angle) * WIDTH);
         
-        SpriteSheet s;
-        s.load(&numbers, 100, 100, 32);
+        int x = cannon.x + cos(angle) * WIDTH * (rand() % 2 ? 1 : -1), 
+            y = cannon.y - sin(angle) * WIDTH;
         
-        robots.push_back(Robot(pos, s));
+        robots.push_back(Robot(x, y, 100, 100, &numbers, 32));
+        
         counter = 0;
-        
         speed += 0.1;
         //period -= 10;
     }
     
     // move and draw robots
     for (int i = 0; i < robots.size(); i++) {
-        Vector toGoal = Vector::getVector(robots[i].pos, cannon);
         
-        if (!robots[i].stop) {
-            robots[i].pos = Vector::add(robots[i].pos, Vector::toLength(toGoal, speed));
-            if (Vector::norm(toGoal) <= 50)
-                return false;
-        }
+        if (robots[i].move(cannon, speed) <= 50)
+            return false;
         
-        float angle = Vector::angle(toGoal, Vector(0, 1)) / PI * 180 + 180;
-        if (robots[i].pos.x < cannon.x)
-            angle *= -1;
-        
-        ofPushMatrix();
-        ofTranslate(robots[i].pos.x, robots[i].pos.y, 0.0);
-        ofRotateZ(angle);
-        ofTranslate(-robots[i].pos.x, -robots[i].pos.y, 0.0);
-        
-        if (!robots[i].sprite.draw(robots[i].pos.x, robots[i].pos.y))
+        if (!robots[i].draw(cannon))
             robots.erase(robots.begin() + i);
-        
-        ofPopMatrix();
     }
     
     // draw cannon
-    float angle = Vector::angle(Vector::getVector(cannon, hitPoint), Vector(0, -1)) / PI * 180;
+    float angle = Vector::angle(hitPoint - cannon, Vector(0, -1)) / PI * 180;
     if (hitPoint.x < cannon.x)
         angle *= -1;
     

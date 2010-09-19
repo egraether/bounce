@@ -17,6 +17,11 @@ public:
         actualPic(0), animate(false), counter(0) {
     }
     
+    SpriteSheet(Texture* t, int w, int h, int n, int s = ANIMATION_SPEED) : 
+        actualPic(0), animate(false), counter(0), 
+        tex(t), width(w), height(h), numPics(n), speed(s) {
+    }
+    
     void load(Texture* t, int w, int h, int n, int s = ANIMATION_SPEED) { 
         tex = t;
         width = w;

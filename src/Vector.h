@@ -31,45 +31,39 @@ public:
          std::cout << "(" << x << ", " << y << ")\n";
     }
 
-    static bool same(Vector u, Vector v) {
-        return u.x == v.x && u.y == v.y;
+    bool operator==(Vector &v) {
+        return x == v.x && y == v.y;
     }
-    static Vector add(Vector u, Vector v) {
-        return Vector(u.x + v.x, u.y + v.y);
+    Vector operator+(Vector &v) {
+        return Vector(x + v.x, y + v.y);
     }
-    static Vector sub(Vector u, Vector v) {
-        return Vector(u.x - v.x, u.y - v.y);
+    Vector operator-(Vector &v) {
+        return Vector(x - v.x, y - v.y);
     }
-    static Vector mul(Vector u, double k) {
-        return Vector(u.x * k, u.y * k);
+    Vector operator*(double k) {
+        return Vector(x * k, y * k);
     }
-    static Vector div(Vector u, double k) {
+    Vector operator/(double k) {
         assert(k);
-        return Vector(u.x / k, u.y / k);
+        return Vector(x / k, y / k);
     }
-    static double dot(Vector u, Vector v) {
-        return u.x * v.x + u.y * v.y;
+    double operator*(Vector &v) {
+        return x * v.x + y * v.y;
     }
     static double norm(Vector u) {
-        return sqrt(dot(u, u));
+        return sqrt(u * u);
     }
-//    static Vector cross(Vector u, Vector v) {
-//        return Vector(
-//            u.y * v.z - u.z * v.y,
-//            u.z * v.x - u.x * v.z,
-//            u.x * v.y - u.y * v.x
-//        );
-//    }
+
     static double angle(Vector u, Vector v) {
-        return acos(dot(u, v)/(norm(u)*norm(v)));
+        return acos((u * v)/(norm(u)*norm(v)));
     }
     
     static Vector toLength(Vector u, double l) {
-        return mul(div(u, norm(u)), l);
+        return u / norm(u) * l;
     }
     
     static double distance(Vector a, Vector b) {
-        return norm(sub(a,b));
+        return norm(a-b);
     }
     
     double distanceToLine(Vector a, Vector b) {
@@ -80,11 +74,7 @@ public:
     }
     
     static Vector projectionVector(Vector a, Vector b) {
-        return mul(b, dot(a, b) / dot(b, b));
-    }
-    
-    static Vector getVector(Vector &a, Vector&b) {
-        return Vector(b.x - a.x, b.y - a.y);
+        return b * ((a * b) / (b * b));
     }
     
     static double pointDistance(Vector &a, Vector&b) {

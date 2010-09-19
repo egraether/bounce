@@ -23,6 +23,6 @@
 #define MIN_BLOB_SIZE 20
 #define MAX_BLOB_SIZE 120000
 
-#define ANIMATION_SPEED 20
+#define ANIMATION_SPEED 5
 
 #endif

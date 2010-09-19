@@ -37,8 +37,6 @@ Tracker::Tracker(Infobox* i, PushButton* m, Console* c) :
     grayImg.allocate(WIDTH,HEIGHT);
     grayBg.allocate(WIDTH,HEIGHT);
     grayDiff.allocate(WIDTH,HEIGHT);
-        
-    colorButton.set("calibration Complete", 10, 10, WIDTH / 5, WIDTH / 5);
     
     showColorImg = false;
     showGrayImg = false;
@@ -132,7 +130,7 @@ void Tracker::calibrate() {
                     
                     if (numCorners == 4) {
                         calibrationQuad.getEyePoints(screenCorner, projCorner);
-                        mode = COLOR;
+                        mode = COMPLETE;
                     }
                     else
                         mode = BACKGROUND;
@@ -142,29 +140,20 @@ void Tracker::calibrate() {
             }
             counter++;
             break;
-        case COLOR: {
+        case COMPLETE: {
             PixelHSV pixHSV[WIDTH * HEIGHT];
-            int a = 0;
-            for (int i = 0; i < HEIGHT - 50; i++) {
+            for (int i = 0; i < 50; i++) {
                 for (int j = 0; j < WIDTH; j++) {
-                    pixHSV[a].set(j * 179 / WIDTH, i * 255 / (HEIGHT - 50), value);
-                    a++;
+                    pixHSV[i * WIDTH + j].set(hue, saturation, value);
                 }
             }
-            for (; a < HEIGHT * WIDTH; a++) {
-                    pixHSV[a].set(hue, saturation, value);
-            }
             ofxCvBounceImage hsvImg;
-            hsvImg.allocate(WIDTH, HEIGHT);
-            hsvImg.setFromPixels((unsigned char*)(pixHSV), WIDTH, HEIGHT);
-            hsvImg.setFromPixels(hsvImg.getPixelsRGB(), WIDTH, HEIGHT);
+            hsvImg.allocate(WIDTH, 50);
+            hsvImg.setFromPixels((unsigned char*)(pixHSV), WIDTH, 50);
+            hsvImg.setFromPixels(hsvImg.getPixelsRGB(), WIDTH, 50);
             ofSetColor(0xffffff);
-            hsvImg.draw(0, 0);
-            colorButton.draw();
-            getHueContour();
-            break;
-        }
-        case COMPLETE:
+            hsvImg.draw(0, HEIGHT - 50);
+            
             if (contourFinder.nBlobs) {
                 Vector camHitPoint(contourFinder.blobs[0].centroid.x, contourFinder.blobs[0].centroid.y);
                 Vector hitPoint = calibrationQuad.getHitPoint(camHitPoint);
@@ -176,6 +165,7 @@ void Tracker::calibrate() {
             
             calibrationQuad.draw();
             break;
+        }
         default:
             break;
     }
@@ -205,9 +195,6 @@ bool Tracker::draw(bool hit, Vector hitPoint) {
         if (menuButton->checkHit(hit, hitPoint))
             return false;
     }
-    
-    if (mode == COLOR && colorButton.checkHit(hit, hitPoint))
-        mode = COMPLETE;
     
     ofSetColor(255, 255, 255);
     if (showColorImg)

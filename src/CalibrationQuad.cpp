@@ -56,7 +56,7 @@ void CalibrationQuad::getEyePoints(Vector* sCorners, Vector* pCorners) {
     eyePoint[0] = Vector::getCutPoint(projCorner[0], projCorner[1], projCorner[2], projCorner[3]);
     eyePoint[1] = Vector::getCutPoint(projCorner[1], projCorner[2], projCorner[0], projCorner[3]);
     
-    Vector eyeVector = Vector::getVector(eyePoint[1], eyePoint[0]);
+    Vector eyeVector = eyePoint[0] - eyePoint[1];
     
     float hypotenuse = sqrt(eyeVector.x * eyeVector.x + eyeVector.y * eyeVector.y),
     length = 0;
@@ -105,8 +105,8 @@ void CalibrationQuad::getEyePoints(Vector* sCorners, Vector* pCorners) {
     }
     
     Vector measureVector[2] = {
-        Vector::getVector(measurePoint[0], projCorner[index[0]]),
-        Vector::getVector(measurePoint[1], projCorner[index[1]])
+        projCorner[index[0]] - measurePoint[0],
+        projCorner[index[1]] - measurePoint[1]
     };
     
     double param[2] = {
@@ -125,8 +125,8 @@ Vector CalibrationQuad::getHitPoint(Vector cHitPoint) {
     edgeProjection[1] = Vector::getCutPoint(eyePoint[1], camHitPoint, projCorner[index[0]], projCorner[cornerIndex]);
     
     Vector projectionVector[2] = {
-        Vector::getVector(measurePoint[1], edgeProjection[0]),
-        Vector::getVector(measurePoint[0], edgeProjection[1])
+        edgeProjection[0] - measurePoint[1],
+        edgeProjection[1] - measurePoint[0]
     };
     
     realParam[0] = Vector::getCutParameter(measurePoint[0], projectionVector[1], projCorner[cornerIndex], realLengthVector[0]); 
