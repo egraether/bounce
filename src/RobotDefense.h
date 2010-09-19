@@ -21,7 +21,7 @@ private:
 public:
     RobotDefense(Infobox* i, PushButton* m);
     virtual void reset();
-    virtual bool draw(bool hit, Vector hitPoint);
+    virtual bool draw(bool hit, Vector &hitPoint);
 };
 
 class RobotDefense::Robot {
@@ -44,9 +44,10 @@ public:
         
         ofTranslate(pos.x, pos.y, 0.0);
         ofRotateZ(angle);
-        ofTranslate(-pos.x, -pos.y, 0.0);
+        //ofTranslate(-pos.x, -pos.y, 0.0);
         
-        bool destroyed = sprite.draw(pos.x, pos.y);
+        //bool destroyed = sprite.draw(pos.x, pos.y);
+        bool destroyed = sprite.draw(0, 0);
         
         ofPopMatrix();
         

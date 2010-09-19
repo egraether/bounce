@@ -15,7 +15,7 @@ public:
     //~Game()
     
     virtual void reset() = 0;
-    virtual bool draw(bool hit, Vector hitPoint) = 0;
+    virtual bool draw(bool hit, Vector &hitPoint) = 0;
 };
 
 #endif

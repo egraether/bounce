@@ -17,12 +17,16 @@ Tracker::Tracker(Infobox* i, PushButton* m, Console* c) :
     storeSize(5) {
     
     console->addRegulation("threshold", &threshold, 0, 255);
+        
     console->addRegulation("hue", &hue, 0, 179);
     console->addRegulation("hueVariance", &hueVariance, 0, 25);
-    console->addRegulation("value", &value, 0, 255);
-    console->addRegulation("valueVariance", &valueVariance, 0, 50);
+    
     console->addRegulation("saturation", &saturation, 0, 255);
     console->addRegulation("saturationVariance", &saturationVariance, 0, 50);
+        
+    console->addRegulation("value", &value, 0, 255);
+    console->addRegulation("valueVariance", &valueVariance, 0, 50);
+        
     console->addRegulation("minBlobSize", &minBlobSize, 0, WIDTH * HEIGHT);
     console->addRegulation("maxBlobSize", &maxBlobSize, 0, WIDTH * HEIGHT);
     
@@ -141,19 +145,32 @@ void Tracker::calibrate() {
             counter++;
             break;
         case COMPLETE: {
-            PixelHSV pixHSV[WIDTH * HEIGHT];
-            for (int i = 0; i < 50; i++) {
-                for (int j = 0; j < WIDTH; j++) {
-                    pixHSV[i * WIDTH + j].set(hue, saturation, value);
-                }
-            }
-            ofxCvBounceImage hsvImg;
-            hsvImg.allocate(WIDTH, 50);
-            hsvImg.setFromPixels((unsigned char*)(pixHSV), WIDTH, 50);
-            hsvImg.setFromPixels(hsvImg.getPixelsRGB(), WIDTH, 50);
-            ofSetColor(0xffffff);
-            hsvImg.draw(0, HEIGHT - 50);
+//            PixelHSV pixHSV[WIDTH * HEIGHT];
+//            for (int i = 0; i < 50; i++) {
+//                for (int j = 0; j < WIDTH; j++) {
+//                    pixHSV[i * WIDTH + j].set(hue, saturation, value);
+//                }
+//            }
+//            ofxCvBounceImage hsvImg;
+//            hsvImg.allocate(WIDTH, 50);
+//            hsvImg.setFromPixels((unsigned char*)(pixHSV), WIDTH, 50);
+//            hsvImg.setFromPixels(hsvImg.getPixelsRGB(), WIDTH, 50);
+//            ofSetColor(0xffffff);
+//            hsvImg.draw(0, HEIGHT - 50);
             
+//            ofSetColor(255, 0, 0);
+//            ofRect(WIDTH / 7, WIDTH / 7, WIDTH / 7, WIDTH / 7);
+//            ofSetColor(255, 255, 0);
+//            ofRect(2 * WIDTH / 7, WIDTH / 7, WIDTH / 7, WIDTH / 7);
+//            ofSetColor(0, 255, 0);
+//            ofRect(3 * WIDTH / 7, WIDTH / 7, WIDTH / 7, WIDTH / 7);
+//            ofSetColor(0, 255, 255);
+//            ofRect(4 * WIDTH / 7, WIDTH / 7, WIDTH / 7, WIDTH / 7);
+//            ofSetColor(0, 0, 255);
+//            ofRect(5 * WIDTH / 7, WIDTH / 7, WIDTH / 7, WIDTH / 7);
+//            ofSetColor(255, 0, 255);
+//            ofRect(6 * WIDTH / 7, WIDTH / 7, WIDTH / 7, WIDTH / 7);
+           
             if (contourFinder.nBlobs) {
                 Vector camHitPoint(contourFinder.blobs[0].centroid.x, contourFinder.blobs[0].centroid.y);
                 Vector hitPoint = calibrationQuad.getHitPoint(camHitPoint);
@@ -274,17 +291,21 @@ void Tracker::getBrightnessContour(int threshold) {
 void Tracker::getHueContour() {
     PixelRGB* pixRGB = (PixelRGB*)(storeImg.front().getPixels());
     PixelHSV* pixHSV = (PixelHSV*)(storeImg.front().getPixelsHSV());
+    
 //    PixelRGB* pixRGB = (PixelRGB*)(colorImg.getPixels());
 //    PixelHSV* pixHSV = (PixelHSV*)(colorImg.getPixelsHSV());
     
     for (int i = 0; i < WIDTH * HEIGHT; i++) {
         if (pixHSV[i].h > hue + hueVariance || pixHSV[i].h < hue - hueVariance ||
-            pixHSV[i].s > saturation + saturationVariance || pixHSV[i].s < saturation - saturationVariance)
+            pixHSV[i].s > saturation + saturationVariance || pixHSV[i].s < saturation - saturationVariance ||
+            pixHSV[i].s > value + valueVariance || pixHSV[i].s < value - valueVariance)
             pixRGB[i].set(0,0,0);
     }
-    colorImg.setFromPixels((unsigned char*)(pixRGB), WIDTH, HEIGHT);
+    ofxCvColorImage c;
+    c.allocate(WIDTH, HEIGHT);
+    c.setFromPixels((unsigned char*)(pixRGB), WIDTH, HEIGHT);
     
-    grayDiff = colorImg;
+    grayDiff = c;
     grayDiff.threshold(1);
     grayDiff.dilate();
     grayDiff.erode();

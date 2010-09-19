@@ -7,12 +7,13 @@
 class SpriteSheet {
 private:
     Texture* tex;
-    int width, height;
     int numPics, actualPic;
     int speed, counter;
     bool animate;
     
 public:
+    int width, height;
+    
     SpriteSheet() : 
         actualPic(0), animate(false), counter(0) {
     }

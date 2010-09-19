@@ -23,7 +23,7 @@ void RobotDefense::reset() {
     laserTime = 100;
 }
    
-bool RobotDefense::draw(bool hit, Vector hitPoint) {
+bool RobotDefense::draw(bool hit, Vector &hitPoint) {
     // destroy hit robots
     if (hit) {
         laserTime = 0;

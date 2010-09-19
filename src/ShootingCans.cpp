@@ -9,35 +9,39 @@ ShootingCans::ShootingCans(Infobox* i, PushButton* m) : Game(i, m) {
         throw "Failed to load numberImage";
     }
     numbers.load(image, GL_CLAMP, GL_CLAMP);
-    sprite.load(&numbers, 100, 100, 32);
-    
-    counter = 0;
 }
 
 void ShootingCans::reset() {
-    counter = 0;
+    cans.clear();
+    
+    for (int i = 0; i < 3; i++) {
+        cans.push_back(Can(200 + i * 100, 150, 50, 50, &numbers, 32));
+    }
+    for (int i = 0; i < 4; i++) {
+        cans.push_back(Can(150 + i * 100, 250, 50, 50, &numbers, 32));
+    }
+    for (int i = 0; i < 3; i++) {
+        cans.push_back(Can(200 + i * 100, 350, 50, 50, &numbers, 32));
+    }
 }
    
-bool ShootingCans::draw(bool hit, Vector hitPoint) {
-    ofPushMatrix();
-    ofTranslate(hitPoint.x, hitPoint.y, 0.0);
-    
-    Vector a(0, 1), b(WIDTH / 2, HEIGHT);
-    float angle = Vector::angle(b - hitPoint, a) / PI * 180 + 180;
-    
-    if (hitPoint.x < WIDTH / 2)
-        angle *= -1;
-    
-    ofRotateZ(angle);
-    ofTranslate(-hitPoint.x, -hitPoint.y, 0.0);
-    sprite.draw(hitPoint.x, hitPoint.y);
-    ofPopMatrix();
-    
-    counter++;
-    if (counter == 100) {
-        sprite.startAnimation();
-        counter = 0;
+bool ShootingCans::draw(bool hit, Vector &hitPoint) {
+    // check hit
+    if (hit) {
+        for (int i = 0; i < cans.size(); i++) {
+            cans[i].checkHit(hitPoint);
+        }
     }
+    
+    // draw
+    for (int i = 0; i < cans.size(); i++) {
+        if (!cans[i].draw())
+            cans.erase(cans.begin() + i);
+    }
+    
+    if (cans.size() == 0)
+        return false;
+    
     return true;
 }
 
