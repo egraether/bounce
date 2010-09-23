@@ -29,7 +29,7 @@ public:
     void draw(int x, int y, int w, int h, float tx, float ty, float tw, float th) {
         ofSetColor(0xffffff);
         ofEnableAlphaBlending();
-        glColor4f(1.0, 0.0, 0.0, 1.0);
+        glColor4f(0.0, 0.0, 0.0, 1.0);
         bind();
         
         glBegin(GL_QUADS);

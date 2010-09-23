@@ -32,7 +32,7 @@ private:
     
     // image capture
     ofVideoGrabber videoCapture;
-    ofxCvBounceImage colorImg;
+    ofxCvBounceImage colorImg, camImg;
     
     deque<ofxCvBounceImage> storeImg;
     int storeSize;
@@ -70,6 +70,8 @@ private:
     bool showColorImg;
     bool showGrayImg;
     bool showGrayDiff;
+    bool showScreenImg;
+    bool showCamImg;
     
     Infobox* infobox;
     Console* console;
@@ -84,6 +86,7 @@ public:
     void reset();
     void calibrate();
     bool draw(bool hit, Vector hitPoint);
+    void drawPics();
     void keyPressed(int key);
     bool getHitPoint(Vector &hitPoint);
 };

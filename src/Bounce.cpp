@@ -37,11 +37,6 @@ void Bounce::update() {
 
 void Bounce::draw() {
     
-    if (bang) {
-        hit = tracker.getHitPoint(hitPoint);
-        bang = false;
-    }
-    
     switch (mode) {
         case MENU:
             calibrateButton.draw();
@@ -88,6 +83,8 @@ void Bounce::draw() {
     
     infobox.draw();
     
+    tracker.drawPics();
+    
     ofFill();
     ofSetColor(0, 255, 0);
     ofCircle(hitPoint.x, hitPoint.y, HITPOINT_SIZE);
@@ -98,7 +95,11 @@ void Bounce::draw() {
     ofSetColor(0x000000);
     ofDrawBitmapString("Framerate: " + ofToString(ofGetFrameRate()), WIDTH - 150, 20);
     
-    tracker.getPics();
+    if (bang) {
+        tracker.getPics();
+        hit = tracker.getHitPoint(hitPoint);
+        bang = false;
+    }
 }
 
 void Bounce::audioReceived (float* input, int bufferSize, int nChannels) {

@@ -39,6 +39,7 @@ Tracker::Tracker(Infobox* i, PushButton* m, Console* c) :
     videoCapture.initGrabber(WIDTH,HEIGHT);
 
     colorImg.allocate(WIDTH,HEIGHT);
+    camImg.allocate(WIDTH,HEIGHT);
     grayImg.allocate(WIDTH,HEIGHT);
     grayBg.allocate(WIDTH,HEIGHT);
     grayDiff.allocate(WIDTH,HEIGHT);
@@ -46,6 +47,8 @@ Tracker::Tracker(Infobox* i, PushButton* m, Console* c) :
     showColorImg = false;
     showGrayImg = false;
     showGrayDiff = false;
+    showScreenImg = false;
+    showCamImg = false;
     
     numCorners = 0;
     
@@ -148,32 +151,6 @@ void Tracker::calibrate() {
             counter++;
             break;
         case COMPLETE: {
-//            PixelHSV pixHSV[WIDTH * HEIGHT];
-//            for (int i = 0; i < 50; i++) {
-//                for (int j = 0; j < WIDTH; j++) {
-//                    pixHSV[i * WIDTH + j].set(hue, saturation, value);
-//                }
-//            }
-//            ofxCvBounceImage hsvImg;
-//            hsvImg.allocate(WIDTH, 50);
-//            hsvImg.setFromPixels((unsigned char*)(pixHSV), WIDTH, 50);
-//            hsvImg.setFromPixels(hsvImg.getPixelsRGB(), WIDTH, 50);
-//            ofSetColor(0xffffff);
-//            hsvImg.draw(0, HEIGHT - 50);
-            
-//            ofSetColor(255, 0, 0);
-//            ofRect(WIDTH / 7, WIDTH / 7, WIDTH / 7, WIDTH / 7);
-//            ofSetColor(255, 255, 0);
-//            ofRect(2 * WIDTH / 7, WIDTH / 7, WIDTH / 7, WIDTH / 7);
-//            ofSetColor(0, 255, 0);
-//            ofRect(3 * WIDTH / 7, WIDTH / 7, WIDTH / 7, WIDTH / 7);
-//            ofSetColor(0, 255, 255);
-//            ofRect(4 * WIDTH / 7, WIDTH / 7, WIDTH / 7, WIDTH / 7);
-//            ofSetColor(0, 0, 255);
-//            ofRect(5 * WIDTH / 7, WIDTH / 7, WIDTH / 7, WIDTH / 7);
-//            ofSetColor(255, 0, 255);
-//            ofRect(6 * WIDTH / 7, WIDTH / 7, WIDTH / 7, WIDTH / 7);
-           
 //            if (contourFinder.nBlobs) {
 //                Vector camHitPoint(contourFinder.blobs[0].centroid.x, contourFinder.blobs[0].centroid.y);
 //                Vector hitPoint = calibrationQuad.getHitPoint(camHitPoint);
@@ -216,43 +193,49 @@ bool Tracker::draw(bool hit, Vector hitPoint) {
             return false;
     }
     
-    ofSetColor(255, 255, 255);
-    if (showColorImg)
-        colorImg.draw(0, 0);
-    if (showGrayImg)
-        grayImg.draw(0, 0);
-    if (showGrayDiff)
-        grayDiff.draw(0, 0);
-    
+    drawPics();
     contourFinder.draw(0, 0);
     
     return true;
 }
 
+void Tracker::drawPics() {
+    
+    ofSetColor(255, 255, 255);
+    if (showColorImg)
+        camImg.draw(0, 0);
+    if (showGrayImg)
+        grayBg.draw(0, 0);
+    if (showGrayDiff)
+        grayDiff.draw(0, 0);
+    if (showScreenImg)
+        screenImg.draw(0, 0);
+    if (showCamImg)
+        grayImg.draw(0, 0);
+    
+    contourFinder.draw(0, 0);
+}
+
 void Tracker::keyPressed(int key) {
 	switch (key){
-        case 'c':
+        case 'r':
             reset();
 			break;
-        case 'g':
+        case 'c':
             showColorImg = !showColorImg;
 			break;
-        case 'f':
+        case 'v':
             showGrayImg = !showGrayImg;
 			break;
-        case 'd':
+        case 'b':
             showGrayDiff = !showGrayDiff;
 			break;
-        case 'p': {
-            ofImage screenShot;
-            screenShot.grabScreen(0, 0, ofGetWidth(), ofGetHeight());
-            screenShot.saveImage("screen.png");
-            ofImage c;
-            c.allocate(WIDTH, HEIGHT, OF_IMAGE_COLOR);
-            c.setFromPixels(colorImg.getPixels(), WIDTH, HEIGHT, OF_IMAGE_COLOR);
-            c.saveImage("cam.png");
+        case 's':
+            showScreenImg = !showScreenImg;
             break;
-        }
+        case 'a':
+            showCamImg = !showCamImg;
+            break;
         default:
             break;
 	}
@@ -269,9 +252,9 @@ bool Tracker::getHitPoint(Vector &hitPoint) {
 //            return true;
 //        }
         
+        grayImg = camImg;
         colorImg.setFromPixels(screenImg.getPixels(), WIDTH, HEIGHT);
         grayBg = colorImg;
-        grayImg = storeImg.front();
         
         int pointList[16] = {
             screenCorner[0].x, screenCorner[0].y, screenCorner[1].x, screenCorner[1].y,
@@ -284,6 +267,7 @@ bool Tracker::getHitPoint(Vector &hitPoint) {
         grayImg.setFromPixels(rectifyImage(grayImg.getPixels(), resolution, resolution, pointList), WIDTH, HEIGHT);
         
         grayDiff.absDiff(grayBg, grayImg);
+        grayBg = grayDiff;
         grayDiff.threshold(threshold);
         grayDiff.erode();
         grayDiff.dilate();
@@ -305,12 +289,12 @@ bool Tracker::getNewImage() {
     newFrame = videoCapture.isFrameNew();
     
     if (newFrame) {
-        colorImg.setFromPixels(videoCapture.getPixels(), WIDTH, HEIGHT);
-        storeImg.push_back(colorImg);
+        camImg.setFromPixels(videoCapture.getPixels(), WIDTH, HEIGHT);
         
-        while (storeImg.size() > storeSize) {
-            storeImg.pop_front();
-        }
+//        storeImg.push_back(colorImg);
+//        while (storeImg.size() > storeSize) {
+//            storeImg.pop_front();
+//        }
         
         return true;
     }
