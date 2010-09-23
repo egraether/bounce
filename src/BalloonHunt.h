@@ -42,8 +42,8 @@ public:
         
         switch (type) {
             case BIG:
-                sprite.width = 200;
-                sprite.height = 200;
+                sprite.width = 300;
+                sprite.height = 300;
                 size = 100;
                 speed = 2;
                 break;

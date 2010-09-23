@@ -1,8 +1,8 @@
 #ifndef _CONSTANTS_
 #define _CONSTANTS_
 
-#define WIDTH 640 //1280
-#define HEIGHT 480 //800
+#define WIDTH 1280 //640 //1280
+#define HEIGHT 800 //480 //800
 
 #define HITPOINT_SIZE 3
 
@@ -20,8 +20,8 @@
 #define SATURATION_VARIANCE 20
 #define VALUE 100
 #define VALUE_VARIANCE 20
-#define MIN_BLOB_SIZE 20
-#define MAX_BLOB_SIZE 120000
+#define MIN_BLOB_SIZE 1000
+#define MAX_BLOB_SIZE 10000
 
 #define ANIMATION_SPEED 10
 

@@ -1,5 +1,6 @@
 #include "Tracker.h"
 #include "constants.h"
+#include "rectify.h"
 
 Tracker::Tracker(Infobox* i, PushButton* m, Console* c) : 
     infobox(i), menuButton(m), console(c),
@@ -14,21 +15,21 @@ Tracker::Tracker(Infobox* i, PushButton* m, Console* c) :
     minBlobSize(MIN_BLOB_SIZE),
     maxBlobSize(MAX_BLOB_SIZE),
     lastBlobSize(0),
-    storeSize(5) {
+    storeSize(1) {
     
     console->addRegulation("threshold", &threshold, 0, 255);
         
-    console->addRegulation("hue", &hue, 0, 179);
-    console->addRegulation("hueVariance", &hueVariance, 0, 25);
-    
-    console->addRegulation("saturation", &saturation, 0, 255);
-    console->addRegulation("saturationVariance", &saturationVariance, 0, 50);
-        
-    console->addRegulation("value", &value, 0, 255);
-    console->addRegulation("valueVariance", &valueVariance, 0, 50);
-        
-    console->addRegulation("minBlobSize", &minBlobSize, 0, WIDTH * HEIGHT);
-    console->addRegulation("maxBlobSize", &maxBlobSize, 0, WIDTH * HEIGHT);
+//    console->addRegulation("hue", &hue, 0, 179);
+//    console->addRegulation("hueVariance", &hueVariance, 0, 25);
+//    
+//    console->addRegulation("saturation", &saturation, 0, 255);
+//    console->addRegulation("saturationVariance", &saturationVariance, 0, 50);
+//        
+//    console->addRegulation("value", &value, 0, 255);
+//    console->addRegulation("valueVariance", &valueVariance, 0, 50);
+//        
+//    console->addRegulation("minBlobSize", &minBlobSize, 0, WIDTH * HEIGHT);
+//    console->addRegulation("maxBlobSize", &maxBlobSize, 0, WIDTH * HEIGHT);
     
     console->addInformation("lastBlobSize", &lastBlobSize);
         
@@ -57,9 +58,11 @@ Tracker::~Tracker() {
     delete [] projCorner;
 }
 
-void Tracker::update() {
-    if (mode == COMPLETE)
+void Tracker::getPics() {
+    if (mode == COMPLETE) {
+        screenImg.grabScreen(0, 0, WIDTH, HEIGHT);
         getNewImage();
+    }
 }
 
 void Tracker::reset() {
@@ -171,14 +174,14 @@ void Tracker::calibrate() {
 //            ofSetColor(255, 0, 255);
 //            ofRect(6 * WIDTH / 7, WIDTH / 7, WIDTH / 7, WIDTH / 7);
            
-            if (contourFinder.nBlobs) {
-                Vector camHitPoint(contourFinder.blobs[0].centroid.x, contourFinder.blobs[0].centroid.y);
-                Vector hitPoint = calibrationQuad.getHitPoint(camHitPoint);
-                
-                ofSetColor(0, 255, 0);
-                ofFill();
-                ofCircle(hitPoint.x, hitPoint.y, 10);
-            }
+//            if (contourFinder.nBlobs) {
+//                Vector camHitPoint(contourFinder.blobs[0].centroid.x, contourFinder.blobs[0].centroid.y);
+//                Vector hitPoint = calibrationQuad.getHitPoint(camHitPoint);
+//                
+//                ofSetColor(0, 255, 0);
+//                ofFill();
+//                ofCircle(hitPoint.x, hitPoint.y, 10);
+//            }
             
             calibrationQuad.draw();
             break;
@@ -193,7 +196,7 @@ bool Tracker::draw(bool hit, Vector hitPoint) {
     if (infobox->checkState(hit, hitPoint) != Infobox::ALIVE) {
         if (mode != CALIBRATION_NULL) {
             if (mode == COMPLETE) {
-                getHueContour();
+                //getHueContour();
                 
                 menuButton->draw();
                 if (menuButton->checkHit(hit, hitPoint))
@@ -240,19 +243,56 @@ void Tracker::keyPressed(int key) {
         case 'd':
             showGrayDiff = !showGrayDiff;
 			break;
+        case 'p': {
+            ofImage screenShot;
+            screenShot.grabScreen(0, 0, ofGetWidth(), ofGetHeight());
+            screenShot.saveImage("screen.png");
+            ofImage c;
+            c.allocate(WIDTH, HEIGHT, OF_IMAGE_COLOR);
+            c.setFromPixels(colorImg.getPixels(), WIDTH, HEIGHT, OF_IMAGE_COLOR);
+            c.saveImage("cam.png");
+            break;
+        }
         default:
             break;
 	}
 }
 
-bool Tracker::getHitPoint(Vector hitPoint) {
+bool Tracker::getHitPoint(Vector &hitPoint) {
     if (mode == COMPLETE) {
-        getHueContour();
+        //getHueContour();
         //getBrightnessContour(threshold);
         
+//        if (contourFinder.nBlobs) {
+//            Vector camHitPoint(contourFinder.blobs[0].centroid.x, contourFinder.blobs[0].centroid.y);
+//            hitPoint = calibrationQuad.getHitPoint(camHitPoint);
+//            return true;
+//        }
+        
+        colorImg.setFromPixels(screenImg.getPixels(), WIDTH, HEIGHT);
+        grayBg = colorImg;
+        grayImg = storeImg.front();
+        
+        int pointList[16] = {
+            screenCorner[0].x, screenCorner[0].y, screenCorner[1].x, screenCorner[1].y,
+            screenCorner[3].x, screenCorner[3].y, screenCorner[2].x, screenCorner[2].y,
+            projCorner[0].x, projCorner[0].y, projCorner[1].x, projCorner[1].y, 
+            projCorner[3].x, projCorner[3].y, projCorner[2].x, projCorner[2].y
+        };
+        int resolution[2] = {WIDTH, HEIGHT};
+        
+        grayImg.setFromPixels(rectifyImage(grayImg.getPixels(), resolution, resolution, pointList), WIDTH, HEIGHT);
+        
+        grayDiff.absDiff(grayBg, grayImg);
+        grayDiff.threshold(threshold);
+        grayDiff.erode();
+        grayDiff.dilate();
+        
+        contourFinder.findContours(grayDiff, minBlobSize, maxBlobSize, 1, false);
+
         if (contourFinder.nBlobs) {
-            Vector camHitPoint(contourFinder.blobs[0].centroid.x, contourFinder.blobs[0].centroid.y);
-            hitPoint = calibrationQuad.getHitPoint(camHitPoint);
+            lastBlobSize = contourFinder.blobs[0].area;
+            hitPoint.set(contourFinder.blobs[0].centroid.x, contourFinder.blobs[0].centroid.y);
             return true;
         }
     }

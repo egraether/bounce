@@ -44,9 +44,6 @@ public:
         
         ofTranslate(pos.x, pos.y, 0.0);
         ofRotateZ(angle);
-        //ofTranslate(-pos.x, -pos.y, 0.0);
-        
-        //bool destroyed = sprite.draw(pos.x, pos.y);
         bool destroyed = sprite.draw(0, 0);
         
         ofPopMatrix();

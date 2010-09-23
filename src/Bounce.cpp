@@ -18,7 +18,7 @@ void Bounce::setup() {
     
     // audio
     ofSoundStreamSetup(0, 1, this);
-    bangLevel = 9;
+    bangLevel = 2;
     lastBang = 0;
     bang = false;
     
@@ -36,10 +36,7 @@ void Bounce::update() {
 }
 
 void Bounce::draw() {
-    // save actual image
-    tracker.update();
     
-    // if loud noise, check if ball is in picture
     if (bang) {
         hit = tracker.getHitPoint(hitPoint);
         bang = false;
@@ -100,6 +97,8 @@ void Bounce::draw() {
     console.draw();
     ofSetColor(0x000000);
     ofDrawBitmapString("Framerate: " + ofToString(ofGetFrameRate()), WIDTH - 150, 20);
+    
+    tracker.getPics();
 }
 
 void Bounce::audioReceived (float* input, int bufferSize, int nChannels) {
@@ -115,6 +114,9 @@ void Bounce::keyPressed(int key) {
     switch (key) {
         case 'm':
             changeMode(MENU);
+            break;
+        case 'f':
+            ofSetFullscreen(true);
             break;
         case 'k':
             console.show = !console.show;

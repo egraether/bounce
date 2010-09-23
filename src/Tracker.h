@@ -38,6 +38,7 @@ private:
     int storeSize;
     
     ofxCvGrayscaleImage grayImg, grayBg, grayDiff;
+    ofImage screenImg;
     
     // contour
     ofxCvContourFinder contourFinder;
@@ -79,12 +80,12 @@ public:
     Tracker(Infobox* i, PushButton* m, Console* c);
     ~Tracker();
     
-    void update();
+    void getPics();
     void reset();
     void calibrate();
     bool draw(bool hit, Vector hitPoint);
     void keyPressed(int key);
-    bool getHitPoint(Vector hitPoint);
+    bool getHitPoint(Vector &hitPoint);
 };
 
 #endif
