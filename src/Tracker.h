@@ -5,7 +5,6 @@
 #include "ofxOpenCv.h"
 #include "ofxCvBounceImage.h"
 #include "Vector.h"
-#include "CalibrationQuad.h"
 #include "Console.h"
 #include "Infobox.h"
 #include "PushButton.h"
@@ -34,7 +33,7 @@ private:
     ofVideoGrabber videoCapture;
     ofxCvColorImage colorImg, camImg;
     
-    deque<ofxCvBounceImage> storeImg;
+    deque<ofImage> screenImgStore;
     int storeSize;
     
     ofxCvGrayscaleImage grayImg, grayBg, grayDiff;
@@ -59,12 +58,14 @@ private:
     Vector* screenCorner;
     Vector* projCorner;
     
-    CalibrationQuad calibrationQuad;
-    
     bool countChecked;
     
     int counter;
     int numCorners;
+    
+    CvMat* homography;
+    
+    bool equalize;
     
     // other
     bool showColorImg;
@@ -77,8 +78,6 @@ private:
     Console* console;
     
     PushButton* menuButton;
-    
-    CvMat* homography;
     
 public:
     Tracker(Infobox* i, PushButton* m, Console* c);

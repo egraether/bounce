@@ -95,8 +95,10 @@ void Bounce::draw() {
     ofSetColor(0x000000);
     ofDrawBitmapString("Framerate: " + ofToString(ofGetFrameRate()), WIDTH - 150, 20);
     
+    tracker.getPics();
+    
     if (bang) {
-        tracker.getPics();
+        //tracker.getPics();
         hit = tracker.getHitPoint(hitPoint);
         bang = false;
     }

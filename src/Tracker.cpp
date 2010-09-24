@@ -1,21 +1,25 @@
 #include "Tracker.h"
 #include "constants.h"
-#include "rectify.h"
 
 Tracker::Tracker(Infobox* i, PushButton* m, Console* c) : 
-    infobox(i), menuButton(m), console(c),
+    infobox(i), 
+    menuButton(m), 
+    console(c),
+
     mode(CALIBRATION_NULL),
     threshold(THRESHOLD),
+
     hue(HUE),
     hueVariance(HUE_VARIANCE),
     saturation(SATURATION),
     saturationVariance(SATURATION_VARIANCE),
     value(VALUE),
     valueVariance(VALUE_VARIANCE),
+
     minBlobSize(MIN_BLOB_SIZE),
     maxBlobSize(MAX_BLOB_SIZE),
     lastBlobSize(0),
-    storeSize(1) {
+    storeSize(3) {
     
     console->addRegulation("threshold", &threshold, 0, 255);
         
@@ -43,6 +47,8 @@ Tracker::Tracker(Infobox* i, PushButton* m, Console* c) :
     grayImg.allocate(WIDTH,HEIGHT);
     grayBg.allocate(WIDTH,HEIGHT);
     grayDiff.allocate(WIDTH,HEIGHT);
+        
+    screenImgStore.push_back(screenImg);
     
     showColorImg = false;
     showGrayImg = false;
@@ -52,8 +58,17 @@ Tracker::Tracker(Infobox* i, PushButton* m, Console* c) :
     
     numCorners = 0;
     
-    screenCorner = new Vector[4];
     projCorner = new Vector[4];
+    screenCorner = new Vector[4];
+    
+    screenCorner[0].set(SCREEN_CORNER_DISTANCE, SCREEN_CORNER_DISTANCE);
+    screenCorner[1].set(WIDTH - SCREEN_CORNER_DISTANCE, SCREEN_CORNER_DISTANCE);
+    screenCorner[2].set(WIDTH - SCREEN_CORNER_DISTANCE, HEIGHT - SCREEN_CORNER_DISTANCE);
+    screenCorner[3].set(SCREEN_CORNER_DISTANCE, HEIGHT - SCREEN_CORNER_DISTANCE);
+    
+    homography = cvCreateMat(3, 3, CV_32FC1);
+    
+    equalize = false;
 }
 
 Tracker::~Tracker() {
@@ -61,27 +76,17 @@ Tracker::~Tracker() {
     delete [] projCorner;
 }
 
-void Tracker::getPics() {
-    if (mode == COMPLETE) {
-        screenImg.grabScreen(0, 0, WIDTH, HEIGHT);
-        getNewImage();
-    }
-}
-
 void Tracker::reset() {
     for (int i = 0; i < 4; i++) {
         projCorner[i].set(0,0);
     }
     
-    screenCorner[0].set(SCREEN_CORNER_DISTANCE, SCREEN_CORNER_DISTANCE);
-    screenCorner[1].set(WIDTH - SCREEN_CORNER_DISTANCE, SCREEN_CORNER_DISTANCE);
-    screenCorner[2].set(WIDTH - SCREEN_CORNER_DISTANCE, HEIGHT - SCREEN_CORNER_DISTANCE);
-    screenCorner[3].set(SCREEN_CORNER_DISTANCE, HEIGHT - SCREEN_CORNER_DISTANCE);
-    
     numCorners = 0;
     counter = 0;
     
     countChecked = false;
+    
+    threshold = 25;
     
     mode = BACKGROUND;
 }
@@ -139,11 +144,9 @@ void Tracker::calibrate() {
                     numCorners++;
                     
                     if (numCorners == 4) {
-                        calibrationQuad.getEyePoints(screenCorner, projCorner);
                         
                         CvMat* projPoints = cvCreateMat(4, 2, CV_32FC1);
                         CvMat* screenPoints = cvCreateMat(4, 2, CV_32FC1);
-                        homography = cvCreateMat(3, 3, CV_32FC1);
                         
                         for (int i = 0; i < 4; i++) {
                             cvmSet(projPoints, i, 0, projCorner[i].x);
@@ -155,12 +158,10 @@ void Tracker::calibrate() {
                         
                         cvFindHomography(projPoints, screenPoints, homography);
                         
-                        for (int i = 0; i < 3; i++) {
-                            for (int j = 0; j < 3; j++) {
-                                cout << cvmGet(homography, i, j) << " ";
-                            }
-                            cout << endl;
-                        }
+                        cvReleaseMat(&projPoints);
+                        cvReleaseMat(&screenPoints);
+                        
+                        threshold = 125;
                         
                         mode = COMPLETE;
                     }
@@ -172,19 +173,8 @@ void Tracker::calibrate() {
             }
             counter++;
             break;
-        case COMPLETE: {
-//            if (contourFinder.nBlobs) {
-//                Vector camHitPoint(contourFinder.blobs[0].centroid.x, contourFinder.blobs[0].centroid.y);
-//                Vector hitPoint = calibrationQuad.getHitPoint(camHitPoint);
-//                
-//                ofSetColor(0, 255, 0);
-//                ofFill();
-//                ofCircle(hitPoint.x, hitPoint.y, 10);
-//            }
-            
-            calibrationQuad.draw();
+        case COMPLETE:
             break;
-        }
         default:
             break;
     }
@@ -208,7 +198,6 @@ bool Tracker::draw(bool hit, Vector hitPoint) {
         }
     }
     else {
-        getNewImage();
         menuButton->draw();
         
         if (menuButton->checkHit(hit, hitPoint))
@@ -230,10 +219,10 @@ void Tracker::drawPics() {
         grayBg.draw(0, 0);
     if (showGrayDiff)
         grayDiff.draw(0, 0);
-    if (showScreenImg)
-        screenImg.draw(0, 0);
     if (showCamImg)
         grayImg.draw(0, 0);
+    if (showScreenImg)
+        screenImgStore.front().draw(0, 0);
     
     contourFinder.draw(0, 0);
 }
@@ -258,6 +247,9 @@ void Tracker::keyPressed(int key) {
         case 'a':
             showCamImg = !showCamImg;
             break;
+        case 'e':
+            equalize = !equalize;
+            break;
         default:
             break;
 	}
@@ -265,17 +257,9 @@ void Tracker::keyPressed(int key) {
 
 bool Tracker::getHitPoint(Vector &hitPoint) {
     if (mode == COMPLETE) {
-        //getHueContour();
-        //getBrightnessContour(threshold);
-        
-//        if (contourFinder.nBlobs) {
-//            Vector camHitPoint(contourFinder.blobs[0].centroid.x, contourFinder.blobs[0].centroid.y);
-//            hitPoint = calibrationQuad.getHitPoint(camHitPoint);
-//            return true;
-//        }
         
         grayImg = camImg;
-        colorImg.setFromPixels(screenImg.getPixels(), WIDTH, HEIGHT);
+        colorImg.setFromPixels(screenImgStore.front().getPixels(), WIDTH, HEIGHT);
         grayBg = colorImg;
         
         int pointList[16] = {
@@ -286,12 +270,15 @@ bool Tracker::getHitPoint(Vector &hitPoint) {
         };
         int resolution[2] = {WIDTH, HEIGHT};
         
-        //grayImg.setFromPixels(rectifyImage(grayImg.getPixels(), resolution, resolution, pointList), WIDTH, HEIGHT);
         cvWarpPerspective(grayImg.getCvImage(), grayDiff.getCvImage(), homography);
+        
+//        if (equalize)
+//            cvEqualizeHist(grayDiff.getCvImage(), grayDiff.getCvImage());
         
         grayImg = grayDiff;
         grayDiff.absDiff(grayBg);
-        //grayBg = grayDiff;
+        grayBg = grayDiff;
+        
         grayDiff.threshold(threshold);
         grayDiff.erode();
         grayDiff.dilate();
@@ -307,22 +294,27 @@ bool Tracker::getHitPoint(Vector &hitPoint) {
     return false;
 }
 
+void Tracker::getPics() {
+    if (getNewImage() && mode == COMPLETE) {
+        
+        screenImg.grabScreen(0, 0, WIDTH, HEIGHT);
+        screenImgStore.push_back(screenImg);
+        
+        while (screenImgStore.size() > storeSize) {
+            screenImgStore.pop_front();
+        }
+    }
+}
+
 bool Tracker::getNewImage() {
     bool newFrame = false;
     videoCapture.grabFrame();
     newFrame = videoCapture.isFrameNew();
     
-    if (newFrame) {
+    if (newFrame)
         camImg.setFromPixels(videoCapture.getPixels(), WIDTH, HEIGHT);
         
-//        storeImg.push_back(colorImg);
-//        while (storeImg.size() > storeSize) {
-//            storeImg.pop_front();
-//        }
-        
-        return true;
-    }
-    return false;
+    return newFrame;
 }
 
 void Tracker::getBrightnessContour(int threshold) {
@@ -337,11 +329,8 @@ void Tracker::getBrightnessContour(int threshold) {
 }
 
 void Tracker::getHueContour() {
-//    PixelRGB* pixRGB = (PixelRGB*)(storeImg.front().getPixels());
-//    PixelHSV* pixHSV = (PixelHSV*)(storeImg.front().getPixelsHSV());
-//    
-////    PixelRGB* pixRGB = (PixelRGB*)(colorImg.getPixels());
-////    PixelHSV* pixHSV = (PixelHSV*)(colorImg.getPixelsHSV());
+//    PixelRGB* pixRGB = (PixelRGB*)(colorImg.getPixels());
+//    PixelHSV* pixHSV = (PixelHSV*)(colorImg.getPixelsHSV());
 //    
 //    for (int i = 0; i < WIDTH * HEIGHT; i++) {
 //        if (pixHSV[i].h > hue + hueVariance || pixHSV[i].h < hue - hueVariance ||
