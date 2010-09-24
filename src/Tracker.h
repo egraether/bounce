@@ -32,7 +32,7 @@ private:
     
     // image capture
     ofVideoGrabber videoCapture;
-    ofxCvBounceImage colorImg, camImg;
+    ofxCvColorImage colorImg, camImg;
     
     deque<ofxCvBounceImage> storeImg;
     int storeSize;
@@ -77,6 +77,8 @@ private:
     Console* console;
     
     PushButton* menuButton;
+    
+    CvMat* homography;
     
 public:
     Tracker(Infobox* i, PushButton* m, Console* c);

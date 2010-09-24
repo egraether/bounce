@@ -140,6 +140,28 @@ void Tracker::calibrate() {
                     
                     if (numCorners == 4) {
                         calibrationQuad.getEyePoints(screenCorner, projCorner);
+                        
+                        CvMat* projPoints = cvCreateMat(4, 2, CV_32FC1);
+                        CvMat* screenPoints = cvCreateMat(4, 2, CV_32FC1);
+                        homography = cvCreateMat(3, 3, CV_32FC1);
+                        
+                        for (int i = 0; i < 4; i++) {
+                            cvmSet(projPoints, i, 0, projCorner[i].x);
+                            cvmSet(projPoints, i, 1, projCorner[i].y);
+                            
+                            cvmSet(screenPoints, i, 0, screenCorner[i].x);
+                            cvmSet(screenPoints, i, 1, screenCorner[i].y);
+                        }
+                        
+                        cvFindHomography(projPoints, screenPoints, homography);
+                        
+                        for (int i = 0; i < 3; i++) {
+                            for (int j = 0; j < 3; j++) {
+                                cout << cvmGet(homography, i, j) << " ";
+                            }
+                            cout << endl;
+                        }
+                        
                         mode = COMPLETE;
                     }
                     else
@@ -264,10 +286,12 @@ bool Tracker::getHitPoint(Vector &hitPoint) {
         };
         int resolution[2] = {WIDTH, HEIGHT};
         
-        grayImg.setFromPixels(rectifyImage(grayImg.getPixels(), resolution, resolution, pointList), WIDTH, HEIGHT);
+        //grayImg.setFromPixels(rectifyImage(grayImg.getPixels(), resolution, resolution, pointList), WIDTH, HEIGHT);
+        cvWarpPerspective(grayImg.getCvImage(), grayDiff.getCvImage(), homography);
         
-        grayDiff.absDiff(grayBg, grayImg);
-        grayBg = grayDiff;
+        grayImg = grayDiff;
+        grayDiff.absDiff(grayBg);
+        //grayBg = grayDiff;
         grayDiff.threshold(threshold);
         grayDiff.erode();
         grayDiff.dilate();
@@ -303,7 +327,7 @@ bool Tracker::getNewImage() {
 
 void Tracker::getBrightnessContour(int threshold) {
     if (getNewImage()) {
-        grayImg = colorImg;
+        grayImg = camImg;
         
         grayDiff.absDiff(grayBg, grayImg);
         grayDiff.threshold(threshold);
@@ -313,29 +337,29 @@ void Tracker::getBrightnessContour(int threshold) {
 }
 
 void Tracker::getHueContour() {
-    PixelRGB* pixRGB = (PixelRGB*)(storeImg.front().getPixels());
-    PixelHSV* pixHSV = (PixelHSV*)(storeImg.front().getPixelsHSV());
-    
-//    PixelRGB* pixRGB = (PixelRGB*)(colorImg.getPixels());
-//    PixelHSV* pixHSV = (PixelHSV*)(colorImg.getPixelsHSV());
-    
-    for (int i = 0; i < WIDTH * HEIGHT; i++) {
-        if (pixHSV[i].h > hue + hueVariance || pixHSV[i].h < hue - hueVariance ||
-            pixHSV[i].s > saturation + saturationVariance || pixHSV[i].s < saturation - saturationVariance ||
-            pixHSV[i].s > value + valueVariance || pixHSV[i].s < value - valueVariance)
-            pixRGB[i].set(0,0,0);
-    }
-    ofxCvColorImage c;
-    c.allocate(WIDTH, HEIGHT);
-    c.setFromPixels((unsigned char*)(pixRGB), WIDTH, HEIGHT);
-    
-    grayDiff = c;
-    grayDiff.threshold(1);
-    grayDiff.dilate();
-    grayDiff.erode();
-    
-    contourFinder.findContours(grayDiff, minBlobSize, maxBlobSize, 1, false);
-    
-    if (contourFinder.nBlobs)
-        lastBlobSize = contourFinder.blobs[0].area;
+//    PixelRGB* pixRGB = (PixelRGB*)(storeImg.front().getPixels());
+//    PixelHSV* pixHSV = (PixelHSV*)(storeImg.front().getPixelsHSV());
+//    
+////    PixelRGB* pixRGB = (PixelRGB*)(colorImg.getPixels());
+////    PixelHSV* pixHSV = (PixelHSV*)(colorImg.getPixelsHSV());
+//    
+//    for (int i = 0; i < WIDTH * HEIGHT; i++) {
+//        if (pixHSV[i].h > hue + hueVariance || pixHSV[i].h < hue - hueVariance ||
+//            pixHSV[i].s > saturation + saturationVariance || pixHSV[i].s < saturation - saturationVariance ||
+//            pixHSV[i].s > value + valueVariance || pixHSV[i].s < value - valueVariance)
+//            pixRGB[i].set(0,0,0);
+//    }
+//    ofxCvColorImage c;
+//    c.allocate(WIDTH, HEIGHT);
+//    c.setFromPixels((unsigned char*)(pixRGB), WIDTH, HEIGHT);
+//    
+//    grayDiff = c;
+//    grayDiff.threshold(1);
+//    grayDiff.dilate();
+//    grayDiff.erode();
+//    
+//    contourFinder.findContours(grayDiff, minBlobSize, maxBlobSize, 1, false);
+//    
+//    if (contourFinder.nBlobs)
+//        lastBlobSize = contourFinder.blobs[0].area;
 }
