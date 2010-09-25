@@ -15,13 +15,13 @@ void ShootingCans::reset() {
     cans.clear();
     
     for (int i = 0; i < 3; i++) {
-        cans.push_back(Can((3 + i * 2) * WIDTH / 10, HEIGHT / 4, 100, 100, &numbers, 32));
+        cans.push_back(Can((3 + i * 2) * WIDTH / 10, HEIGHT / 4, &numbers, 100, 100, 1, 32));
     }
     for (int i = 1; i <= 4; i++) {
-        cans.push_back(Can(i * WIDTH / 5, HEIGHT / 2, 100, 100, &numbers, 32));
+        cans.push_back(Can(i * WIDTH / 5, HEIGHT / 2, &numbers, 100, 100, 1, 32));
     }
     for (int i = 0; i < 3; i++) {
-        cans.push_back(Can((3 + i * 2) * WIDTH / 10, HEIGHT / 4 * 3, 100, 100, &numbers, 32));
+        cans.push_back(Can((3 + i * 2) * WIDTH / 10, HEIGHT / 4 * 3, &numbers, 100, 100, 1, 32));
     }
 }
    

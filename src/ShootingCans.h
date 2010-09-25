@@ -3,7 +3,7 @@
 
 #include "Game.h"
 #include "Texture.h"
-#include "SpriteSheet.h"
+#include "SpriteAnimation.h"
 #include "PushButton.h"
 #include "Infobox.h"
 
@@ -27,12 +27,15 @@ class ShootingCans::Can {
 private:
     Vector pos, flight;
     bool flying;
-    SpriteSheet sprite;
+    SpriteAnimation sprite;
     float time;
     
 public:
-    Can(int x, int y, int w, int h, Texture* t, int n) :
-        pos(x, y), sprite(t, w, h, n), flying(false) {
+    Can(int x, int y, Texture* t, int w, int h, int r, int c) :
+        pos(x, y), flying(false),
+        sprite(t, w, h, r, c) {
+            
+        sprite.setAnimation(2, 1, 6, 1, true);
     }
     
     bool draw() {
@@ -53,14 +56,14 @@ public:
     }
     
     bool checkHit(Vector &hitPoint) {
-        if (hitPoint.x > pos.x - sprite.width / 2 && 
-            hitPoint.x < pos.x + sprite.width / 2 &&
-            hitPoint.y > pos.y - sprite.height / 2 &&
-            hitPoint.y < pos.y + sprite.height / 2) {
+        if (hitPoint.x > pos.x - sprite.getWidth() / 2 && 
+            hitPoint.x < pos.x + sprite.getWidth() / 2 &&
+            hitPoint.y > pos.y - sprite.getHeight() / 2 &&
+            hitPoint.y < pos.y + sprite.getHeight() / 2) {
             
             flying = true;
-            flight = ((Vector(0, -sprite.height / 3 * 2) + pos) - hitPoint) / 10;
-            sprite.startAnimation();
+            flight = ((Vector(0, -sprite.getHeight() / 3 * 2) + pos) - hitPoint) / 10;
+            sprite.setAnimation(11, 1, 28, 1);
             time = ofGetElapsedTimef();
         }
     }
