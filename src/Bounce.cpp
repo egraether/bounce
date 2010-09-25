@@ -2,12 +2,12 @@
 #include "constants.h"
 
 Bounce::Bounce() : 
-    tracker(&infobox, &menuButton, &console),
+    tracker(&infobox, &console),
     mode(MENU),
     hit(false),
-    shootingCans(&infobox, &menuButton),
-    robotDefense(&infobox, &menuButton),
-    balloonHunt(&infobox, &menuButton) {
+    shootingCans(&infobox),
+    robotDefense(&infobox),
+    balloonHunt(&infobox) {
 }
 
 void Bounce::setup() {

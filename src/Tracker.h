@@ -51,7 +51,7 @@ private:
     int lastBlobSize;
     
     bool getNewImage();
-    void getBrightnessContour(int threshold);
+    void getBrightnessContour();
     void getHueContour();
     
     // calibration
@@ -73,14 +73,13 @@ private:
     bool showGrayDiff;
     bool showScreenImg;
     bool showCamImg;
+    bool showContours;
     
     Infobox* infobox;
     Console* console;
     
-    PushButton* menuButton;
-    
 public:
-    Tracker(Infobox* i, PushButton* m, Console* c);
+    Tracker(Infobox* i, Console* c);
     ~Tracker();
     
     void getPics();

@@ -1,7 +1,7 @@
 #include "BalloonHunt.h"
 #include "ofMain.h"
 
-BalloonHunt::BalloonHunt(Infobox* i, PushButton* m) : Game(i, m) {
+BalloonHunt::BalloonHunt(Infobox* i) : Game(i) {
     ofImage image;
     bool result = image.loadImage("numbers.png");
     if (!result) {

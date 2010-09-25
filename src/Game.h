@@ -8,10 +8,9 @@
 class Game {
 protected:
     Infobox* infobox;
-    PushButton* menuButton;
     
 public:
-    Game(Infobox* i, PushButton* m) : infobox(i), menuButton(m) {}
+    Game(Infobox* i) : infobox(i) {}
     //~Game()
     
     virtual void reset() = 0;

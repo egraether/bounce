@@ -3,8 +3,8 @@
 
 #include <cmath>
 
-RobotDefense::RobotDefense(Infobox* i, PushButton* m) : 
-    Game(i, m), cannon(WIDTH / 2, HEIGHT) {
+RobotDefense::RobotDefense(Infobox* i) : 
+    Game(i), cannon(WIDTH / 2, HEIGHT) {
         
     ofImage image;
     bool result = image.loadImage("numbers.png");

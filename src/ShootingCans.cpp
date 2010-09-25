@@ -1,7 +1,7 @@
 #include "ShootingCans.h"
 #include "ofMain.h"
 
-ShootingCans::ShootingCans(Infobox* i, PushButton* m) : Game(i, m) {
+ShootingCans::ShootingCans(Infobox* i) : Game(i) {
     ofImage image;
     bool result = image.loadImage("numbers.png");
     if (!result) {

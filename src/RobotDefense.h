@@ -19,7 +19,7 @@ private:
     Vector cannon;
     
 public:
-    RobotDefense(Infobox* i, PushButton* m);
+    RobotDefense(Infobox* i);
     virtual void reset();
     virtual bool draw(bool hit, Vector &hitPoint);
 };

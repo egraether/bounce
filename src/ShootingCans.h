@@ -16,7 +16,7 @@ private:
     Texture numbers;
     
 public:
-    ShootingCans(Infobox* i, PushButton* m);
+    ShootingCans(Infobox* i);
     //~Game()
     
     virtual void reset();

@@ -18,7 +18,7 @@ private:
     int counter;
     
 public:
-    BalloonHunt(Infobox* i, PushButton* m);
+    BalloonHunt(Infobox* i);
     //~Game()
     
     virtual void reset();

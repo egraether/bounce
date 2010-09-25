@@ -1,9 +1,8 @@
 #include "Tracker.h"
 #include "constants.h"
 
-Tracker::Tracker(Infobox* i, PushButton* m, Console* c) : 
-    infobox(i), 
-    menuButton(m), 
+Tracker::Tracker(Infobox* i, Console* c) : 
+    infobox(i),  
     console(c),
 
     mode(CALIBRATION_NULL),
@@ -55,6 +54,7 @@ Tracker::Tracker(Infobox* i, PushButton* m, Console* c) :
     showGrayDiff = false;
     showScreenImg = false;
     showCamImg = false;
+    showContours = true;
     
     numCorners = 0;
     
@@ -74,6 +74,8 @@ Tracker::Tracker(Infobox* i, PushButton* m, Console* c) :
 Tracker::~Tracker() {
     delete [] screenCorner;
     delete [] projCorner;
+    
+    cvReleaseMat(&homography);
 }
 
 void Tracker::reset() {
@@ -88,7 +90,8 @@ void Tracker::reset() {
     
     threshold = 25;
     
-    mode = BACKGROUND;
+    mode = CALIBRATION_NULL;
+    showColorImg = true;
 }
 
 void Tracker::calibrate() {
@@ -130,7 +133,8 @@ void Tracker::calibrate() {
                 if (contourFinder.nBlobs == 4)
                     countChecked = true;
                 else
-                    infobox->set("counting of corners failed$check if camera is directed to screen", Infobox::CHECK);
+                    reset();
+                    //infobox->set("counting of corners failed$check if camera is directed to screen", Infobox::CHECK);
             }
             break;
         case POINT:
@@ -173,8 +177,6 @@ void Tracker::calibrate() {
             }
             counter++;
             break;
-        case COMPLETE:
-            break;
         default:
             break;
     }
@@ -182,30 +184,16 @@ void Tracker::calibrate() {
 
 bool Tracker::draw(bool hit, Vector hitPoint) {
     
-    if (infobox->checkState(hit, hitPoint) != Infobox::ALIVE) {
-        if (mode != CALIBRATION_NULL) {
-            if (mode == COMPLETE) {
-                //getHueContour();
-                
-                menuButton->draw();
-                if (menuButton->checkHit(hit, hitPoint))
-                    return false;
-            }
-            else
-                getBrightnessContour(threshold);
-            
-            calibrate();
+    if (mode == CALIBRATION_NULL) {
+        if (hit) {
+            mode = BACKGROUND;
+            showColorImg = false;
         }
     }
-    else {
-        menuButton->draw();
-        
-        if (menuButton->checkHit(hit, hitPoint))
-            return false;
-    }
+    else if (mode != COMPLETE)
+        getBrightnessContour();
     
-    drawPics();
-    contourFinder.draw(0, 0);
+    calibrate();
     
     return true;
 }
@@ -223,14 +211,17 @@ void Tracker::drawPics() {
         grayImg.draw(0, 0);
     if (showScreenImg)
         screenImgStore.front().draw(0, 0);
-    
-    contourFinder.draw(0, 0);
+    if (showContours)
+        contourFinder.draw(0, 0);
 }
 
 void Tracker::keyPressed(int key) {
 	switch (key){
         case 'r':
             reset();
+			break;
+        case 'x':
+            showContours = !showContours;
 			break;
         case 'c':
             showColorImg = !showColorImg;
@@ -317,7 +308,7 @@ bool Tracker::getNewImage() {
     return newFrame;
 }
 
-void Tracker::getBrightnessContour(int threshold) {
+void Tracker::getBrightnessContour() {
     if (getNewImage()) {
         grayImg = camImg;
         
