@@ -1,34 +1,35 @@
 #ifndef _INFOBOX_
 #define _INFOBOX_
 
-#include "PushButton.h"
-#include "Vector.h"
+#include "ofMain.h"
+#include "constants.h"
 
 #include <vector>
-#include <cstring>
-
-using namespace std;
 
 class Infobox {
-public:
-    enum Type {CHECK, CHOICE};
-    enum State {ALIVE, ONE_HIT, TWO_HIT, DEAD};
-    
 private:
-    vector<string> message;
-    int width, height;
-    Type type;
-    State state;
-    PushButton one, two;
+    //vector<string> message;
+    string message;
+    //unsigned int width, height;
     
 public:
-    Infobox();
-    //~Infobox();
+    Infobox() {}
+
+    void set(const char* m) {
+        clear();
+        message = m;
+    }
     
-    void set(string m, Type t);
-    void draw();
-    State checkState(bool hit, Vector &hitPoint);
-    void kill();
+    void clear() {
+        message.clear();
+    }
+
+    void draw() {
+        ofSetColor(0, 0, 0);
+        //for (int i = 0; i < message.size(); i++) {
+            ofDrawBitmapString(message, WIDTH - message.length() * 8 - 10, HEIGHT - 20);
+        //}
+    }
 };
 
 #endif

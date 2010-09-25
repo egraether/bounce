@@ -1,8 +1,8 @@
 #ifndef _CONSTANTS_
 #define _CONSTANTS_
 
-#define WIDTH 1280 //640 //1280
-#define HEIGHT 800 //480 //800
+#define WIDTH 1280
+#define HEIGHT 800
 
 #define HITPOINT_SIZE 3
 

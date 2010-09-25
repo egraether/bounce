@@ -92,6 +92,8 @@ void Tracker::reset() {
     
     mode = CALIBRATION_NULL;
     showColorImg = true;
+    
+    infobox->set("direct the camera to the screen, then click to start the calibration");
 }
 
 void Tracker::calibrate() {
@@ -168,6 +170,8 @@ void Tracker::calibrate() {
                         threshold = 125;
                         
                         mode = COMPLETE;
+                        
+                        infobox->set("calibration finished, press 'm' for returning to menu");
                     }
                     else
                         mode = BACKGROUND;
@@ -188,6 +192,7 @@ bool Tracker::draw(bool hit, Vector hitPoint) {
         if (hit) {
             mode = BACKGROUND;
             showColorImg = false;
+            infobox->clear();
         }
     }
     else if (mode != COMPLETE)

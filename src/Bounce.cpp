@@ -81,9 +81,9 @@ void Bounce::draw() {
             break;
     }
     
+    tracker.drawPics();
     infobox.draw();
     //nameInput.draw(hit, hitPoint);
-    tracker.drawPics();
     
     ofFill();
     ofSetColor(0, 255, 0);
@@ -154,5 +154,5 @@ void Bounce::windowResized(int w, int h) {}
 
 void Bounce::changeMode(Mode m) {
     mode = m;
-    infobox.kill();
+    infobox.clear();
 }
