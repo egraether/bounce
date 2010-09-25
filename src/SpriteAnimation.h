@@ -11,6 +11,7 @@ private:
     
     unsigned int fromRow, fromColumn, toRow, toColumn;
     unsigned int actualRow, actualColumn;
+    bool increaseRow, increaseColumn;
     
     unsigned int spritesPerRow, spritesPerColumn;
     
@@ -49,11 +50,15 @@ public:
             if (frameCounter == frameSpeed) {
                 frameCounter = 0;
                 
-                if (actualRow < toRow)
+                if (actualRow < toRow && increaseRow)
                     actualRow++;
+                else if (actualRow > toRow && !increaseRow)
+                    actualRow--;
                 
-                if (actualColumn < toColumn)
+                if (actualColumn < toColumn && increaseColumn)
                     actualColumn++;
+                else if (actualColumn > toColumn && !increaseColumn)
+                    actualColumn--;
                 
                 if (isLastFrame) {
                     isLastFrame = false;
@@ -72,7 +77,7 @@ public:
             texture->draw(
                 x - width / 2, y - height / 2, 
                 width, height,
-                (actualColumn - 1) * (1.0 / spritesPerRow), (actualRow - 1) * (1.0 / spritesPerColumn),
+                actualColumn * (1.0 / spritesPerRow), actualRow * (1.0 / spritesPerColumn),
                 1.0 / spritesPerRow, 1.0 / spritesPerColumn
             );
         }
@@ -97,6 +102,9 @@ public:
         
         toRow = _toRow; 
         toColumn = _toColumn;
+        
+        increaseRow = fromRow < toRow;
+        increaseColumn = fromColumn < toColumn;
         
         repeat = _repeat;
         

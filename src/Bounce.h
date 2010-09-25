@@ -7,6 +7,7 @@
 #include "Console.h"
 #include "Infobox.h"
 #include "PushButton.h"
+#include "NameInput.h"
 #include "ShootingCans.h"
 #include "RobotDefense.h"
 #include "BalloonHunt.h"
@@ -22,6 +23,7 @@ private:
     Infobox infobox;
     Console console;
     Tracker tracker;
+    NameInput nameInput;
     
     ShootingCans shootingCans;
     RobotDefense robotDefense;

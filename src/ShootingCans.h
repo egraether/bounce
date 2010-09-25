@@ -35,7 +35,7 @@ public:
         pos(x, y), flying(false),
         sprite(t, w, h, r, c) {
             
-        sprite.setAnimation(2, 1, 6, 1, true);
+        sprite.setAnimation(1, 0, 5, 0, true);
     }
     
     bool draw() {
@@ -63,7 +63,7 @@ public:
             
             flying = true;
             flight = ((Vector(0, -sprite.getHeight() / 3 * 2) + pos) - hitPoint) / 10;
-            sprite.setAnimation(11, 1, 28, 1);
+            sprite.setAnimation(10, 0, 0, 0);
             time = ofGetElapsedTimef();
         }
     }

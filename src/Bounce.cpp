@@ -82,7 +82,7 @@ void Bounce::draw() {
     }
     
     infobox.draw();
-    
+    //nameInput.draw(hit, hitPoint);
     tracker.drawPics();
     
     ofFill();

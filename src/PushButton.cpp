@@ -15,6 +15,9 @@ void PushButton::set(string n, int x, int y, int w, int h) {
 }
 
 void PushButton::draw() {
+    ofFill();
+    ofSetColor(0xffffff);
+    ofRect(posX, posY, width, height);
     ofNoFill();
     ofSetColor(0, 0, 0);
     ofRect(posX, posY, width, height);
