@@ -26,15 +26,14 @@ void Bounce::setup() {
     console.addInformation("lastBang", &lastBang);
     console.addRegulation("bangLevel", &bangLevel, 0, 15);
     
-    calibrateButton.set("calibrate", WIDTH - 10 - WIDTH / 5, HEIGHT - 10 - WIDTH / 5,WIDTH / 5,WIDTH / 5);
-    menuButton.set("Menu", WIDTH - 10 - WIDTH / 5, HEIGHT - 10 - WIDTH / 5,WIDTH / 5,WIDTH / 5);
-    shootingCansButton.set("shootingCans", 10, 100, WIDTH / 5, WIDTH / 5);
-    robotDefenseButton.set("robotDefense", 20 + WIDTH / 5, 100, WIDTH / 5, WIDTH / 5);
-    balloonHuntButton.set("balloonHunt", 30 + 2 * WIDTH / 5, 100, WIDTH / 5, WIDTH / 5);
+    calibrateButton.set("calibrate", WIDTH - 10 - WIDTH / 5, HEIGHT - 10 - HEIGHT / 5, WIDTH / 5, HEIGHT / 5);
+    menuButton.set("Menu", WIDTH - 10 - WIDTH / 5, HEIGHT - 10 - WIDTH / 5, WIDTH / 5, HEIGHT / 5);
+    shootingCansButton.set("shootingCans", 10, 100, WIDTH / 5, HEIGHT / 5);
+    robotDefenseButton.set("robotDefense", 20 + WIDTH / 5, 100, WIDTH / 5, HEIGHT / 5);
+    balloonHuntButton.set("balloonHunt", 30 + 2 * WIDTH / 5, 100, WIDTH / 5, HEIGHT / 5);
 }
 
-void Bounce::update() {
-}
+void Bounce::update() {}
 
 void Bounce::draw() {
     

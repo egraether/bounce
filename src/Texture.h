@@ -52,7 +52,11 @@ public:
         ofDisableAlphaBlending();
     }
     
-    void load(ofImage &image, int wrapS, int wrapT) {
+    void load(const char* imageFile, int wrapS, int wrapT) {
+        ofImage image;
+        if (!image.loadImage(imageFile))
+            throw "Failed to load numberImage";
+        
         width = image.getWidth();
         height = image.getHeight();
         

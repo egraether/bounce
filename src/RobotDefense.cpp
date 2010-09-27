@@ -5,14 +5,8 @@
 
 RobotDefense::RobotDefense(const char* titel, Infobox* infobox, const char* scoresFileName) : 
     Game(titel, infobox, scoresFileName), cannon(WIDTH / 2, HEIGHT) {
-        
-    ofImage image;
-    bool result = image.loadImage("numbers.png");
-    if (!result) {
-        cout << "Failed to load " << "numbers.png" << "\n";
-        throw "Failed to load numberImage";
-    }
-    numbers.load(image, GL_CLAMP, GL_CLAMP);
+    
+    numbers.load("numbers.png", GL_CLAMP, GL_CLAMP);
 }
 
 void RobotDefense::reset() {

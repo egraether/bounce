@@ -4,13 +4,7 @@
 BalloonHunt::BalloonHunt(const char* titel, Infobox* infobox, const char* scoresFileName) : 
     Game(titel, infobox, scoresFileName) {
     
-    ofImage image;
-    bool result = image.loadImage("numbers.png");
-    if (!result) {
-        cout << "Failed to load " << "numbers.png" << "\n";
-        throw "Failed to load numberImage";
-    }
-    numbers.load(image, GL_CLAMP, GL_CLAMP);
+    numbers.load("numbers.png", GL_CLAMP, GL_CLAMP);
 }
 
 void BalloonHunt::reset() {
@@ -18,7 +12,6 @@ void BalloonHunt::reset() {
     
     balloons.clear();
     counter = 0;
-    startTime = ofGetElapsedTimef();
 }
    
 bool BalloonHunt::draw(bool hit, Vector &hitPoint) {

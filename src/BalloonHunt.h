@@ -14,7 +14,6 @@ private:
     class Balloon;
     vector<Balloon> balloons;
     Texture numbers;
-    float startTime;
     int counter;
     
 public:

@@ -225,6 +225,14 @@ void Tracker::keyPressed(int key) {
         case 'r':
             reset();
 			break;
+        case 'm':
+            showContours = false;
+            showColorImg = false;
+            showGrayImg = false;
+            showGrayDiff = false;
+            showScreenImg = false;
+            showCamImg = false;
+            break;
         case 'x':
             showContours = !showContours;
 			break;

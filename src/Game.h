@@ -12,6 +12,7 @@ class Game {
 protected:
     string titel;
     bool gameOver;
+    enum {INIT, PLAY, PANEL} mode;
     
     Infobox* infobox;
     int points;
@@ -21,6 +22,8 @@ protected:
     
     string name;
     bool insertName;
+    
+    float startTime;
     
 public:
     Game(string _titel, Infobox* _infobox, string _scoresFileName) : 
@@ -33,13 +36,22 @@ public:
     virtual bool draw(bool hit, Vector &hitPoint) = 0;
     
     void resetGame() {
+        mode = INIT;
         points = 0;
         insertName = false;
         name = "";
         gameOver = false;
+        infobox->set("bounce to start.");
+    }
+    
+    void startGame() {
+        mode = PLAY;
+        infobox->clear();
+        startTime = ofGetElapsedTimef();
     }
     
     void stopGame() {
+        mode = PANEL;
         gameOver = true;
         infobox->set("bounce to continue.");
         
@@ -61,7 +73,7 @@ public:
         
         ofDrawBitmapString(titel, WIDTH / 4 + 20, HEIGHT / 4 + 20);
         highScore.draw(WIDTH / 4 + 20, HEIGHT / 4 + 50);
-        ofDrawBitmapString(name, WIDTH / 4 + 20, HEIGHT / 4 + 270);
+        ofDrawBitmapString("your score: " + ofToString(points), WIDTH / 4 + 20, HEIGHT / 4 + 300);
     }
     
     bool keyPressed(int key) {

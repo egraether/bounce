@@ -56,7 +56,8 @@ public:
     }
     
     bool checkHit(Vector &hitPoint) {
-        if (hitPoint.x > pos.x - sprite.getWidth() / 2 && 
+        if (!flying && 
+            hitPoint.x > pos.x - sprite.getWidth() / 2 && 
             hitPoint.x < pos.x + sprite.getWidth() / 2 &&
             hitPoint.y > pos.y - sprite.getHeight() / 2 &&
             hitPoint.y < pos.y + sprite.getHeight() / 2) {
