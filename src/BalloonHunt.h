@@ -18,7 +18,7 @@ private:
     int counter;
     
 public:
-    BalloonHunt(Infobox* i);
+    BalloonHunt(const char* titel, Infobox* infobox, const char* scoresFileName);
     //~Game()
     
     virtual void reset();

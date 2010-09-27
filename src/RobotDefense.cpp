@@ -3,8 +3,8 @@
 
 #include <cmath>
 
-RobotDefense::RobotDefense(Infobox* i) : 
-    Game(i), cannon(WIDTH / 2, HEIGHT) {
+RobotDefense::RobotDefense(const char* titel, Infobox* infobox, const char* scoresFileName) : 
+    Game(titel, infobox, scoresFileName), cannon(WIDTH / 2, HEIGHT) {
         
     ofImage image;
     bool result = image.loadImage("numbers.png");
@@ -16,6 +16,8 @@ RobotDefense::RobotDefense(Infobox* i) :
 }
 
 void RobotDefense::reset() {
+    resetGame();
+    
     robots.clear();
     counter = 0;
     period = 100;

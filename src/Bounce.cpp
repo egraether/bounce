@@ -5,9 +5,10 @@ Bounce::Bounce() :
     tracker(&infobox, &console),
     mode(MENU),
     hit(false),
-    shootingCans(&infobox),
-    robotDefense(&infobox),
-    balloonHunt(&infobox) {
+    activeGame(0),
+    shootingCans("Shooting Cans", &infobox, "cans.txt"),
+    robotDefense("Robot Defense", &infobox, "robots.txt"),
+    balloonHunt("BalloonHunt", &infobox, "balloons.txt") {
 }
 
 void Bounce::setup() {
@@ -44,40 +45,22 @@ void Bounce::draw() {
             robotDefenseButton.draw();
             balloonHuntButton.draw();
             
-            if (calibrateButton.checkHit(hit, hitPoint)) {
+            if (calibrateButton.checkHit(hit, hitPoint))
                 changeMode(CALIBRATE);
-                tracker.reset();
-            }
-            else if (shootingCansButton.checkHit(hit, hitPoint)) {
+            else if (shootingCansButton.checkHit(hit, hitPoint))
                 changeMode(SHOOTING_CANS);
-                shootingCans.reset();
-            }
-            else if (robotDefenseButton.checkHit(hit, hitPoint)) {
+            else if (robotDefenseButton.checkHit(hit, hitPoint))
                 changeMode(ROBOT_DEFENSE);
-                robotDefense.reset();
-            }
-            else if (balloonHuntButton.checkHit(hit, hitPoint)) {
+            else if (balloonHuntButton.checkHit(hit, hitPoint))
                 changeMode(BALLOON_HUNT);
-                balloonHunt.reset();
-            }
             break;
         case CALIBRATE:
             if (!tracker.draw(hit, hitPoint))
                 changeMode(MENU);
             break;
-        case SHOOTING_CANS:
-            if (!shootingCans.draw(hit, hitPoint))
-                changeMode(MENU);
-            break;
-        case ROBOT_DEFENSE:
-            if (!robotDefense.draw(hit, hitPoint))
-                changeMode(MENU);
-            break;
-        case BALLOON_HUNT:
-            if (!balloonHunt.draw(hit, hitPoint))
-                changeMode(MENU);
-            break;
         default:
+            if (!activeGame->draw(hit, hitPoint))
+                changeMode(MENU);
             break;
     }
     
@@ -114,6 +97,9 @@ void Bounce::audioReceived (float* input, int bufferSize, int nChannels) {
 }
 
 void Bounce::keyPressed(int key) {
+    if (activeGame && activeGame->keyPressed(key))
+        return;
+    
     switch (key) {
         case 'm':
             changeMode(MENU);
@@ -155,4 +141,27 @@ void Bounce::windowResized(int w, int h) {}
 void Bounce::changeMode(Mode m) {
     mode = m;
     infobox.clear();
+    
+    switch (mode) {
+        case MENU:
+            activeGame = 0;
+            break;
+        case CALIBRATE:
+            tracker.reset();
+            break;
+        case SHOOTING_CANS:
+            activeGame = &shootingCans;
+            shootingCans.reset();
+            break;
+        case ROBOT_DEFENSE:
+            activeGame = &robotDefense;
+            robotDefense.reset();
+            break;
+        case BALLOON_HUNT:
+            activeGame = &balloonHunt;
+            balloonHunt.reset();
+            break;
+        default:
+            break;
+    }
 }

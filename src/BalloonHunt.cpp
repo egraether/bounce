@@ -1,7 +1,9 @@
 #include "BalloonHunt.h"
 #include "ofMain.h"
 
-BalloonHunt::BalloonHunt(Infobox* i) : Game(i) {
+BalloonHunt::BalloonHunt(const char* titel, Infobox* infobox, const char* scoresFileName) : 
+    Game(titel, infobox, scoresFileName) {
+    
     ofImage image;
     bool result = image.loadImage("numbers.png");
     if (!result) {
@@ -12,6 +14,8 @@ BalloonHunt::BalloonHunt(Infobox* i) : Game(i) {
 }
 
 void BalloonHunt::reset() {
+    resetGame();
+    
     balloons.clear();
     counter = 0;
     startTime = ofGetElapsedTimef();

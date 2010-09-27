@@ -25,6 +25,8 @@ private:
     Tracker tracker;
     NameInput nameInput;
     
+    Game* activeGame;
+    
     ShootingCans shootingCans;
     RobotDefense robotDefense;
     BalloonHunt balloonHunt;

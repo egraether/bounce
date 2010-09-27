@@ -1,6 +1,8 @@
 #ifndef _HIGHSCORE_
 #define _HIGHSCORE_
 
+#include "ofMain.h"
+
 #include <cstring>
 #include <fstream>
 #include <map>
@@ -8,15 +10,9 @@
 using namespace std;
 
 class HighScore {
-private:
-    struct classcomp {
-        bool operator() (const int l, const int& r) const {
-            return l > r;
-        }
-    };
-    
-    multimap<int, string, classcomp> scores;
-    multimap<int, string, classcomp>::iterator it;
+private:    
+    multimap<int, string, greater<int> > scores;
+    multimap<int, string, greater<int> >::iterator it, at;
     
 public:
     bool checkScore(int score) {
@@ -25,9 +21,13 @@ public:
     
     void insertScore(string name, int score) {
         if (checkScore(score)) {
-            scores.insert(pair<int, string>(score, name));
+            at = scores.insert(pair<int, string>(score, name));
             scores.erase(--scores.end());
         }
+    }
+    
+    void updateNewName(string name) {
+        at->second = name;
     }
     
     void readFile(const char* fileName) {
@@ -52,6 +52,7 @@ public:
         }
         
         file.close();
+        at = 0;
     }
     
     void writeFile(const char* fileName) {
@@ -61,11 +62,30 @@ public:
             file << it->second << ' ' << it->first << '\n';
         
         file.close();
+        at = 0;
     }
     
     void printScores() {
         for (it = scores.begin(); it != scores.end(); it++)
             cout << it->first << ' ' << it->second << '\n';
+    }
+    
+    void draw(int x, int y) {
+        int row = y + 15;
+        ofSetColor(0, 0, 0);
+        
+        for (it = scores.begin(); it != scores.end(); it++) {
+            if (it == at) {
+                ofFill();
+                ofSetColor(220, 220, 220);
+                ofRect(x, row - 15, 200, 20);
+                ofSetColor(0, 0, 0);
+            }
+            
+            ofDrawBitmapString(ofToString(it->first), x + 10, row);
+            ofDrawBitmapString(it->second, x + 50, row);
+            row += 20;
+        }
     }
 };
 

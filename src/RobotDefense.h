@@ -19,7 +19,7 @@ private:
     Vector cannon;
     
 public:
-    RobotDefense(Infobox* i);
+    RobotDefense(const char* titel, Infobox* infobox, const char* scoresFileName);
     virtual void reset();
     virtual bool draw(bool hit, Vector &hitPoint);
 };

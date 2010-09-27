@@ -16,7 +16,7 @@ private:
     Texture numbers;
     
 public:
-    ShootingCans(Infobox* i);
+    ShootingCans(const char* titel, Infobox* infobox, const char* scoresFileName);
     //~Game()
     
     virtual void reset();
@@ -65,7 +65,11 @@ public:
             flight = ((Vector(0, -sprite.getHeight() / 3 * 2) + pos) - hitPoint) / 10;
             sprite.setAnimation(10, 0, 0, 0);
             time = ofGetElapsedTimef();
+            
+            return true;
         }
+        
+        return false;
     }
 };
 

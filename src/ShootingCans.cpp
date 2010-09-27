@@ -1,7 +1,9 @@
 #include "ShootingCans.h"
 #include "ofMain.h"
 
-ShootingCans::ShootingCans(Infobox* i) : Game(i) {
+ShootingCans::ShootingCans(const char* titel, Infobox* infobox, const char* scoresFileName) : 
+    Game(titel, infobox, scoresFileName) {
+        
     ofImage image;
     bool result = image.loadImage("numbers.png");
     if (!result) {
@@ -12,6 +14,8 @@ ShootingCans::ShootingCans(Infobox* i) : Game(i) {
 }
 
 void ShootingCans::reset() {
+    resetGame();
+    
     cans.clear();
     
     for (int i = 0; i < 3; i++) {
@@ -29,7 +33,10 @@ bool ShootingCans::draw(bool hit, Vector &hitPoint) {
     // check hit
     if (hit) {
         for (int i = 0; i < cans.size(); i++) {
-            cans[i].checkHit(hitPoint);
+            if (cans[i].checkHit(hitPoint)) {
+                points += 100;
+                infobox->set(ofToString(points).c_str());
+            }
         }
     }
     
@@ -39,8 +46,14 @@ bool ShootingCans::draw(bool hit, Vector &hitPoint) {
             cans.erase(cans.begin() + i);
     }
     
-    if (cans.size() == 0)
-        return false;
+    if (gameOver) {
+        drawPanel();
+        
+        if (hit && !insertName)
+            return false;
+    }
+    else if (cans.size() == 0)
+        stopGame();
     
     return true;
 }
