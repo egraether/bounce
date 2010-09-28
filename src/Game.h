@@ -7,6 +7,9 @@
 #include "Infobox.h"
 #include "HighScore.h"
 #include "constants.h"
+#include "Sign.h"
+
+#include <vector>
 
 class Game {
 protected:
@@ -25,6 +28,8 @@ protected:
     
     float startTime;
     
+    vector<Sign> signs;
+    
 public:
     Game(string _titel, Infobox* _infobox, string _scoresFileName) : 
         titel(_titel), infobox(_infobox), scoresFileName(_scoresFileName), insertName(false) {
@@ -41,6 +46,7 @@ public:
         insertName = false;
         name = "";
         gameOver = false;
+        signs.clear();
         infobox->set("bounce to start.");
     }
     
@@ -74,6 +80,13 @@ public:
         ofDrawBitmapString(titel, WIDTH * 3 / 8 + 20, HEIGHT / 4 + 20);
         highScore.draw(WIDTH * 3 / 8 + 20, HEIGHT / 4 + 50);
         ofDrawBitmapString("your score: " + ofToString(points), WIDTH * 3 / 8 + 20, HEIGHT / 4 + 300);
+    }
+    
+    void drawSigns() {
+        for (int i = 0; i < signs.size(); i++) {
+            if (!signs[i].draw())
+                signs.erase(signs.begin() + i);
+        }
     }
     
     bool keyPressed(int key) {

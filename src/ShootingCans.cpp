@@ -23,7 +23,6 @@ void ShootingCans::reset() {
     }
     
     gameStarted = false;
-    timeBonus = 0;
 }
    
 bool ShootingCans::draw(bool hit, Vector &hitPoint) {
@@ -45,10 +44,12 @@ bool ShootingCans::draw(bool hit, Vector &hitPoint) {
                     if (cans[i].checkHit(hitPoint)) {
                         points += 100;
                         infobox->set(ofToString(points).c_str());
+                        signs.push_back(Sign("+100", hitPoint.x, hitPoint.y, 2.0));
                         
                         if (points == 1000) {
-                            timeBonus = (startTime - ofGetElapsedTimef()) * 10;
+                            int timeBonus = (startTime - ofGetElapsedTimef()) * 10;
                             points += timeBonus;
+                            signs.push_back(Sign("Timebonus: +" + ofToString(timeBonus), WIDTH / 2, HEIGHT / 2, 5.0));
                         }
                     }
                 }
@@ -79,6 +80,8 @@ bool ShootingCans::draw(bool hit, Vector &hitPoint) {
         default:
             break;
     }
+    
+    drawSigns();
     
     return true;
 }
