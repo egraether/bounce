@@ -19,7 +19,7 @@ void Bounce::setup() {
     
     // audio
     ofSoundStreamSetup(0, 1, this);
-    bangLevel = 2;
+    bangLevel = 10;
     lastBang = 0;
     bang = false;
     
@@ -88,8 +88,8 @@ void Bounce::draw() {
 
 void Bounce::audioReceived (float* input, int bufferSize, int nChannels) {
 	for (int i = 0; i < bufferSize; i++){
-		if (input[i] * 10 > bangLevel) {
-            lastBang = input[i] * 10;
+		if (input[i] * 100 > bangLevel) {
+            lastBang = input[i] * 100;
             bang = true;
         }
 	}	
