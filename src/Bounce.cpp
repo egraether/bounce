@@ -75,7 +75,7 @@ void Bounce::draw() {
     
     console.draw();
     ofSetColor(0x000000);
-    ofDrawBitmapString("Framerate: " + ofToString(ofGetFrameRate()), WIDTH - 150, 20);
+    ofDrawBitmapString("Framerate: " + ofToString(ofGetFrameRate()), WIDTH - 150, 40);
     
     tracker.getPics();
     

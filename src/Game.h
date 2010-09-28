@@ -65,15 +65,15 @@ public:
     void drawPanel() {
         ofFill();
         ofSetColor(200, 200, 200);
-        ofRect(WIDTH / 4, HEIGHT / 4, WIDTH / 2, HEIGHT / 2);
+        ofRect(WIDTH * 3 / 8, HEIGHT / 4, WIDTH / 4, HEIGHT / 2);
         
         ofNoFill();
         ofSetColor(0, 0, 0);
-        ofRect(WIDTH / 4, HEIGHT / 4, WIDTH / 2, HEIGHT / 2);
+        ofRect(WIDTH * 3 / 8, HEIGHT / 4, WIDTH / 4, HEIGHT / 2);
         
-        ofDrawBitmapString(titel, WIDTH / 4 + 20, HEIGHT / 4 + 20);
-        highScore.draw(WIDTH / 4 + 20, HEIGHT / 4 + 50);
-        ofDrawBitmapString("your score: " + ofToString(points), WIDTH / 4 + 20, HEIGHT / 4 + 300);
+        ofDrawBitmapString(titel, WIDTH * 3 / 8 + 20, HEIGHT / 4 + 20);
+        highScore.draw(WIDTH * 3 / 8 + 20, HEIGHT / 4 + 50);
+        ofDrawBitmapString("your score: " + ofToString(points), WIDTH * 3 / 8 + 20, HEIGHT / 4 + 300);
     }
     
     bool keyPressed(int key) {

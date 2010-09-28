@@ -15,6 +15,9 @@ private:
     vector<Can> cans;
     Texture numbers;
     
+    bool gameStarted;
+    float timeBonus;
+    
 public:
     ShootingCans(const char* titel, Infobox* infobox, const char* scoresFileName);
     //~Game()
