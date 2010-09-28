@@ -13,13 +13,13 @@ void ShootingCans::reset() {
     cans.clear();
     
     for (int i = 0; i < 3; i++) {
-        cans.push_back(Can((3 + i * 2) * WIDTH / 10, HEIGHT / 4, &numbers, 100, 100, 1, 32));
+        cans.push_back(Can((3 + i * 2) * WIDTH / 10, HEIGHT / 4, &numbers, 100, 100, 32, 1));
     }
     for (int i = 1; i <= 4; i++) {
-        cans.push_back(Can(i * WIDTH / 5, HEIGHT / 2, &numbers, 100, 100, 1, 32));
+        cans.push_back(Can(i * WIDTH / 5, HEIGHT / 2, &numbers, 100, 100, 32, 1));
     }
     for (int i = 0; i < 3; i++) {
-        cans.push_back(Can((3 + i * 2) * WIDTH / 10, HEIGHT / 4 * 3, &numbers, 100, 100, 1, 32));
+        cans.push_back(Can((3 + i * 2) * WIDTH / 10, HEIGHT / 4 * 3, &numbers, 100, 100, 32, 1));
     }
     
     gameStarted = false;
@@ -30,7 +30,6 @@ bool ShootingCans::draw(bool hit, Vector &hitPoint) {
     switch (mode) {
         case INIT:
             startGame();
-            infobox->set(ofToString(points).c_str());
             break;
         case PLAY:
             // check hit
@@ -43,13 +42,12 @@ bool ShootingCans::draw(bool hit, Vector &hitPoint) {
                 for (int i = 0; i < cans.size(); i++) {
                     if (cans[i].checkHit(hitPoint)) {
                         points += 100;
-                        infobox->set(ofToString(points).c_str());
-                        signs.push_back(Sign("+100", hitPoint.x, hitPoint.y, 2.0));
+                        signs.push_back(Sign("+100", hitPoint, 2.0));
                         
                         if (points == 1000) {
                             int timeBonus = (startTime - ofGetElapsedTimef()) * 10;
                             points += timeBonus;
-                            signs.push_back(Sign("Timebonus: +" + ofToString(timeBonus), WIDTH / 2, HEIGHT / 2, 5.0));
+                            signs.push_back(Sign("Timebonus: +" + ofToString(timeBonus), Vector(WIDTH / 2, HEIGHT / 2), 5.0));
                         }
                     }
                 }
@@ -66,6 +64,8 @@ bool ShootingCans::draw(bool hit, Vector &hitPoint) {
                 ofDrawBitmapString(ofToString(startTime - ofGetElapsedTimef(), 0), WIDTH - 30, 20);
             else
                 ofDrawBitmapString("120", WIDTH - 30, 20);
+            
+            ofDrawBitmapString(ofToString(points), 20, 20);
             
             if (cans.size() == 0 || (gameStarted && startTime - ofGetElapsedTimef() < 0))
                 stopGame();

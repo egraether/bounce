@@ -3,7 +3,7 @@
 
 #include "Game.h"
 #include "Texture.h"
-#include "SpriteSheet.h"
+#include "SpriteAnimation.h"
 #include "PushButton.h"
 #include "Infobox.h"
 
@@ -18,6 +18,8 @@ private:
     float speed;
     Vector cannon;
     
+    bool gameOver;
+    
 public:
     RobotDefense(const char* titel, Infobox* infobox, const char* scoresFileName);
     virtual void reset();
@@ -27,12 +29,14 @@ public:
 class RobotDefense::Robot {
 private:
     Vector pos;
-    SpriteSheet sprite;
+    SpriteAnimation sprite;
     bool stop;
     
 public:
-    Robot(int x, int y, int w, int h, Texture* t, int n) : 
-        pos(x, y), sprite(t, w, h, n), stop(false) {
+    Robot(int x, int y, int width, int height, Texture* texture, int rows, int columns) : 
+        pos(x, y), sprite(texture, width, height, rows, columns), stop(false) {
+            
+        sprite.setAnimation(0, 0, 0, 0, true);
     }
     
     bool draw(Vector &cannon) {
@@ -58,11 +62,21 @@ public:
         return Vector::distance(goal, pos);
     }
     
-    void checkHit(Vector &cannon, Vector &hitPoint) {
-        if (pos.distanceToLine(hitPoint, cannon - hitPoint) < 50) {
-            sprite.startAnimation();
-            stop = true;
+    bool checkHit(Vector &cannon, Vector &hitPoint) {
+        if (!stop && pos.distanceToLine(hitPoint, cannon - hitPoint) < 50) {
+            destroy();
+            return true;
         }
+        return false;
+    }
+    
+    Vector getPosition() {
+        return pos;
+    }
+    
+    void destroy() {
+        sprite.setAnimation(5, 0, 0, 0, false);
+        stop = true;
     }
 };
 

@@ -77,8 +77,8 @@ public:
             texture->draw(
                 x - width / 2, y - height / 2, 
                 width, height,
-                actualColumn * (1.0 / spritesPerRow), actualRow * (1.0 / spritesPerColumn),
-                1.0 / spritesPerRow, 1.0 / spritesPerColumn
+                actualColumn * (1.0 / spritesPerColumn), actualRow * (1.0 / spritesPerRow),
+                1.0 / spritesPerColumn, 1.0 / spritesPerRow
             );
         }
         

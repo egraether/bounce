@@ -11,8 +11,8 @@ private:
     float stopTime;
     
 public:
-    Sign(string _content, int x, int y, float time) : 
-        content(_content), position(x, y), stopTime(ofGetElapsedTimef() + time) {
+    Sign(string _content, Vector _position, float time) : 
+        content(_content), position(_position), stopTime(ofGetElapsedTimef() + time) {
     }
     
     bool draw() {
