@@ -18,11 +18,20 @@ Tracker::Tracker(Infobox* i, Console* c) :
     minBlobSize(MIN_BLOB_SIZE),
     maxBlobSize(MAX_BLOB_SIZE),
     lastBlobSize(0),
-    storeSize(3),
+
+    screenStoreSize(6),
+    trackStop(false),
 
     derivationWidth(2),
-    bangLevel(10), 
-    bangCounter(0) {
+    bangLevel(3), 
+    bangCounter(0),
+
+    camWaitFrames(3),
+    camWaitCounter(10) {
+    
+    console->addInformation("lastBlobSize", &lastBlobSize);
+    console->addRegulation("screenStoreSize", &screenStoreSize, 1, 10);    
+    console->addRegulation("camWaitFrames", &camWaitFrames, 0, 30);
     
     console->addRegulation("threshold", &threshold, 0, 255);
     console->addRegulation("derivationWidth", &derivationWidth, 0, 10);
@@ -40,20 +49,14 @@ Tracker::Tracker(Infobox* i, Console* c) :
 //    console->addRegulation("minBlobSize", &minBlobSize, 0, WIDTH * HEIGHT);
 //    console->addRegulation("maxBlobSize", &maxBlobSize, 0, WIDTH * HEIGHT);
     
-    console->addInformation("lastBlobSize", &lastBlobSize);
-        
-    console->addRegulation("storeSize", &storeSize, 1, 10);
-    
     videoCapture.setVerbose(true);
     videoCapture.initGrabber(WIDTH,HEIGHT);
 
     colorImg.allocate(WIDTH,HEIGHT);
-    camImg.allocate(WIDTH,HEIGHT);
+    camImg.allocate(WIDTH, HEIGHT);
     grayImg.allocate(WIDTH,HEIGHT);
     grayBg.allocate(WIDTH,HEIGHT);
     grayDiff.allocate(WIDTH,HEIGHT);
-        
-    screenImgStore.push_back(screenImg);
     
     showColorImg = false;
     showGrayImg = false;
@@ -227,8 +230,9 @@ void Tracker::drawPics() {
         grayDiff.draw(0, 0);
     if (showCamImg)
         grayImg.draw(0, 0);
+        //camImg.draw(0, 0);
     if (showScreenImg)
-        screenImgStore.front().draw(0, 0);
+        screenImgStore.front()->draw(0, 0);
     if (showContours)
         contourFinder.draw(0, 0);
 }
@@ -273,57 +277,52 @@ void Tracker::keyPressed(int key) {
 }
 
 bool Tracker::getHitPoint(Vector &hitPoint) {
-    if (mode == COMPLETE) {
-        
-        grayImg = camImg;
-        colorImg.setFromPixels(screenImgStore.front().getPixels(), WIDTH, HEIGHT);
-        grayBg = colorImg;
-        
-        int pointList[16] = {
-            screenCorner[0].x, screenCorner[0].y, screenCorner[1].x, screenCorner[1].y,
-            screenCorner[3].x, screenCorner[3].y, screenCorner[2].x, screenCorner[2].y,
-            projCorner[0].x, projCorner[0].y, projCorner[1].x, projCorner[1].y, 
-            projCorner[3].x, projCorner[3].y, projCorner[2].x, projCorner[2].y
-        };
-        int resolution[2] = {WIDTH, HEIGHT};
-        
-        cvWarpPerspective(grayImg.getCvImage(), grayDiff.getCvImage(), homography);
-        
-//        if (equalize)
-//            cvEqualizeHist(grayDiff.getCvImage(), grayDiff.getCvImage());
-        
-        grayImg = grayDiff;
-        grayDiff.absDiff(grayBg);
-        grayBg = grayDiff;
-        
-        grayDiff.threshold(threshold);
-        grayDiff.erode();
-        grayDiff.dilate();
-        
-        contourFinder.findContours(grayDiff, minBlobSize, maxBlobSize, 1, false);
-
-        if (contourFinder.nBlobs) {
-            lastBlobSize = contourFinder.blobs[0].area;
-            hitPoint.set(contourFinder.blobs[0].centroid.x, contourFinder.blobs[0].centroid.y);
-            return true;
+    camWaitCounter++;
+    if (camWaitFrames == camWaitCounter) {
+        if (mode == COMPLETE) {
+            
+            grayImg = camImg;
+            colorImg.setFromPixels(screenImgStore.front()->getPixels(), WIDTH, HEIGHT);
+            grayBg = colorImg;
+            
+            int pointList[16] = {
+                screenCorner[0].x, screenCorner[0].y, screenCorner[1].x, screenCorner[1].y,
+                screenCorner[3].x, screenCorner[3].y, screenCorner[2].x, screenCorner[2].y,
+                projCorner[0].x, projCorner[0].y, projCorner[1].x, projCorner[1].y, 
+                projCorner[3].x, projCorner[3].y, projCorner[2].x, projCorner[2].y
+            };
+            int resolution[2] = {WIDTH, HEIGHT};
+            
+            cvWarpPerspective(grayImg.getCvImage(), grayDiff.getCvImage(), homography);
+            
+            //        if (equalize)
+            //            cvEqualizeHist(grayDiff.getCvImage(), grayDiff.getCvImage());
+            
+            grayImg = grayDiff;
+            grayDiff.absDiff(grayBg);
+            grayBg = grayDiff;
+            
+            grayDiff.threshold(threshold);
+            grayDiff.erode();
+            grayDiff.dilate();
+            
+            contourFinder.findContours(grayDiff, minBlobSize, maxBlobSize, 1, false);
+            
+            if (contourFinder.nBlobs) {
+                lastBlobSize = contourFinder.blobs[0].area;
+                hitPoint.set(contourFinder.blobs[0].centroid.x, contourFinder.blobs[0].centroid.y);
+                return true;
+            }
         }
     }
+    
+    getNewCamImage();
+    getNewScreenImage();
+    
     return false;
 }
 
-void Tracker::getPics() {
-    if (getNewImage() && mode == COMPLETE) {
-        
-        screenImg.grabScreen(0, 0, WIDTH, HEIGHT);
-        screenImgStore.push_back(screenImg);
-        
-        while (screenImgStore.size() > storeSize) {
-            screenImgStore.pop_front();
-        }
-    }
-}
-
-bool Tracker::getNewImage() {
+bool Tracker::getNewCamImage() {
     bool newFrame = false;
     videoCapture.grabFrame();
     newFrame = videoCapture.isFrameNew();
@@ -334,8 +333,20 @@ bool Tracker::getNewImage() {
     return newFrame;
 }
 
+void Tracker::getNewScreenImage() {
+    ofImage* screenImg = new ofImage();
+    screenImg->grabScreen(0, 0, WIDTH, HEIGHT);
+    screenImgStore.push_back(screenImg);
+    
+    while (screenImgStore.size() > screenStoreSize) {
+        screenImg = screenImgStore.front();
+        screenImgStore.pop_front();
+        delete screenImg;
+    }
+}
+
 void Tracker::getBrightnessContour() {
-    if (getNewImage()) {
+    if (getNewCamImage()) {
         grayImg = camImg;
         
         grayDiff.absDiff(grayBg, grayImg);
@@ -370,7 +381,7 @@ void Tracker::getHueContour() {
 //        lastBlobSize = contourFinder.blobs[0].area;
 }
 
-bool Tracker::audioInput(float energy) {
+void Tracker::audioInput(float energy) {
     energyDiff.push_back(energy - energyPlot[energyPlot.size() - 1]);
     while (energyDiff.size() > derivationWidth) {
         energyDiff.pop_front();
@@ -392,10 +403,8 @@ bool Tracker::audioInput(float energy) {
     bangCounter++;
     if (averageEnergyDiff >= bangLevel && bangCounter > 20) {
         bangCounter = 0;
-        return true;
+        camWaitCounter = 0;
     }
-    
-    return false;
 }
 
 void Tracker::drawAudioPlots() {

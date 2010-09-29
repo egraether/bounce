@@ -31,13 +31,20 @@ private:
     
     // image capture
     ofVideoGrabber videoCapture;
-    ofxCvColorImage colorImg, camImg;
+    ofxCvColorImage colorImg;
     
-    deque<ofImage> screenImgStore;
-    int storeSize;
+    deque<ofImage*> screenImgStore;
+    int screenStoreSize;
+    int screenStoreIndex;
+    
+    int camWaitFrames;
+    int camWaitCounter;
+    ofxCvColorImage camImg;
+    
+    bool imageSwitch;
+    bool trackStop;
     
     ofxCvGrayscaleImage grayImg, grayBg, grayDiff;
-    ofImage screenImg;
     
     // contour
     ofxCvContourFinder contourFinder;
@@ -50,7 +57,8 @@ private:
     int minBlobSize, maxBlobSize;
     int lastBlobSize;
     
-    bool getNewImage();
+    bool getNewCamImage();
+    void getNewScreenImage();
     void getBrightnessContour();
     void getHueContour();
     
@@ -93,14 +101,13 @@ public:
     Tracker(Infobox* i, Console* c);
     ~Tracker();
     
-    void getPics();
     void reset();
     void calibrate();
     bool draw(bool hit, Vector hitPoint);
     void drawPics();
     void keyPressed(int key);
     bool getHitPoint(Vector &hitPoint);
-    bool audioInput(float energy);
+    void audioInput(float energy);
 };
 
 #endif

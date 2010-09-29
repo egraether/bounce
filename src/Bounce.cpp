@@ -13,7 +13,8 @@ Bounce::Bounce() :
 
 void Bounce::setup() {
     ofBackground(220, 220, 255);
-    ofSetVerticalSync(true);
+    //ofSetVerticalSync(true);
+    ofSetFrameRate(60.0f);
     
     srand(time(NULL));
     
@@ -72,13 +73,7 @@ void Bounce::draw() {
     ofSetColor(0x000000);
     ofDrawBitmapString("Framerate: " + ofToString(ofGetFrameRate()), WIDTH - 150, 40);
     
-    tracker.getPics();
-    
-    if (bang) {
-        //tracker.getPics();
-        hit = tracker.getHitPoint(hitPoint);
-        bang = false;
-    }
+    hit = tracker.getHitPoint(hitPoint);
 }
 
 void Bounce::audioReceived (float* input, int bufferSize, int nChannels) {
@@ -87,7 +82,7 @@ void Bounce::audioReceived (float* input, int bufferSize, int nChannels) {
         energy += input[i] * input[i];
 	}
     
-    bang = tracker.audioInput(energy);
+    tracker.audioInput(energy);
 }
 
 void Bounce::keyPressed(int key) {
