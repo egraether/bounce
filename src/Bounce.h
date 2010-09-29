@@ -39,8 +39,6 @@ private:
     
     // audio
     void audioReceived(float* input, int bufferSize, int nChannels);
-    int bangLevel;
-    int lastBang;
     bool bang;
 
 public:

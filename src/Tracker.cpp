@@ -18,9 +18,15 @@ Tracker::Tracker(Infobox* i, Console* c) :
     minBlobSize(MIN_BLOB_SIZE),
     maxBlobSize(MAX_BLOB_SIZE),
     lastBlobSize(0),
-    storeSize(3) {
+    storeSize(3),
+
+    derivationWidth(2),
+    bangLevel(10), 
+    bangCounter(0) {
     
     console->addRegulation("threshold", &threshold, 0, 255);
+    console->addRegulation("derivationWidth", &derivationWidth, 0, 10);
+    console->addRegulation("bangLevel", &bangLevel, 0, 50);
         
 //    console->addRegulation("hue", &hue, 0, 179);
 //    console->addRegulation("hueVariance", &hueVariance, 0, 25);
@@ -69,6 +75,7 @@ Tracker::Tracker(Infobox* i, Console* c) :
     homography = cvCreateMat(3, 3, CV_32FC1);
     
     equalize = false;
+    energyPlot.push_back(.0f);
 }
 
 Tracker::~Tracker() {
@@ -104,6 +111,9 @@ void Tracker::calibrate() {
     }
     
     switch (mode) {
+        case CALIBRATION_NULL:
+            drawAudioPlots();
+            break;
         case BACKGROUND:
             if (contourFinder.nBlobs == 0) {
                 counter++;
@@ -180,6 +190,9 @@ void Tracker::calibrate() {
                     reset();
             }
             counter++;
+            break;
+        case COMPLETE:
+            drawAudioPlots();
             break;
         default:
             break;
@@ -355,4 +368,48 @@ void Tracker::getHueContour() {
 //    
 //    if (contourFinder.nBlobs)
 //        lastBlobSize = contourFinder.blobs[0].area;
+}
+
+bool Tracker::audioInput(float energy) {
+    energyDiff.push_back(energy - energyPlot[energyPlot.size() - 1]);
+    while (energyDiff.size() > derivationWidth) {
+        energyDiff.pop_front();
+    }
+    
+    energyPlot.push_back(energy);
+    if (energyPlot.size() > PLOT_SIZE)
+        energyPlot.pop_front();
+    
+    float averageEnergyDiff = 0;
+    for (int i = 0; i < energyDiff.size(); i++) {
+        averageEnergyDiff += energyDiff[i];
+    }
+    
+    energyDiffPlot.push_back(averageEnergyDiff);
+    if (energyDiffPlot.size() > PLOT_SIZE)
+        energyDiffPlot.pop_front();
+    
+    bangCounter++;
+    if (averageEnergyDiff >= bangLevel && bangCounter > 20) {
+        bangCounter = 0;
+        return true;
+    }
+    
+    return false;
+}
+
+void Tracker::drawAudioPlots() {
+    ofSetColor(255, 0, 0);
+    ofLine(WIDTH / 2 - 250, HEIGHT / 2 + 50 - bangLevel, 
+           WIDTH / 2 + 250, HEIGHT / 2 + 50 - bangLevel);
+    
+    ofSetColor(0, 0, 0);
+    for (int i = 0; i < energyPlot.size() - 1; i++) {
+        ofLine((WIDTH - PLOT_SIZE) / 2 + i, HEIGHT / 2 - 50 - energyPlot[i], 
+               (WIDTH - PLOT_SIZE) / 2 + 1 + i, HEIGHT / 2 - 50 - energyPlot[i + 1]);
+    }
+    for (int i = 0; i < energyDiffPlot.size() - 1; i++) {
+        ofLine((WIDTH - PLOT_SIZE) / 2 + i, HEIGHT / 2 + 50 - energyDiffPlot[i], 
+               (WIDTH - PLOT_SIZE) / 2 + 1 + i, HEIGHT / 2 + 50 - energyDiffPlot[i + 1]);
+    }
 }

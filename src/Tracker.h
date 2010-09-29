@@ -67,6 +67,17 @@ private:
     
     bool equalize;
     
+    // audio
+    deque<float> energyPlot;
+    deque<float> energyDiff;
+    deque<float> energyDiffPlot;
+    
+    int derivationWidth;
+    int bangLevel;
+    int bangCounter;
+    
+    void drawAudioPlots();
+    
     // other
     bool showColorImg;
     bool showGrayImg;
@@ -89,6 +100,7 @@ public:
     void drawPics();
     void keyPressed(int key);
     bool getHitPoint(Vector &hitPoint);
+    bool audioInput(float energy);
 };
 
 #endif

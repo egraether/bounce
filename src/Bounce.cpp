@@ -19,12 +19,7 @@ void Bounce::setup() {
     
     // audio
     ofSoundStreamSetup(0, 1, this);
-    bangLevel = 10;
-    lastBang = 0;
     bang = false;
-    
-    console.addInformation("lastBang", &lastBang);
-    console.addRegulation("bangLevel", &bangLevel, 0, 15);
     
     calibrateButton.set("calibrate", WIDTH - 10 - WIDTH / 5, HEIGHT - 10 - HEIGHT / 5, WIDTH / 5, HEIGHT / 5);
     menuButton.set("Menu", WIDTH - 10 - WIDTH / 5, HEIGHT - 10 - WIDTH / 5, WIDTH / 5, HEIGHT / 5);
@@ -87,12 +82,12 @@ void Bounce::draw() {
 }
 
 void Bounce::audioReceived (float* input, int bufferSize, int nChannels) {
-	for (int i = 0; i < bufferSize; i++){
-		if (input[i] * 100 > bangLevel) {
-            lastBang = input[i] * 100;
-            bang = true;
-        }
-	}	
+    float energy = .0f;
+	for (int i = 0, ii = bufferSize * nChannels; i < ii; i++) {
+        energy += input[i] * input[i];
+	}
+    
+    bang = tracker.audioInput(energy);
 }
 
 void Bounce::keyPressed(int key) {
