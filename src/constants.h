@@ -1,7 +1,7 @@
 #ifndef _CONSTANTS_
 #define _CONSTANTS_
 
-#define WIDTH 1280
+#define WIDTH 1280 //1218
 #define HEIGHT 800
 
 #define HITPOINT_SIZE 3
@@ -20,7 +20,7 @@
 #define SATURATION_VARIANCE 20
 #define VALUE 100
 #define VALUE_VARIANCE 20
-#define MIN_BLOB_SIZE 500
+#define MIN_BLOB_SIZE 1000
 #define MAX_BLOB_SIZE 3000
 
 #define PLOT_SIZE 500

@@ -19,6 +19,7 @@ protected:
     
     Infobox* infobox;
     int points;
+    int ballHits;
     
     string scoresFileName;
     HighScore highScore;
@@ -43,6 +44,7 @@ public:
     void resetGame() {
         mode = INIT;
         points = 0;
+        ballHits = 0;
         insertName = false;
         name = "";
         gameOver = false;
