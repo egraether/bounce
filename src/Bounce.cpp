@@ -9,7 +9,8 @@ Bounce::Bounce() :
     activeGame(0),
     shootingCans("Shooting Cans", &infobox, "cans.txt"),
     robotDefense("Robot Defense", &infobox, "robots.txt"),
-    balloonHunt("BalloonHunt", &infobox, "balloons.txt") {
+    balloonHunt("BalloonHunt", &infobox, "balloons.txt"),
+    risingNinja("RisingNinja", &infobox, "ninja.txt") {
 }
 
 void Bounce::setup() {
@@ -27,6 +28,7 @@ void Bounce::setup() {
     shootingCansButton.set("shootingCans", 10, 100, WIDTH / 5, HEIGHT / 5);
     robotDefenseButton.set("robotDefense", 20 + WIDTH / 5, 100, WIDTH / 5, HEIGHT / 5);
     balloonHuntButton.set("balloonHunt", 30 + 2 * WIDTH / 5, 100, WIDTH / 5, HEIGHT / 5);
+    risingNinjaButton.set("risingNinja", 40 + 3 * WIDTH / 5, 100, WIDTH / 5, HEIGHT / 5);
 }
 
 void Bounce::update() {}
@@ -39,6 +41,7 @@ void Bounce::draw() {
             shootingCansButton.draw();
             robotDefenseButton.draw();
             balloonHuntButton.draw();
+            risingNinjaButton.draw();
             
             if (calibrateButton.checkHit(hit, hitPoint))
                 changeMode(CALIBRATE);
@@ -48,6 +51,8 @@ void Bounce::draw() {
                 changeMode(ROBOT_DEFENSE);
             else if (balloonHuntButton.checkHit(hit, hitPoint))
                 changeMode(BALLOON_HUNT);
+            else if (risingNinjaButton.checkHit(hit, hitPoint))
+                changeMode(RISING_NINJA);
             break;
         case CALIBRATE:
             if (!tracker.draw(hit, hitPoint))
@@ -167,6 +172,9 @@ void Bounce::changeMode(Mode m) {
             break;
         case BALLOON_HUNT:
             activeGame = &balloonHunt;
+            break;
+        case RISING_NINJA:
+            activeGame = &risingNinja;
             break;
         default:
             break;

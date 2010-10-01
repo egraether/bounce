@@ -10,13 +10,14 @@
 #include "ShootingCans.h"
 #include "RobotDefense.h"
 #include "BalloonHunt.h"
+#include "RisingNinja.h"
 
 class Bounce : public ofBaseApp{
 private:
     Vector hitPoint;
     bool hit;
     
-    enum Mode {MENU, CALIBRATE, SHOOTING_CANS, ROBOT_DEFENSE, BALLOON_HUNT} mode;
+    enum Mode {MENU, CALIBRATE, SHOOTING_CANS, ROBOT_DEFENSE, BALLOON_HUNT, RISING_NINJA} mode;
     void changeMode(Mode m);
     
     Infobox infobox;
@@ -29,11 +30,13 @@ private:
     ShootingCans shootingCans;
     RobotDefense robotDefense;
     BalloonHunt balloonHunt;
+    RisingNinja risingNinja;
     
     PushButton calibrateButton;
     PushButton shootingCansButton;
     PushButton robotDefenseButton;
     PushButton balloonHuntButton;
+    PushButton risingNinjaButton;
     
     // audio
     void audioReceived(float* input, int bufferSize, int nChannels);

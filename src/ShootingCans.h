@@ -4,8 +4,8 @@
 #include "Game.h"
 #include "Texture.h"
 #include "SpriteAnimation.h"
-#include "PushButton.h"
 #include "Infobox.h"
+#include "Vector.h"
 
 #include <vector>
 
@@ -19,7 +19,6 @@ private:
     
 public:
     ShootingCans(const char* titel, Infobox* infobox, const char* scoresFileName);
-    //~Game()
     
     virtual void reset();
     virtual bool draw(bool hit, Vector &hitPoint);
