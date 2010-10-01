@@ -105,6 +105,7 @@ public:
     void calibrate();
     bool draw(bool hit, Vector hitPoint);
     void drawPics();
+    void drawPauseScreen();
     void keyPressed(int key);
     bool getHitPoint(Vector &hitPoint);
     void audioInput(float energy);

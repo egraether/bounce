@@ -5,6 +5,7 @@ Bounce::Bounce() :
     tracker(&infobox, &console),
     mode(MENU),
     hit(false),
+    gamePaused(false),
     activeGame(0),
     shootingCans("Shooting Cans", &infobox, "cans.txt"),
     robotDefense("Robot Defense", &infobox, "robots.txt"),
@@ -20,10 +21,9 @@ void Bounce::setup() {
     
     // audio
     ofSoundStreamSetup(0, 1, this);
-    bang = false;
+    fullScreen = false;
     
     calibrateButton.set("calibrate", WIDTH - 10 - WIDTH / 5, HEIGHT - 10 - HEIGHT / 5, WIDTH / 5, HEIGHT / 5);
-    menuButton.set("Menu", WIDTH - 10 - WIDTH / 5, HEIGHT - 10 - WIDTH / 5, WIDTH / 5, HEIGHT / 5);
     shootingCansButton.set("shootingCans", 10, 100, WIDTH / 5, HEIGHT / 5);
     robotDefenseButton.set("robotDefense", 20 + WIDTH / 5, 100, WIDTH / 5, HEIGHT / 5);
     balloonHuntButton.set("balloonHunt", 30 + 2 * WIDTH / 5, 100, WIDTH / 5, HEIGHT / 5);
@@ -54,14 +54,22 @@ void Bounce::draw() {
                 changeMode(MENU);
             break;
         default:
-            if (!activeGame->draw(hit, hitPoint))
-                changeMode(MENU);
+            if (!gamePaused) {
+                if (!activeGame->draw(hit, hitPoint))
+                    changeMode(MENU);
+            }
+            else {
+                tracker.drawPauseScreen();
+                ofEnableAlphaBlending();
+                ofSetColor(220, 220, 220, 125);
+                ofRect(0, 0, WIDTH, HEIGHT);
+                ofDisableAlphaBlending();
+            }
             break;
     }
     
     tracker.drawPics();
     infobox.draw();
-    //nameInput.draw(hit, hitPoint);
     
     ofFill();
     ofSetColor(0, 255, 0);
@@ -73,7 +81,8 @@ void Bounce::draw() {
     ofSetColor(0x000000);
     ofDrawBitmapString("Framerate: " + ofToString(ofGetFrameRate()), WIDTH - 150, 40);
     
-    hit = tracker.getHitPoint(hitPoint);
+    if (!gamePaused)
+        hit = tracker.getHitPoint(hitPoint);
 }
 
 void Bounce::audioReceived (float* input, int bufferSize, int nChannels) {
@@ -94,10 +103,22 @@ void Bounce::keyPressed(int key) {
             changeMode(MENU);
             break;
         case 'f':
-            ofSetFullscreen(true);
+            fullScreen = !fullScreen;
+            ofSetFullscreen(fullScreen);
             break;
         case 'k':
             console.show = !console.show;
+            break;
+        case ' ':
+            if (activeGame) {
+                if (gamePaused) {
+                    gamePaused = false;
+                    activeGame->proceed();
+                }
+                else {
+                    gamePaused = activeGame->pause();
+                }
+            }
             break;
         case OF_KEY_LEFT:
             console.next(false);
@@ -140,17 +161,17 @@ void Bounce::changeMode(Mode m) {
             break;
         case SHOOTING_CANS:
             activeGame = &shootingCans;
-            shootingCans.reset();
             break;
         case ROBOT_DEFENSE:
             activeGame = &robotDefense;
-            robotDefense.reset();
             break;
         case BALLOON_HUNT:
             activeGame = &balloonHunt;
-            balloonHunt.reset();
             break;
         default:
             break;
     }
+    
+    if (activeGame)
+        activeGame->reset();
 }

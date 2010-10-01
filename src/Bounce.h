@@ -7,7 +7,6 @@
 #include "Console.h"
 #include "Infobox.h"
 #include "PushButton.h"
-#include "NameInput.h"
 #include "ShootingCans.h"
 #include "RobotDefense.h"
 #include "BalloonHunt.h"
@@ -23,23 +22,22 @@ private:
     Infobox infobox;
     Console console;
     Tracker tracker;
-    NameInput nameInput;
     
     Game* activeGame;
+    bool gamePaused;
     
     ShootingCans shootingCans;
     RobotDefense robotDefense;
     BalloonHunt balloonHunt;
     
     PushButton calibrateButton;
-    PushButton menuButton;
     PushButton shootingCansButton;
     PushButton robotDefenseButton;
     PushButton balloonHuntButton;
     
     // audio
     void audioReceived(float* input, int bufferSize, int nChannels);
-    bool bang;
+    bool fullScreen;
 
 public:
     Bounce();

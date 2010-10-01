@@ -422,3 +422,8 @@ void Tracker::drawAudioPlots() {
                (WIDTH - PLOT_SIZE) / 2 + 1 + i, HEIGHT / 2 + 50 - energyDiffPlot[i + 1]);
     }
 }
+
+void Tracker::drawPauseScreen() {
+    ofSetColor(255, 255, 255);
+    screenImgStore.back()->draw(0, 0);
+}

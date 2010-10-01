@@ -27,7 +27,7 @@ protected:
     string name;
     bool insertName;
     
-    float startTime;
+    float startTime, pauseTime;
     
     vector<Sign> signs;
     
@@ -117,6 +117,18 @@ public:
         }
         
         return insertName;
+    }
+    
+    bool pause() {
+        if (mode == PLAY) {
+            pauseTime = ofGetElapsedTimef();
+            return true;
+        }
+        return false;
+    }
+    
+    void proceed() {
+        startTime += ofGetElapsedTimef() - pauseTime;
     }
 };
 
