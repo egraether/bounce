@@ -3,21 +3,19 @@
 
 #include "ofMain.h"
 #include "Vector.h"
-#include <cstring>
-
-using namespace std;
+#include "Texture.h"
 
 class PushButton {
 private:
     int posX, posY;
     int width, height;
-    string name;
+    Texture texture;
     
 public:
-    PushButton() : name(""), posX(0), posY(0) {}
+    PushButton() : posX(0), posY(0) {}
     
-    void set(string n, int x, int y, int w, int h) {
-        name = n;
+    void set(const char* imageFile, int x, int y, int w, int h) {
+        texture.load(imageFile, true, GL_CLAMP, GL_CLAMP);
         posX = x; 
         posY = y;
         width = w;
@@ -25,13 +23,7 @@ public:
     }
     
     void draw() {
-        ofFill();
-        ofSetColor(0xffffff);
-        ofRect(posX, posY, width, height);
-        ofNoFill();
-        ofSetColor(0, 0, 0);
-        ofRect(posX, posY, width, height);
-        ofDrawBitmapString(name, posX + 10, posY + 20);
+        texture.draw(posX, posY, width, height);
     }
     
     bool checkHit(bool hit, Vector &hitPoint) {

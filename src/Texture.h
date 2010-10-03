@@ -6,6 +6,7 @@
 class Texture {
 public:
     unsigned int textureId;
+    bool alpha;
 
 public:
     unsigned int width, height;
@@ -26,10 +27,11 @@ public:
         draw(x, y, w, h, 0.0, 0.0, 1.0, 1.0);
     }
     
-    void draw(int x, int y, int w, int h, float tx, float ty, float tw, float th) {
-        ofSetColor(0xffffff);
+    void draw(int x, int y, int w, int h, float tx, float ty, float tw, float th, bool white = true) {
+        if (white)
+            ofSetColor(0xffffff);
+        
         ofEnableAlphaBlending();
-        //glColor4f(0.0, 0.0, 0.0, 1.0);
         bind();
         
         glBegin(GL_QUADS);
@@ -52,10 +54,12 @@ public:
         ofDisableAlphaBlending();
     }
     
-    void load(const char* imageFile, int wrapS, int wrapT) {
+    void load(const char* imageFile, bool _alpha, int wrapS, int wrapT) {
+        alpha = _alpha;
+        
         ofImage image;
         if (!image.loadImage(imageFile))
-            throw "Failed to load numberImage";
+            throw "Failed to load Image";
         
         width = image.getWidth();
         height = image.getHeight();
@@ -71,18 +75,30 @@ public:
         unsigned char *pixels = image.getPixels();
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
         
-        glTexImage2D(
-            GL_TEXTURE_2D,
-            0,
-            GL_RGBA,
-            width,
-            height,
-            0,
-            GL_RGBA,
-            GL_UNSIGNED_BYTE,
-            pixels
-        );
-
+        if (alpha)
+            glTexImage2D(
+                GL_TEXTURE_2D,
+                0,
+                GL_RGBA,
+                width,
+                height,
+                0,
+                GL_RGBA,
+                GL_UNSIGNED_BYTE,
+                pixels
+            );
+        else
+            glTexImage2D(
+                GL_TEXTURE_2D,
+                0,
+                GL_RGB,
+                width,
+                height,
+                0,
+                GL_RGB,
+                GL_UNSIGNED_BYTE,
+                pixels
+            );
 //        gluBuild2DMipmaps(
 //            GL_TEXTURE_2D,
 //            GL_RGBA,

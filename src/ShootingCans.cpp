@@ -4,7 +4,10 @@
 ShootingCans::ShootingCans(const char* titel, Infobox* infobox, const char* scoresFileName) : 
     Game(titel, infobox, scoresFileName) {
     
-    numbers.load("numbers.png", GL_CLAMP, GL_CLAMP);
+    canTexture.load("can.png", true, GL_CLAMP, GL_CLAMP);
+    shelfTexture.load("body.png", true, GL_CLAMP, GL_CLAMP);
+    background = new Texture();
+    background->load("cans_bg.png", false, GL_CLAMP, GL_CLAMP);
 }
 
 void ShootingCans::reset() {
@@ -13,19 +16,21 @@ void ShootingCans::reset() {
     cans.clear();
     
     for (int i = 0; i < 3; i++) {
-        cans.push_back(Can((3 + i * 2) * WIDTH / 10, HEIGHT / 4, &numbers, 100, 100, 32, 1));
+        cans.push_back(Can((3 + i * 2) * WIDTH / 10, HEIGHT / 4 - 30, &canTexture, 100, 100, 1, 4));
     }
     for (int i = 1; i <= 4; i++) {
-        cans.push_back(Can(i * WIDTH / 5, HEIGHT / 2, &numbers, 100, 100, 32, 1));
+        cans.push_back(Can(i * WIDTH / 5, HEIGHT / 2, &canTexture, 100, 100, 1, 4));
     }
     for (int i = 0; i < 3; i++) {
-        cans.push_back(Can((3 + i * 2) * WIDTH / 10, HEIGHT / 4 * 3, &numbers, 100, 100, 32, 1));
+        cans.push_back(Can((3 + i * 2) * WIDTH / 10, HEIGHT / 4 * 3 + 30, &canTexture, 100, 100, 1, 4));
     }
     
     gameStarted = false;
 }
    
 bool ShootingCans::draw(bool hit, Vector &hitPoint) {
+    background->draw(0, 0, WIDTH, HEIGHT);
+    shelfTexture.draw(100, 150, WIDTH - 200, HEIGHT - 150);
     
     switch (mode) {
         case INIT:
@@ -55,8 +60,10 @@ bool ShootingCans::draw(bool hit, Vector &hitPoint) {
             
             // draw
             for (int i = 0; i < cans.size(); i++) {
-                if (!cans[i].draw())
+                if (!cans[i].draw()) {
                     cans.erase(cans.begin() + i);
+                    i--;
+                }
             }
             
             ofSetColor(0, 0, 0);

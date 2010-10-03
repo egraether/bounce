@@ -13,8 +13,9 @@ class BalloonHunt : public Game {
 private:
     class Balloon;
     vector<Balloon> balloons;
-    Texture numbers;
+    Texture balloonTexture;
     int counter;
+    
     
 public:
     BalloonHunt(const char* titel, Infobox* infobox, const char* scoresFileName);
@@ -64,7 +65,7 @@ public:
                 break;
         }
             
-        sprite.setAnimation(0, 0, 0, 0, true);
+        sprite.setAnimation(0, 0, 0, 1, true);
     }
     
     bool draw() {
@@ -86,7 +87,7 @@ public:
     bool checkHit(Vector &hitPoint) {
         if (Vector::distance(hitPoint, pos) <= size) {
             explode = true;
-            sprite.setAnimation(5, 0, 0, 0, false);
+            sprite.setAnimation(0, 2, 0, 3, false);
             return true;
         }
         return false;

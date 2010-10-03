@@ -12,11 +12,13 @@
 class RobotDefense : public Game {
 private:
     class Robot;
-    Texture numbers;
     vector<Robot> robots;
     int counter, period, laserTime;
     float speed;
     Vector cannon;
+    Texture robotTexture[2];
+    Texture cannonTexture;
+    Texture laserTexture;
     
     bool gameOver;
     
@@ -43,6 +45,8 @@ public:
         float angle = Vector::angle(cannon - pos, Vector(0, 1)) / PI * 180 + 180;
         if (pos.x < cannon.x)
             angle *= -1;
+        
+        angle += 180;
         
         ofPushMatrix();
         
@@ -75,7 +79,7 @@ public:
     }
     
     void destroy() {
-        sprite.setAnimation(5, 0, 0, 0, false);
+        sprite.setAnimation(0, 1, 0, 3, false);
         stop = true;
     }
 };

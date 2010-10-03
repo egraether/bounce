@@ -7,6 +7,7 @@
 #include "Console.h"
 #include "Infobox.h"
 #include "PushButton.h"
+#include "Texture.h"
 #include "ShootingCans.h"
 #include "RobotDefense.h"
 #include "BalloonHunt.h"
@@ -33,6 +34,7 @@ private:
     RisingNinja risingNinja;
     
     PushButton calibrateButton;
+    PushButton creditsButton;
     PushButton shootingCansButton;
     PushButton robotDefenseButton;
     PushButton balloonHuntButton;
@@ -41,6 +43,12 @@ private:
     // audio
     void audioReceived(float* input, int bufferSize, int nChannels);
     bool fullScreen;
+    
+    // menu
+    Texture background;
+    Texture bounceLogo;
+    Texture fhLogo;
+    Texture mmaMmtLogo;
 
 public:
     Bounce();

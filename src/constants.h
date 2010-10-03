@@ -25,6 +25,6 @@
 
 #define PLOT_SIZE 500
 
-#define ANIMATION_SPEED 20
+#define ANIMATION_SPEED 7
 
 #endif

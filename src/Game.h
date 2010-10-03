@@ -4,6 +4,7 @@
 #include "ofMain.h"
 #include "Vector.h"
 #include "PushButton.h"
+#include "Texture.h"
 #include "Infobox.h"
 #include "HighScore.h"
 #include "constants.h"
@@ -30,6 +31,7 @@ protected:
     float startTime, pauseTime;
     
     vector<Sign> signs;
+    Texture* background;
     
 public:
     Game(string _titel, Infobox* _infobox, string _scoresFileName) : 

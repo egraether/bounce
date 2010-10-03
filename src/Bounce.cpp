@@ -24,20 +24,32 @@ void Bounce::setup() {
     ofSoundStreamSetup(0, 1, this);
     fullScreen = false;
     
-    calibrateButton.set("calibrate", WIDTH - 10 - WIDTH / 5, HEIGHT - 10 - HEIGHT / 5, WIDTH / 5, HEIGHT / 5);
-    shootingCansButton.set("shootingCans", 10, 100, WIDTH / 5, HEIGHT / 5);
-    robotDefenseButton.set("robotDefense", 20 + WIDTH / 5, 100, WIDTH / 5, HEIGHT / 5);
-    balloonHuntButton.set("balloonHunt", 30 + 2 * WIDTH / 5, 100, WIDTH / 5, HEIGHT / 5);
-    risingNinjaButton.set("risingNinja", 40 + 3 * WIDTH / 5, 100, WIDTH / 5, HEIGHT / 5);
+    background.load("menu_bg.png", false, GL_CLAMP, GL_CLAMP);
+    bounceLogo.load("logo_bounce.png", true, GL_CLAMP, GL_CLAMP);
+    fhLogo.load("logo_fh.png", true, GL_CLAMP, GL_CLAMP);
+    mmaMmtLogo.load("logo_mmammt.png", true, GL_CLAMP, GL_CLAMP);
+    
+    calibrateButton.set("calibrate_button.png", WIDTH - 290, HEIGHT - 140, 250, 100);
+    creditsButton.set("credits_button.png", 40, HEIGHT - 140, 250, 100);
+    
+    shootingCansButton.set("cans_button.png", (WIDTH / 3 - 300) / 2, 200, 300, 300);
+    robotDefenseButton.set("robot_button.png", (WIDTH / 3 - 300) / 2 + WIDTH / 3, 200, 300, 300);
+    balloonHuntButton.set("balloon_button.png", (WIDTH / 3 - 300) / 2 + WIDTH / 3 * 2, 200, 300, 300);
+    risingNinjaButton.set("wordbubble2.png", (WIDTH / 3 - 300) / 2 + WIDTH / 3, 500, 300, 300);
 }
 
 void Bounce::update() {}
 
 void Bounce::draw() {
-    
     switch (mode) {
         case MENU:
+            background.draw(0, 0, WIDTH, HEIGHT);
+            bounceLogo.draw(20, 20);
+            fhLogo.draw(WIDTH - 400, 20);
+            mmaMmtLogo.draw(WIDTH / 2 - 170, HEIGHT - 80);
+            
             calibrateButton.draw();
+            creditsButton.draw();
             shootingCansButton.draw();
             robotDefenseButton.draw();
             balloonHuntButton.draw();

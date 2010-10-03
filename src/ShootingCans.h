@@ -13,7 +13,8 @@ class ShootingCans : public Game {
 private:
     class Can;
     vector<Can> cans;
-    Texture numbers;
+    Texture canTexture;
+    Texture shelfTexture;
     
     bool gameStarted;
     
@@ -36,24 +37,23 @@ public:
         pos(x, y), flying(false),
         sprite(t, w, h, r, c) {
             
-        sprite.setAnimation(1, 0, 5, 0, true);
+        sprite.setAnimation(0, 0, 0, 0, true);
     }
     
     bool draw() {
         pos = flight + pos;
         
-        if (flying) {
-            flight.y += (ofGetElapsedTimef() - time) / 5;
-        }
-        
+        if (flying)
+            flight.y += (ofGetElapsedTimef() - time) * 10;
         
         ofPushMatrix();
         ofTranslate(pos.x, pos.y, 0.0);
-        //ofRotateZ();
-        bool destroyed = sprite.draw(0, 0);
+        if (flying)
+            ofRotateZ((ofGetElapsedTimef() - time) * pos.x);
+        sprite.draw(0, 0);
         ofPopMatrix();
         
-        return destroyed;
+        return pos.y < HEIGHT + 100;
     }
     
     bool checkHit(Vector &hitPoint) {
@@ -64,8 +64,8 @@ public:
             hitPoint.y < pos.y + sprite.getHeight() / 2) {
             
             flying = true;
-            flight = ((Vector(0, -sprite.getHeight() / 3 * 2) + pos) - hitPoint) / 10;
-            sprite.setAnimation(10, 0, 0, 0);
+            flight = ((Vector(0, -sprite.getHeight() / 3 * 2) + pos) - hitPoint) / 5;
+            sprite.setAnimation(0, 1, 0, 3, true);
             time = ofGetElapsedTimef();
             
             return true;

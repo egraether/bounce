@@ -4,7 +4,9 @@
 BalloonHunt::BalloonHunt(const char* titel, Infobox* infobox, const char* scoresFileName) : 
     Game(titel, infobox, scoresFileName) {
     
-    numbers.load("numbers.png", GL_CLAMP, GL_CLAMP);
+    balloonTexture.load("balloon.png", true, GL_CLAMP, GL_CLAMP);
+    background = new Texture();
+    background->load("balloon_bg.png", false, GL_CLAMP, GL_CLAMP);
 }
 
 void BalloonHunt::reset() {
@@ -15,6 +17,7 @@ void BalloonHunt::reset() {
 }
    
 bool BalloonHunt::draw(bool hit, Vector &hitPoint) {
+    background->draw(0, 0, WIDTH, HEIGHT);
     
     switch (mode) {
         case INIT:
@@ -28,7 +31,7 @@ bool BalloonHunt::draw(bool hit, Vector &hitPoint) {
             counter++;
             if (counter == 100) {
                 counter = 0;
-                balloons.push_back(Balloon(Balloon::Type(rand() % 3), rand() % (WIDTH - 100) + 50, HEIGHT + 50, &numbers, 32, 1));
+                balloons.push_back(Balloon(Balloon::Type(rand() % 3), rand() % (WIDTH - 100) + 50, HEIGHT + 50, &balloonTexture, 1, 4));
             }
             
             // check hit
@@ -43,8 +46,10 @@ bool BalloonHunt::draw(bool hit, Vector &hitPoint) {
             
             // draw
             for (int i = 0; i < balloons.size(); i++) {
-                if (!balloons[i].draw())
+                if (!balloons[i].draw()) {
                     balloons.erase(balloons.begin() + i);
+                    i--;
+                }
             }
             
             ofSetColor(0, 0, 0);

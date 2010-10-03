@@ -4,9 +4,14 @@
 #include <cmath>
 
 RobotDefense::RobotDefense(const char* titel, Infobox* infobox, const char* scoresFileName) : 
-    Game(titel, infobox, scoresFileName), cannon(WIDTH / 2, HEIGHT) {
+    Game(titel, infobox, scoresFileName), cannon(WIDTH / 2, HEIGHT - 80) {
     
-    numbers.load("numbers.png", GL_CLAMP, GL_CLAMP);
+    robotTexture[0].load("robot_a.png", true, GL_CLAMP, GL_CLAMP);
+    robotTexture[1].load("robot_b.png", true, GL_CLAMP, GL_CLAMP);
+    cannonTexture.load("gun.png", true, GL_CLAMP, GL_CLAMP);
+    laserTexture.load("laser.png", true, GL_CLAMP, GL_CLAMP);
+    background = new Texture();
+    background->load("robot_bg.png", false, GL_CLAMP, GL_CLAMP);
 }
 
 void RobotDefense::reset() {
@@ -22,6 +27,8 @@ void RobotDefense::reset() {
 }
    
 bool RobotDefense::draw(bool hit, Vector &hitPoint) {
+    background->draw(0, 0, WIDTH, HEIGHT);
+    
     switch (mode) {
         case INIT:
             startGame();
@@ -46,7 +53,7 @@ bool RobotDefense::draw(bool hit, Vector &hitPoint) {
                 int x = cannon.x + cos(angle) * WIDTH * (rand() % 2 ? 1 : -1), 
                 y = cannon.y - sin(angle) * WIDTH;
                 
-                robots.push_back(Robot(x, y, 100, 100, &numbers, 32, 1));
+                robots.push_back(Robot(x, y, 100, 100, &robotTexture[rand() % 2], 1, 4));
                 
                 counter = 0;
                 speed += 0.1;
@@ -73,8 +80,10 @@ bool RobotDefense::draw(bool hit, Vector &hitPoint) {
             
             // draw robots
             for (int i = 0; i < robots.size(); i++) {
-                if (!robots[i].draw(cannon))
+                if (!robots[i].draw(cannon)) {
                     robots.erase(robots.begin() + i);
+                    i--;
+                }
             }
             
             // draw cannon
@@ -90,15 +99,10 @@ bool RobotDefense::draw(bool hit, Vector &hitPoint) {
                 
                 // shoot
                 laserTime++;
-                if (laserTime < 20) {
-                    ofSetColor(100, 200, 0);
-                    ofRect(cannon.x - 10, cannon.y - WIDTH, 20, WIDTH);
-                }
+                if (laserTime < 20)
+                    laserTexture.draw(cannon.x - 75, cannon.y - WIDTH, 150, WIDTH);
                 
-                ofSetColor(150, 150, 150);
-                ofRect(cannon.x - 20, cannon.y - 80, 40, 60);
-                ofSetColor(200, 200, 200);
-                ofCircle(cannon.x, cannon.y, 50);
+                cannonTexture.draw(cannon.x - 100, cannon.y - 100, 200, 200);
                 
                 ofPopMatrix();
             }

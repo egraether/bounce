@@ -2,6 +2,7 @@
 
 is an augmented reality game, allowing you to play a real ballgame with a projection on the wall.
 
+
 ### What you need:
 
 * experience with [OpenFrameworks](http://www.openframeworks.cc/download)
@@ -12,8 +13,9 @@ is an augmented reality game, allowing you to play a real ballgame with a projec
 
 * microphone
 
+
 ### Instructions
-Inorder to compile Bounce you have to: 
+In order to compile Bounce you have to: 
 
 * download [Openframeworks](http://www.openframeworks.cc/download) with addons(FAT), compatible to your IDE
     

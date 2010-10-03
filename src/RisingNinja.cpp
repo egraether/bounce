@@ -4,7 +4,7 @@
 RisingNinja::RisingNinja(const char* titel, Infobox* infobox, const char* scoresFileName) : 
 Game(titel, infobox, scoresFileName) {
     
-    numbers.load("numbers.png", GL_CLAMP, GL_CLAMP);
+    numbers.load("numbers.png", true, GL_CLAMP, GL_CLAMP);
     numberAnimation.load(&numbers, 100, 100, 32, 1);
 }
 
