@@ -107,9 +107,7 @@ bool RobotDefense::draw(bool hit, Vector &hitPoint) {
                 ofPopMatrix();
             }
             
-            ofSetColor(0, 0, 0);
-            ofDrawBitmapString(ofToString(points), 20, 20);
-            ofDrawBitmapString(ofToString(ofGetElapsedTimef() - startTime, 0), WIDTH - 30, 20);
+            screenTime = ofGetElapsedTimef() - startTime;
             
             if (gameOver && robots.size() == 0)
                 stopGame();

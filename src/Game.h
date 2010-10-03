@@ -29,6 +29,7 @@ protected:
     bool insertName;
     
     float startTime, pauseTime;
+    int screenTime;
     
     vector<Sign> signs;
     Texture* background;
@@ -58,6 +59,7 @@ public:
         gameOver = false;
         signs.clear();
         infobox->set("bounce to start.");
+        screenTime = 0;
     }
     
     void startGame() {
@@ -99,6 +101,11 @@ public:
                 i--;
             }
         }
+        
+        ofSetColor(0x384585);
+        gameFont->drawString("points: " + ofToString(points), 20, 40);
+        string t = "time: " + ofToString(screenTime);
+        gameFont->drawString(t, WIDTH - 20 - gameFont->stringWidth(t), 40);
     }
     
     bool keyPressed(int key) {
@@ -147,7 +154,7 @@ public:
         titelFont = new ofTrueTypeFont();
         titelFont->loadFont("keypuncn.ttf", 40);
         gameFont = new ofTrueTypeFont();
-        gameFont->loadFont("microgme.ttf", 32);
+        gameFont->loadFont("microgme.ttf", 26);
         scoreFont = new ofTrueTypeFont();
         scoreFont->loadFont("microgme.ttf", 18);
     }

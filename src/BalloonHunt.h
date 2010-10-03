@@ -16,7 +16,6 @@ private:
     Texture balloonTexture;
     int counter;
     
-    
 public:
     BalloonHunt(const char* titel, Infobox* infobox, const char* scoresFileName);
     //~Game()
@@ -27,11 +26,10 @@ public:
 
 class BalloonHunt::Balloon {
 public:
-    enum Type {BIG, MEDIUM, SMALL};
     int points;
+    static int counter;
     
 private:
-    Type type;
     Vector pos;
     bool explode;
     SpriteAnimation sprite;
@@ -39,25 +37,25 @@ private:
     int size;
     
 public:
-    Balloon(Type t, int x, int y, Texture* tex, int rows, int columns) :
-        type(t), pos(x, y), explode(false) {
+    Balloon(int x, int y, Texture* tex, int rows, int columns) :
+        pos(x, y), explode(false) {
         
-        switch (type) {
-            case BIG:
+            switch (counter % 3) {
+            case 0:
                 sprite.load(tex, 300, 300, rows, columns);
                 size = 100;
                 points = 10;
                 speed = 2;
                 break;
-            case MEDIUM:
-                sprite.load(tex, 100, 100, rows, columns);
-                size = 50;
+            case 1:
+                sprite.load(tex, 200, 200, rows, columns);
+                size = 75;
                 points = 50;
                 speed = 1;
                 break;
-            case SMALL:
-                sprite.load(tex, 50, 50, rows, columns);
-                size = 25;
+            case 2:
+                sprite.load(tex, 100, 100, rows, columns);
+                size = 50;
                 points = 100;
                 speed = .5;
                 break;
@@ -66,6 +64,7 @@ public:
         }
             
         sprite.setAnimation(0, 0, 0, 1, true);
+        counter++;
     }
     
     bool draw() {
@@ -99,4 +98,3 @@ public:
 };
 
 #endif
-

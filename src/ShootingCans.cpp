@@ -26,6 +26,7 @@ void ShootingCans::reset() {
     }
     
     gameStarted = false;
+    screenTime = 120;
 }
    
 bool ShootingCans::draw(bool hit, Vector &hitPoint) {
@@ -66,15 +67,10 @@ bool ShootingCans::draw(bool hit, Vector &hitPoint) {
                 }
             }
             
-            ofSetColor(0, 0, 0);
             if (gameStarted)
-                ofDrawBitmapString(ofToString(startTime - ofGetElapsedTimef(), 0), WIDTH - 30, 20);
-            else
-                ofDrawBitmapString("120", WIDTH - 30, 20);
+                screenTime = startTime - ofGetElapsedTimef();
             
-            ofDrawBitmapString(ofToString(points), 20, 20);
-            
-            if (cans.size() == 0 || (gameStarted && startTime - ofGetElapsedTimef() < 0))
+            if (cans.size() == 0 || screenTime <= 0)
                 stopGame();
             break;
         case PANEL:

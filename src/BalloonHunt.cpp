@@ -1,6 +1,8 @@
 #include "BalloonHunt.h"
 #include "ofMain.h"
 
+int BalloonHunt::Balloon::counter = 0;
+
 BalloonHunt::BalloonHunt(const char* titel, Infobox* infobox, const char* scoresFileName) : 
     Game(titel, infobox, scoresFileName) {
     
@@ -14,6 +16,8 @@ void BalloonHunt::reset() {
     
     balloons.clear();
     counter = 0;
+    Balloon::counter = 0;
+    screenTime = 120;
 }
    
 bool BalloonHunt::draw(bool hit, Vector &hitPoint) {
@@ -31,7 +35,7 @@ bool BalloonHunt::draw(bool hit, Vector &hitPoint) {
             counter++;
             if (counter == 100) {
                 counter = 0;
-                balloons.push_back(Balloon(Balloon::Type(rand() % 3), rand() % (WIDTH - 100) + 50, HEIGHT + 50, &balloonTexture, 1, 4));
+                balloons.push_back(Balloon(rand() % (WIDTH - 100) + 50, HEIGHT + 50, &balloonTexture, 1, 4));
             }
             
             // check hit
@@ -52,12 +56,11 @@ bool BalloonHunt::draw(bool hit, Vector &hitPoint) {
                 }
             }
             
-            ofSetColor(0, 0, 0);
-            ofDrawBitmapString(ofToString(points), 20, 20);
-            ofDrawBitmapString(ofToString(startTime - ofGetElapsedTimef(), 0), WIDTH - 30, 20);
-            
-            if (startTime - ofGetElapsedTimef() <= 0)
+            screenTime = startTime - ofGetElapsedTimef();
+            if (screenTime <= 0) {
                 stopGame();
+                screenTime = 0;
+            }
             
             break;
         case PANEL:
