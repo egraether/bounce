@@ -70,21 +70,21 @@ public:
             cout << it->first << ' ' << it->second << '\n';
     }
     
-    void draw(int x, int y) {
+    void draw(ofTrueTypeFont* font, int x, int y) {
         int row = y + 15;
-        ofSetColor(0, 0, 0);
+        ofSetColor(0x384585);
         
         for (it = scores.begin(); it != scores.end(); it++) {
             if (it == at) {
                 ofFill();
-                ofSetColor(220, 220, 220);
+                ofSetColor(0xcccccc);
                 ofRect(x, row - 15, 200, 20);
-                ofSetColor(0, 0, 0);
+                ofSetColor(0x384585);
             }
             
-            ofDrawBitmapString(ofToString(it->first), x + 10, row);
-            ofDrawBitmapString(it->second, x + 50, row);
-            row += 20;
+            font->drawString(ofToString(it->first), x + 10, row);
+            font->drawString(it->second, x + 110, row);
+            row += font->getLineHeight() + 10;
         }
     }
 };

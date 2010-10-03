@@ -15,12 +15,12 @@ public:
         content(_content), position(_position), stopTime(ofGetElapsedTimef() + time) {
     }
     
-    bool draw() {
+    bool draw(ofTrueTypeFont* font) {
         if (stopTime <= ofGetElapsedTimef())
             return false;
         
-        ofSetColor(0, 0, 0);
-        ofDrawBitmapString(content, position.x, position.y);
+        ofSetColor(0x384585);
+        font->drawString(content, position.x, position.y);
         return true;
     }
 };

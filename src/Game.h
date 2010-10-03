@@ -34,6 +34,12 @@ protected:
     Texture* background;
     
 public:
+    static ofTrueTypeFont* titelFont;
+    static ofTrueTypeFont* gameFont;
+    static ofTrueTypeFont* scoreFont;
+    static ofTrueTypeFont* bigFont;
+    static Texture* panel;
+    
     Game(string _titel, Infobox* _infobox, string _scoresFileName) : 
         titel(_titel), infobox(_infobox), scoresFileName(_scoresFileName), insertName(false) {
             
@@ -73,23 +79,25 @@ public:
     }
     
     void drawPanel() {
-        ofFill();
-        ofSetColor(200, 200, 200);
-        ofRect(WIDTH * 3 / 8, HEIGHT / 4, WIDTH / 4, HEIGHT / 2);
+        ofPushMatrix();
+        ofTranslate((WIDTH - 500) / 2, (HEIGHT - 500) / 2, 0);
         
-        ofNoFill();
-        ofSetColor(0, 0, 0);
-        ofRect(WIDTH * 3 / 8, HEIGHT / 4, WIDTH / 4, HEIGHT / 2);
+        panel->draw(0, 0, 500, 500);
         
-        ofDrawBitmapString(titel, WIDTH * 3 / 8 + 20, HEIGHT / 4 + 20);
-        highScore.draw(WIDTH * 3 / 8 + 20, HEIGHT / 4 + 50);
-        ofDrawBitmapString("your score: " + ofToString(points), WIDTH * 3 / 8 + 20, HEIGHT / 4 + 300);
+        ofSetColor(0x384585);
+        titelFont->drawString(titel, 50, 50);
+        scoreFont->drawString("your score: " + ofToString(points), 60, 100);
+        highScore.draw(scoreFont, 150, 150);
+        
+        ofPopMatrix();
     }
     
     void drawSigns() {
         for (int i = 0; i < signs.size(); i++) {
-            if (!signs[i].draw())
+            if (!signs[i].draw(gameFont)) {
                 signs.erase(signs.begin() + i);
+                i--;
+            }
         }
     }
     
@@ -131,6 +139,17 @@ public:
     
     void proceed() {
         startTime += ofGetElapsedTimef() - pauseTime;
+    }
+    
+    static void initializeStatics() {
+        panel = new Texture();
+        panel->load("wordbubble2.png", true, GL_CLAMP, GL_CLAMP);
+        titelFont = new ofTrueTypeFont();
+        titelFont->loadFont("keypuncn.ttf", 40);
+        gameFont = new ofTrueTypeFont();
+        gameFont->loadFont("microgme.ttf", 32);
+        scoreFont = new ofTrueTypeFont();
+        scoreFont->loadFont("microgme.ttf", 18);
     }
 };
 

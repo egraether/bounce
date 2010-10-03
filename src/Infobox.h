@@ -8,16 +8,17 @@
 
 class Infobox {
 private:
-    //vector<string> message;
     string message;
-    //unsigned int width, height;
+    ofTrueTypeFont font;
     
 public:
-    Infobox() {}
+    Infobox() {
+        font.loadFont("microgme.ttf", 26);
+    }
 
-    void set(const char* m) {
+    void set(const char* _message) {
         clear();
-        message = m;
+        message = _message;
     }
     
     void clear() {
@@ -25,10 +26,8 @@ public:
     }
 
     void draw() {
-        ofSetColor(0, 0, 0);
-        //for (int i = 0; i < message.size(); i++) {
-            ofDrawBitmapString(message, WIDTH - message.length() * 8 - 10, HEIGHT - 20);
-        //}
+        ofSetColor(0x384585);
+        font.drawString(message, WIDTH - 20 - font.stringWidth(message), HEIGHT - 20);
     }
 };
 
