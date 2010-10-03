@@ -35,7 +35,7 @@ bool BalloonHunt::draw(bool hit, Vector &hitPoint) {
             counter++;
             if (counter == 100) {
                 counter = 0;
-                balloons.push_back(Balloon(rand() % (WIDTH - 100) + 50, HEIGHT + 50, &balloonTexture, 1, 4));
+                balloons.push_back(Balloon(&balloonTexture, 1, 4));
             }
             
             // check hit

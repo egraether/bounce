@@ -36,12 +36,27 @@ bool RobotDefense::draw(bool hit, Vector &hitPoint) {
         case PLAY:
             // destroy hit robots
             if (hit) {
+                int comboCounter = 0;
                 laserTime = 0;
+                
                 for (int i = 0; i < robots.size(); i++) {
                     if (robots[i].checkHit(cannon, hitPoint)) {
                         points += 10;
+                        comboCounter++;
                         signs.push_back(Sign("+10", robots[i].getPosition(), 2.0));
                     }
+                }
+                
+                if (comboCounter > 1) {
+                    string combo = "+" + ofToString(10 * comboCounter);
+                    points += comboCounter * (comboCounter - 1) * 10;
+                    
+                    for (int i = signs.size() - comboCounter; i < signs.size(); i++) {
+                        signs[i].update(combo);
+                    }
+                    
+                    combo = "Combo: x" + ofToString(comboCounter);
+                    signs.push_back(Sign(combo, Vector((WIDTH - gameFont->stringWidth(combo)) / 2, HEIGHT / 2), 2.0));
                 }
             }
             
@@ -69,7 +84,9 @@ bool RobotDefense::draw(bool hit, Vector &hitPoint) {
                         gameOver = true;
                         int timeBonus = ofGetElapsedTimef() - startTime;
                         points += timeBonus;
-                        signs.push_back(Sign("Timebonus: +" + ofToString(timeBonus), Vector(WIDTH / 2, HEIGHT / 2), 5.0));
+                        
+                        string bonus = "Timebonus: +" + ofToString(timeBonus);
+                        signs.push_back(Sign(bonus, Vector((WIDTH - gameFont->stringWidth(bonus)) / 2, HEIGHT / 2), 3.0));
                         
                         for (int j = 0; j < robots.size(); j++) {
                             robots[j].destroy();
@@ -109,7 +126,7 @@ bool RobotDefense::draw(bool hit, Vector &hitPoint) {
             
             screenTime = ofGetElapsedTimef() - startTime;
             
-            if (gameOver && robots.size() == 0)
+            if (gameOver && robots.size() == 0 && signs.size() == 0)
                 stopGame();
             break;
         case PANEL:

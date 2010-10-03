@@ -23,6 +23,10 @@ public:
         font->drawString(content, position.x, position.y);
         return true;
     }
+    
+    void update(string _content) {
+        content = _content;
+    }
 };
 
 #endif

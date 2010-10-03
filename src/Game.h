@@ -87,8 +87,8 @@ public:
         panel->draw(0, 0, 500, 500);
         
         ofSetColor(0x384585);
-        titelFont->drawString(titel, 50, 50);
-        scoreFont->drawString("your score: " + ofToString(points), 60, 100);
+        titelFont->drawString(titel, 50, 70);
+        scoreFont->drawString("your score: " + ofToString(points), 50, 100);
         highScore.draw(scoreFont, 150, 150);
         
         ofPopMatrix();

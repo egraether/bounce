@@ -40,6 +40,8 @@ bool ShootingCans::draw(bool hit, Vector &hitPoint) {
         case PLAY:
             // check hit
             if (hit) {
+                ballHits++;
+                
                 if (!gameStarted) {
                     gameStarted = true;
                     startTime = ofGetElapsedTimef() + 120;
@@ -53,7 +55,13 @@ bool ShootingCans::draw(bool hit, Vector &hitPoint) {
                         if (points == 1000) {
                             int timeBonus = (startTime - ofGetElapsedTimef()) * 10;
                             points += timeBonus;
-                            signs.push_back(Sign("Timebonus: +" + ofToString(timeBonus), Vector(WIDTH / 2, HEIGHT / 2), 5.0));
+                            
+                            string bonus = "timebonus: +" + ofToString(timeBonus);
+                            signs.push_back(Sign(bonus, Vector((WIDTH - gameFont->stringWidth(bonus)) / 2, HEIGHT / 2), 3.0));
+                            
+                            points -= ballHits * 10;
+                            string minus = "ballcount-reduction: -" + ofToString(ballHits * 10);
+                            signs.push_back(Sign(minus, Vector((WIDTH - gameFont->stringWidth(minus)) / 2, HEIGHT / 2 + 40), 4.0));
                         }
                     }
                 }
@@ -70,7 +78,7 @@ bool ShootingCans::draw(bool hit, Vector &hitPoint) {
             if (gameStarted)
                 screenTime = startTime - ofGetElapsedTimef();
             
-            if (cans.size() == 0 || screenTime <= 0)
+            if ((cans.size() == 0 && signs.size() == 0) || screenTime <= 0)
                 stopGame();
             break;
         case PANEL:

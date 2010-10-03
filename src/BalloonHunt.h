@@ -37,32 +37,33 @@ private:
     int size;
     
 public:
-    Balloon(int x, int y, Texture* tex, int rows, int columns) :
-        pos(x, y), explode(false) {
+    Balloon(Texture* tex, int rows, int columns) :
+        explode(false) {
         
             switch (counter % 3) {
-            case 0:
-                sprite.load(tex, 300, 300, rows, columns);
-                size = 100;
-                points = 10;
-                speed = 2;
-                break;
-            case 1:
-                sprite.load(tex, 200, 200, rows, columns);
-                size = 75;
-                points = 50;
-                speed = 1;
-                break;
-            case 2:
-                sprite.load(tex, 100, 100, rows, columns);
-                size = 50;
-                points = 100;
-                speed = .5;
-                break;
-            default:
-                break;
+                case 0:
+                    sprite.load(tex, 300, 300, rows, columns);
+                    size = 100;
+                    points = 10;
+                    speed = 5;
+                    break;
+                case 1:
+                    sprite.load(tex, 200, 200, rows, columns);
+                    size = 75;
+                    points = 50;
+                    speed = 2;
+                    break;
+                case 2:
+                    sprite.load(tex, 100, 100, rows, columns);
+                    size = 50;
+                    points = 100;
+                    speed = 1;
+                    break;
+                default:
+                    break;
         }
-            
+        
+        pos.set(rand() % (WIDTH - 300) + 150, HEIGHT + size);
         sprite.setAnimation(0, 0, 0, 1, true);
         counter++;
     }
@@ -76,6 +77,7 @@ public:
         
         ofPushMatrix();
         ofTranslate(pos.x, pos.y, 0.0);
+        //ofCircle(0, 0, size);
         //ofRotateZ();
         bool destroyed = sprite.draw(0, 0);
         ofPopMatrix();
