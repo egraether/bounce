@@ -88,7 +88,7 @@ public:
         
         ofSetColor(0x384585);
         titelFont->drawString(titel, 50, 70);
-        scoreFont->drawString("your score: " + ofToString(points), 50, 100);
+        scoreFont->drawString("your score: " + ofToString(points), 50, 110);
         highScore.draw(scoreFont, 150, 150);
         
         ofPopMatrix();

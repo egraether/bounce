@@ -48,7 +48,7 @@ void Bounce::draw() {
             background.draw(0, 0, WIDTH, HEIGHT);
             bounceLogo.draw(20, 20);
             fhLogo.draw(WIDTH - 400, 20);
-            mmaMmtLogo.draw(WIDTH / 2 - 170, HEIGHT - 80);
+            mmaMmtLogo.draw(WIDTH - 375, 150);
             
             calibrateButton.draw();
             creditsButton.draw();

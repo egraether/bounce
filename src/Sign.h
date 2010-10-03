@@ -16,11 +16,19 @@ public:
     }
     
     bool draw(ofTrueTypeFont* font) {
-        if (stopTime <= ofGetElapsedTimef())
+        position.y -= 0.5;
+        
+        float leftTime = stopTime - ofGetElapsedTimef();
+        if (leftTime <= 0)
             return false;
         
-        ofSetColor(0x384585);
+        ofEnableAlphaBlending();
+        
+        int alpha = leftTime < 1 ? 255 * leftTime : 255;
+        ofSetColor(56, 69, 133, alpha);
         font->drawString(content, position.x, position.y);
+        
+        ofDisableAlphaBlending();
         return true;
     }
     

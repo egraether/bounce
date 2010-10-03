@@ -16,7 +16,7 @@ void BalloonHunt::reset() {
     
     balloons.clear();
     counter = 0;
-    Balloon::counter = 0;
+    Balloon::counter = 1;
     screenTime = 120;
 }
    
@@ -25,10 +25,9 @@ bool BalloonHunt::draw(bool hit, Vector &hitPoint) {
     
     switch (mode) {
         case INIT:
-            if (hit) {
-                startGame();
-                startTime = ofGetElapsedTimef() + 120;
-            }
+            startGame();
+            startTime = ofGetElapsedTimef() + 120;
+            counter = 99;
             break;
         case PLAY:
             // new balloons

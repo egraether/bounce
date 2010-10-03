@@ -24,7 +24,7 @@ bool RisingNinja::draw(bool hit, Vector &hitPoint) {
             break;
         case PLAY:
             if (!numberAnimation.draw(100, 100)) {
-                signs.push_back(Sign("Dave sucks!", Vector(100, 100), 3.0));
+                signs.push_back(Sign("Ninja!", Vector(100, 100), 3.0));
                 stopGame();
             }
             break;

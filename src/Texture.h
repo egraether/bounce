@@ -19,12 +19,12 @@ public:
         glDeleteTextures(1, &textureId);
     }
     
-    void draw(int x, int y) {
-        draw(x, y, width, height, 0.0, 0.0, 1.0, 1.0);
+    void draw(int x, int y, bool white = true) {
+        draw(x, y, width, height, 0.0, 0.0, 1.0, 1.0, white);
     }
     
-    void draw(int x, int y, int w, int h) {
-        draw(x, y, w, h, 0.0, 0.0, 1.0, 1.0);
+    void draw(int x, int y, int w, int h, bool white = true) {
+        draw(x, y, w, h, 0.0, 0.0, 1.0, 1.0, white);
     }
     
     void draw(int x, int y, int w, int h, float tx, float ty, float tw, float th, bool white = true) {

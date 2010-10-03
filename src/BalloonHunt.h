@@ -35,34 +35,37 @@ private:
     SpriteAnimation sprite;
     float speed; 
     int size;
-    
+    int color[3];
+
 public:
-    Balloon(Texture* tex, int rows, int columns) :
-        explode(false) {
-        
-            switch (counter % 3) {
-                case 0:
-                    sprite.load(tex, 300, 300, rows, columns);
-                    size = 100;
-                    points = 10;
-                    speed = 5;
-                    break;
-                case 1:
-                    sprite.load(tex, 200, 200, rows, columns);
-                    size = 75;
-                    points = 50;
-                    speed = 2;
-                    break;
-                case 2:
-                    sprite.load(tex, 100, 100, rows, columns);
-                    size = 50;
-                    points = 100;
-                    speed = 1;
-                    break;
-                default:
-                    break;
+    Balloon(Texture* tex, int rows, int columns) : explode(false) {
+        switch (counter % 3) {
+            case 0:
+                sprite.load(tex, 300, 300, rows, columns);
+                size = 100;
+                points = 10;
+                speed = 5;
+                break;
+            case 1:
+                sprite.load(tex, 200, 200, rows, columns);
+                size = 75;
+                points = 50;
+                speed = 2;
+                break;
+            case 2:
+                sprite.load(tex, 100, 100, rows, columns);
+                size = 50;
+                points = 100;
+                speed = 1;
+                break;
+            default:
+                break;
         }
         
+        color[0] = rand() % 125 + 125;
+        color[1] = rand() % 125 + 125;
+        color[2] = rand() % 125 + 125;
+            
         pos.set(rand() % (WIDTH - 300) + 150, HEIGHT + size);
         sprite.setAnimation(0, 0, 0, 1, true);
         counter++;
@@ -78,8 +81,8 @@ public:
         ofPushMatrix();
         ofTranslate(pos.x, pos.y, 0.0);
         //ofCircle(0, 0, size);
-        //ofRotateZ();
-        bool destroyed = sprite.draw(0, 0);
+        ofSetColor(color[0], color[1], color[2]);
+        bool destroyed = sprite.draw(0, 0, false);
         ofPopMatrix();
         
         return destroyed;

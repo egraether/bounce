@@ -32,6 +32,7 @@ bool RobotDefense::draw(bool hit, Vector &hitPoint) {
     switch (mode) {
         case INIT:
             startGame();
+            counter = 99;
             break;
         case PLAY:
             // destroy hit robots
@@ -64,9 +65,8 @@ bool RobotDefense::draw(bool hit, Vector &hitPoint) {
             counter++;
             if (counter == period && !gameOver) {
                 float angle = float(rand() % 61 + 30) / 180 * PI;
-                
-                int x = cannon.x + cos(angle) * WIDTH * (rand() % 2 ? 1 : -1), 
-                y = cannon.y - sin(angle) * WIDTH;
+                int x = cannon.x + cos(angle) * WIDTH * 3 / 4 * (rand() % 2 ? 1 : -1), 
+                y = cannon.y - sin(angle) * WIDTH * 3 / 4;
                 
                 robots.push_back(Robot(x, y, 100, 100, &robotTexture[rand() % 2], 1, 4));
                 
@@ -116,8 +116,18 @@ bool RobotDefense::draw(bool hit, Vector &hitPoint) {
                 
                 // shoot
                 laserTime++;
-                if (laserTime < 20)
-                    laserTexture.draw(cannon.x - 75, cannon.y - WIDTH, 150, WIDTH);
+                if (laserTime < 20) {
+                    ofEnableAlphaBlending();
+                    if (laserTime < 3)
+                        ofSetColor(255, 255, 255, 255 * laserTime / 3);
+                    else if (laserTime < 10)
+                        ofSetColor(255, 255, 255, 255);
+                    else
+                        ofSetColor(255, 255, 255, (1.0 - (laserTime - 10) / 10.0) * 255);
+                    laserTexture.draw(cannon.x - 75, cannon.y - WIDTH - laserTime * 5 + 50, 150, WIDTH, false);
+                    ofDisableAlphaBlending();
+                    
+                }
                 
                 cannonTexture.draw(cannon.x - 100, cannon.y - 100, 200, 200);
                 
