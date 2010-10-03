@@ -3,7 +3,6 @@
 
 #include "ofMain.h"
 #include "ofxOpenCv.h"
-#include "ofxCvBounceImage.h"
 #include "Vector.h"
 #include "Console.h"
 #include "Infobox.h"
@@ -12,21 +11,7 @@
 #include <deque>
 
 class Tracker {
-private:
-    struct PixelRGB {
-        unsigned char r, g, b;
-        void set(unsigned char _r, unsigned char _g, unsigned char _b) {
-            r = _r; g = _g; b = _b;
-        }
-    };
-    
-    struct PixelHSV {
-        unsigned char h, s, v;
-        void set(unsigned char _h, unsigned char _s, unsigned char _v) {
-            h = _h; s = _s; v = _v;
-        }
-    };
-    
+private:    
     enum {CALIBRATION_NULL, BACKGROUND, COUNT, POINT, COMPLETE} mode;
     
     // image capture
@@ -50,17 +35,12 @@ private:
     ofxCvContourFinder contourFinder;
     
     int threshold;
-    int hue, hueVariance;
-    int saturation, saturationVariance;
-    int value, valueVariance;
-    
     int minBlobSize, maxBlobSize;
     int lastBlobSize;
     
     bool getNewCamImage();
     void getNewScreenImage();
     void getBrightnessContour();
-    void getHueContour();
     
     // calibration
     Vector* screenCorner;

@@ -8,13 +8,6 @@ Tracker::Tracker(Infobox* i, Console* c) :
     mode(CALIBRATION_NULL),
     threshold(THRESHOLD),
 
-    hue(HUE),
-    hueVariance(HUE_VARIANCE),
-    saturation(SATURATION),
-    saturationVariance(SATURATION_VARIANCE),
-    value(VALUE),
-    valueVariance(VALUE_VARIANCE),
-
     minBlobSize(MIN_BLOB_SIZE),
     maxBlobSize(MAX_BLOB_SIZE),
     lastBlobSize(0),
@@ -36,18 +29,6 @@ Tracker::Tracker(Infobox* i, Console* c) :
     console->addRegulation("threshold", &threshold, 0, 255);
     console->addRegulation("derivationWidth", &derivationWidth, 0, 10);
     console->addRegulation("bangLevel", &bangLevel, 0, 50);
-        
-//    console->addRegulation("hue", &hue, 0, 179);
-//    console->addRegulation("hueVariance", &hueVariance, 0, 25);
-//    
-//    console->addRegulation("saturation", &saturation, 0, 255);
-//    console->addRegulation("saturationVariance", &saturationVariance, 0, 50);
-//        
-//    console->addRegulation("value", &value, 0, 255);
-//    console->addRegulation("valueVariance", &valueVariance, 0, 50);
-//        
-//    console->addRegulation("minBlobSize", &minBlobSize, 0, WIDTH * HEIGHT);
-//    console->addRegulation("maxBlobSize", &maxBlobSize, 0, WIDTH * HEIGHT);
     
     videoCapture.setVerbose(true);
     videoCapture.initGrabber(WIDTH,HEIGHT);
@@ -354,31 +335,6 @@ void Tracker::getBrightnessContour() {
         
         contourFinder.findContours(grayDiff, 20, (WIDTH * HEIGHT) / 3, 10, true);
     }
-}
-
-void Tracker::getHueContour() {
-//    PixelRGB* pixRGB = (PixelRGB*)(colorImg.getPixels());
-//    PixelHSV* pixHSV = (PixelHSV*)(colorImg.getPixelsHSV());
-//    
-//    for (int i = 0; i < WIDTH * HEIGHT; i++) {
-//        if (pixHSV[i].h > hue + hueVariance || pixHSV[i].h < hue - hueVariance ||
-//            pixHSV[i].s > saturation + saturationVariance || pixHSV[i].s < saturation - saturationVariance ||
-//            pixHSV[i].s > value + valueVariance || pixHSV[i].s < value - valueVariance)
-//            pixRGB[i].set(0,0,0);
-//    }
-//    ofxCvColorImage c;
-//    c.allocate(WIDTH, HEIGHT);
-//    c.setFromPixels((unsigned char*)(pixRGB), WIDTH, HEIGHT);
-//    
-//    grayDiff = c;
-//    grayDiff.threshold(1);
-//    grayDiff.dilate();
-//    grayDiff.erode();
-//    
-//    contourFinder.findContours(grayDiff, minBlobSize, maxBlobSize, 1, false);
-//    
-//    if (contourFinder.nBlobs)
-//        lastBlobSize = contourFinder.blobs[0].area;
 }
 
 void Tracker::audioInput(float energy) {

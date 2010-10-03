@@ -8,7 +8,7 @@
 
 class Infobox {
 private:
-    string message;
+    vector<string> message;
     ofTrueTypeFont font;
     
 public:
@@ -16,9 +16,20 @@ public:
         font.loadFont("microgme.ttf", 26);
     }
 
-    void set(const char* _message) {
+    void set(string _message) {
         clear();
-        message = _message;
+        
+        if (_message.length() > 60) {
+            int pos = _message.find(' ', 50);
+            
+            while (pos != string::npos) {
+                message.push_back(_message.substr(0, pos));
+                _message = _message.substr(pos + 1);
+                pos = _message.find(' ', 50);
+            }
+        }
+        
+        message.push_back(_message);
     }
     
     void clear() {
@@ -27,7 +38,13 @@ public:
 
     void draw() {
         ofSetColor(0x384585);
-        font.drawString(message, WIDTH - 20 - font.stringWidth(message), HEIGHT - 20);
+        for (int i = 0; i < message.size(); i++) {
+            font.drawString(
+                message[i], 
+                WIDTH - 20 - font.stringWidth(message[i]), 
+                HEIGHT - 20 - font.stringHeight(message[i]) * (message.size() - i - 1)
+            );
+        }
     }
 };
 
