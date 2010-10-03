@@ -56,7 +56,7 @@ bool RobotDefense::draw(bool hit, Vector &hitPoint) {
                         signs[i].update(combo);
                     }
                     
-                    combo = "Combo: x" + ofToString(comboCounter);
+                    combo = "combo: x" + ofToString(comboCounter);
                     signs.push_back(Sign(combo, Vector((WIDTH - gameFont->stringWidth(combo)) / 2, HEIGHT / 2), 2.0));
                 }
             }
@@ -85,7 +85,7 @@ bool RobotDefense::draw(bool hit, Vector &hitPoint) {
                         int timeBonus = ofGetElapsedTimef() - startTime;
                         points += timeBonus;
                         
-                        string bonus = "Timebonus: +" + ofToString(timeBonus);
+                        string bonus = "timebonus: +" + ofToString(timeBonus);
                         signs.push_back(Sign(bonus, Vector((WIDTH - gameFont->stringWidth(bonus)) / 2, HEIGHT / 2), 3.0));
                         
                         for (int j = 0; j < robots.size(); j++) {

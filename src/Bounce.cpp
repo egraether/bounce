@@ -15,7 +15,6 @@ Bounce::Bounce() :
 
 void Bounce::setup() {
     ofBackground(220, 220, 255);
-    //ofSetVerticalSync(true);
     ofSetFrameRate(60.0f);
     
     srand(time(NULL));
@@ -29,12 +28,12 @@ void Bounce::setup() {
     fhLogo.load("logo_fh.png", true, GL_CLAMP, GL_CLAMP);
     mmaMmtLogo.load("logo_mmammt.png", true, GL_CLAMP, GL_CLAMP);
     
-    calibrateButton.set("calibrate_button.png", WIDTH - 290, HEIGHT - 140, 250, 100);
-    creditsButton.set("credits_button.png", 40, HEIGHT - 140, 250, 100);
+    calibrateButton.set("calibrate_button.png", WIDTH - 350, HEIGHT - 150, 250, 100);
+    creditsButton.set("credits_button.png", 100, HEIGHT - 150, 250, 100);
     
-    shootingCansButton.set("cans_button.png", (WIDTH / 3 - 300) / 2, 200, 300, 300);
-    robotDefenseButton.set("robot_button.png", (WIDTH / 3 - 300) / 2 + WIDTH / 3, 200, 300, 300);
-    balloonHuntButton.set("balloon_button.png", (WIDTH / 3 - 300) / 2 + WIDTH / 3 * 2, 200, 300, 300);
+    shootingCansButton.set("cans_button.png", (WIDTH / 3 - 300) / 2, 250, 300, 300);
+    robotDefenseButton.set("robot_button.png", (WIDTH / 3 - 300) / 2 + WIDTH / 3, 250, 300, 300);
+    balloonHuntButton.set("balloon_button.png", (WIDTH / 3 - 300) / 2 + WIDTH / 3 * 2, 250, 300, 300);
     risingNinjaButton.set("wordbubble2.png", (WIDTH / 3 - 300) / 2 + WIDTH / 3, 500, 300, 300);
     
     Game::initializeStatics();
@@ -55,7 +54,7 @@ void Bounce::draw() {
             shootingCansButton.draw();
             robotDefenseButton.draw();
             balloonHuntButton.draw();
-            risingNinjaButton.draw();
+//            risingNinjaButton.draw();
             
             if (calibrateButton.checkHit(hit, hitPoint))
                 changeMode(CALIBRATE);
@@ -65,8 +64,8 @@ void Bounce::draw() {
                 changeMode(ROBOT_DEFENSE);
             else if (balloonHuntButton.checkHit(hit, hitPoint))
                 changeMode(BALLOON_HUNT);
-            else if (risingNinjaButton.checkHit(hit, hitPoint))
-                changeMode(RISING_NINJA);
+//            else if (risingNinjaButton.checkHit(hit, hitPoint))
+//                changeMode(RISING_NINJA);
             break;
         case CALIBRATE:
             if (!tracker.draw(hit, hitPoint))

@@ -60,7 +60,7 @@ bool ShootingCans::draw(bool hit, Vector &hitPoint) {
                             signs.push_back(Sign(bonus, Vector((WIDTH - gameFont->stringWidth(bonus)) / 2, HEIGHT / 2), 3.0));
                             
                             points -= ballHits * 10;
-                            string minus = "ballcount-reduction: -" + ofToString(ballHits * 10);
+                            string minus = "ballthrows: -" + ofToString(ballHits * 10);
                             signs.push_back(Sign(minus, Vector((WIDTH - gameFont->stringWidth(minus)) / 2, HEIGHT / 2 + 40), 4.0));
                         }
                     }
