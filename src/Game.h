@@ -88,15 +88,21 @@ public:
     
     void drawPanel() {
         ofPushMatrix();
-        ofTranslate((WIDTH - 500) / 2, (HEIGHT - 500) / 2, 0);
+        ofTranslate((WIDTH - 500) / 2, (HEIGHT - 700) / 2, 0);
         
-        panel->draw(0, 0, 500, 500);
+        panel->draw(0, 0, 500, 700);
         
         ofSetColor(0x384585);
         titelFont->drawString(titel, 50, 70);
-        scoreFont->drawString("your score: " + ofToString(points), 50, 110);
-        highScore.draw(scoreFont, 80, 150);
-        lastScore.draw(scoreFont, 300, 150);
+        
+        gameFont->drawString("your score:", 50, 150);
+        bigFont->drawString(ofToString(points), (500 - bigFont->stringWidth(ofToString(points))) / 2, 220);
+        
+        ofSetColor(0x584585);
+        scoreFont->drawString("Highcores:", 50, 300);
+        scoreFont->drawString("Last Players:", 310, 300);
+        highScore.draw(scoreFont, 50, 320);
+        lastScore.draw(scoreFont, 310, 320);
         
         ofPopMatrix();
     }
@@ -163,7 +169,9 @@ public:
         gameFont = new ofTrueTypeFont();
         gameFont->loadFont("microgme.ttf", 26);
         scoreFont = new ofTrueTypeFont();
-        scoreFont->loadFont("microgme.ttf", 18);
+        scoreFont->loadFont("microgme.ttf", 16);
+        bigFont = new ofTrueTypeFont();
+        bigFont->loadFont("microgme.ttf", 46);
     }
 };
 

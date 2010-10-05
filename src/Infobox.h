@@ -37,13 +37,21 @@ public:
     }
 
     void draw() {
-        ofSetColor(0x384585);
-        for (int i = 0; i < message.size(); i++) {
-            font.drawString(
-                message[i], 
-                WIDTH - 20 - font.stringWidth(message[i]), 
-                HEIGHT - 20 - font.stringHeight(message[i]) * (message.size() - i - 1)
-            );
+        if (message.size()) {
+            ofFill();
+            ofEnableAlphaBlending();
+            ofSetColor(220, 220, 255, 200);
+            ofRect(0, HEIGHT - message.size() * 30 - 20, WIDTH, message.size() * 30 + 20);
+            ofDisableAlphaBlending();
+        
+            ofSetColor(0x384585);
+            for (int i = 0; i < message.size(); i++) {
+                font.drawString(
+                    message[i], 
+                    WIDTH - 20 - font.stringWidth(message[i]), 
+                    HEIGHT - 20 - font.stringHeight(message[i]) * (message.size() - i - 1)
+                );
+            }
         }
     }
 };

@@ -71,21 +71,30 @@ public:
     }
     
     void draw(ofTrueTypeFont* font, int x, int y) {
-        int row = y + 15;
+        ofPushMatrix();
+        ofTranslate(x, y, 0);
+        ofFill();
+        
+        ofEnableAlphaBlending();
+        ofSetColor(220, 220, 255, 200);
+        ofRect(0, 0, 200, (font->getLineHeight() + 10) * 10);
+        ofDisableAlphaBlending();
+        
+        int row = 20;
         ofSetColor(0x384585);
         
         for (it = scores.begin(); it != scores.end(); it++) {
             if (it == at) {
-                ofFill();
-                ofSetColor(0xcccccc);
-                ofRect(x, row - 15, 200, 20);
+                ofSetColor(0xccccff);
+                ofRect(0, row - 15, 200, 20);
                 ofSetColor(0x384585);
             }
             
-            font->drawString(ofToString(it->first), x + 10, row);
-            font->drawString(it->second, x + 110, row);
+            font->drawString(ofToString(it->first), 40 - font->stringWidth(ofToString(it->first)) / 2, row);
+            font->drawString(it->second, 140 - font->stringWidth(it->second) / 2, row);
             row += font->getLineHeight() + 10;
         }
+        ofPopMatrix();
     }
 };
 
