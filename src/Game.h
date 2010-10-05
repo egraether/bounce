@@ -7,10 +7,12 @@
 #include "Texture.h"
 #include "Infobox.h"
 #include "HighScore.h"
+#include "LastScore.h"
 #include "constants.h"
 #include "Sign.h"
 
 #include <vector>
+#include <set>
 
 class Game {
 protected:
@@ -24,6 +26,7 @@ protected:
     
     string scoresFileName;
     HighScore highScore;
+    LastScore lastScore;
     
     string name;
     bool insertName;
@@ -34,6 +37,8 @@ protected:
     vector<Sign> signs;
     Texture* background;
     
+    int textColor;
+    
 public:
     static ofTrueTypeFont* titelFont;
     static ofTrueTypeFont* gameFont;
@@ -42,7 +47,7 @@ public:
     static Texture* panel;
     
     Game(string _titel, Infobox* _infobox, string _scoresFileName) : 
-        titel(_titel), infobox(_infobox), scoresFileName(_scoresFileName), insertName(false) {
+        titel(_titel), infobox(_infobox), scoresFileName(_scoresFileName), insertName(false), textColor(0x384585) {
             
         highScore.readFile(scoresFileName.c_str());
     }
@@ -78,6 +83,7 @@ public:
             infobox->set("you got a new highScore, insert your name at the keyboard and press enter.");
             insertName = true;
         }
+        lastScore.insertScore(points);
     }
     
     void drawPanel() {
@@ -89,7 +95,8 @@ public:
         ofSetColor(0x384585);
         titelFont->drawString(titel, 50, 70);
         scoreFont->drawString("your score: " + ofToString(points), 50, 110);
-        highScore.draw(scoreFont, 150, 150);
+        highScore.draw(scoreFont, 80, 150);
+        lastScore.draw(scoreFont, 300, 150);
         
         ofPopMatrix();
     }
@@ -102,7 +109,7 @@ public:
             }
         }
         
-        ofSetColor(0x384585);
+        ofSetColor(textColor);
         gameFont->drawString("points: " + ofToString(points), 20, 40);
         string t = "time: " + ofToString(screenTime);
         gameFont->drawString(t, WIDTH - 20 - gameFont->stringWidth(t), 40);

@@ -79,7 +79,7 @@ public:
     }
     
     void destroy() {
-        sprite.setAnimation(0, 1, 0, 3, false);
+        sprite.setAnimation(0, 2, 0, 13, false, 3);
         stop = true;
     }
 };

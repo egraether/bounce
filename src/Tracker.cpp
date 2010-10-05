@@ -266,14 +266,6 @@ bool Tracker::getHitPoint(Vector &hitPoint) {
             colorImg.setFromPixels(screenImgStore.front()->getPixels(), WIDTH, HEIGHT);
             grayBg = colorImg;
             
-            int pointList[16] = {
-                screenCorner[0].x, screenCorner[0].y, screenCorner[1].x, screenCorner[1].y,
-                screenCorner[3].x, screenCorner[3].y, screenCorner[2].x, screenCorner[2].y,
-                projCorner[0].x, projCorner[0].y, projCorner[1].x, projCorner[1].y, 
-                projCorner[3].x, projCorner[3].y, projCorner[2].x, projCorner[2].y
-            };
-            int resolution[2] = {WIDTH, HEIGHT};
-            
             cvWarpPerspective(grayImg.getCvImage(), grayDiff.getCvImage(), homography);
             
             //        if (equalize)
@@ -285,6 +277,8 @@ bool Tracker::getHitPoint(Vector &hitPoint) {
             
             grayDiff.threshold(threshold);
             grayDiff.erode();
+            grayDiff.erode();
+            grayDiff.dilate();
             grayDiff.dilate();
             
             contourFinder.findContours(grayDiff, minBlobSize, maxBlobSize, 1, false);

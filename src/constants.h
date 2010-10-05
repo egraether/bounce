@@ -15,7 +15,7 @@
 
 #define THRESHOLD 33
 
-#define MIN_BLOB_SIZE 1000
+#define MIN_BLOB_SIZE 500
 #define MAX_BLOB_SIZE 3000
 
 #define PLOT_SIZE 500

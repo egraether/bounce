@@ -2,13 +2,16 @@
 #include "ofMain.h"
 
 int BalloonHunt::Balloon::counter = 0;
+int BalloonHunt::Balloon::colors[6] = {
+    0xff8888, 0xffcc88, 0x8888ff, 0xffff88, 0xff88ff, 0x88ffff
+};
 
 BalloonHunt::BalloonHunt(const char* titel, Infobox* infobox, const char* scoresFileName) : 
     Game(titel, infobox, scoresFileName) {
     
-    balloonTexture.load("balloon.png", true, GL_CLAMP, GL_CLAMP);
+    balloonTexture.load("balloon2.png", true, GL_CLAMP, GL_CLAMP);
     background = new Texture();
-    background->load("balloon_bg.png", false, GL_CLAMP, GL_CLAMP);
+    background->load("balloon_bg2.png", false, GL_CLAMP, GL_CLAMP);
 }
 
 void BalloonHunt::reset() {
@@ -34,7 +37,7 @@ bool BalloonHunt::draw(bool hit, Vector &hitPoint) {
             counter++;
             if (counter == 100) {
                 counter = 0;
-                balloons.push_back(Balloon(&balloonTexture, 1, 4));
+                balloons.push_back(Balloon(&balloonTexture, 1, 6));
             }
             
             // check hit

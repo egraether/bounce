@@ -30,44 +30,46 @@ public:
     static int counter;
     
 private:
-    Vector pos;
+    Vector pos, balloonCenter;
     bool explode;
     SpriteAnimation sprite;
     float speed; 
     int size;
-    int color[3];
+    
+    int color;
+    static int colors[6];
 
 public:
     Balloon(Texture* tex, int rows, int columns) : explode(false) {
         switch (counter % 3) {
             case 0:
                 sprite.load(tex, 300, 300, rows, columns);
-                size = 100;
+                size = 120;
                 points = 10;
                 speed = 5;
+                balloonCenter.set(0, -50);
                 break;
             case 1:
                 sprite.load(tex, 200, 200, rows, columns);
-                size = 75;
+                size = 80;
                 points = 50;
                 speed = 2;
+                balloonCenter.set(0, -36);
                 break;
             case 2:
                 sprite.load(tex, 100, 100, rows, columns);
-                size = 50;
+                size = 40;
                 points = 100;
                 speed = 1;
+                balloonCenter.set(0, -17);
                 break;
             default:
                 break;
         }
         
-        color[0] = rand() % 125 + 125;
-        color[1] = rand() % 125 + 125;
-        color[2] = rand() % 125 + 125;
-            
+        color = colors[rand() % 6];
         pos.set(rand() % (WIDTH - 300) + 150, HEIGHT + size);
-        sprite.setAnimation(0, 0, 0, 1, true);
+        sprite.setAnimation(0, 0, 0, 0, true);
         counter++;
     }
     
@@ -80,8 +82,8 @@ public:
         
         ofPushMatrix();
         ofTranslate(pos.x, pos.y, 0.0);
-        //ofCircle(0, 0, size);
-        ofSetColor(color[0], color[1], color[2]);
+        ofCircle(balloonCenter.x, balloonCenter.y, size);
+        ofSetColor(color);
         bool destroyed = sprite.draw(0, 0, false);
         ofPopMatrix();
         
@@ -89,9 +91,9 @@ public:
     }
     
     bool checkHit(Vector &hitPoint) {
-        if (Vector::distance(hitPoint, pos) <= size) {
+        if (!explode && Vector::distance(hitPoint, pos + balloonCenter) <= size) {
             explode = true;
-            sprite.setAnimation(0, 2, 0, 3, false);
+            sprite.setAnimation(0, 2, 0, 5, false, 3);
             return true;
         }
         return false;

@@ -4,16 +4,18 @@
 ShootingCans::ShootingCans(const char* titel, Infobox* infobox, const char* scoresFileName) : 
     Game(titel, infobox, scoresFileName) {
     
+    textColor = 0xededed;
     canTexture.load("can.png", true, GL_CLAMP, GL_CLAMP);
     shelfTexture.load("body.png", true, GL_CLAMP, GL_CLAMP);
     background = new Texture();
-    background->load("cans_bg.png", false, GL_CLAMP, GL_CLAMP);
+    background->load("cans_bg2.png", true, GL_CLAMP, GL_CLAMP);
 }
 
 void ShootingCans::reset() {
     resetGame();
     
     cans.clear();
+    shootedCans.clear();
     
     for (int i = 0; i < 3; i++) {
         cans.push_back(Can((3 + i * 2) * WIDTH / 10, HEIGHT / 4 - 30, &canTexture, 100, 100, 1, 4));
@@ -27,11 +29,20 @@ void ShootingCans::reset() {
     
     gameStarted = false;
     screenTime = 120;
+    
+    ofBackground(0xe3, 0xcb, 0xcc);
 }
    
 bool ShootingCans::draw(bool hit, Vector &hitPoint) {
+    
+    for (int i = 0; i < shootedCans.size(); i++) {
+        if (!shootedCans[i].draw()) {
+            shootedCans.erase(shootedCans.begin() + i);
+            i--;
+        }
+    }
+    shelfTexture.draw(150, 250, WIDTH - 300, HEIGHT - 300);
     background->draw(0, 0, WIDTH, HEIGHT);
-    shelfTexture.draw(100, 150, WIDTH - 200, HEIGHT - 150);
     
     switch (mode) {
         case INIT:
@@ -52,6 +63,10 @@ bool ShootingCans::draw(bool hit, Vector &hitPoint) {
                         points += 100;
                         signs.push_back(Sign("+100", hitPoint, 2.0));
                         
+                        shootedCans.push_back(cans[i]);
+                        cans.erase(cans.begin() + i);
+                        i--;
+                        
                         if (points == 1000) {
                             int timeBonus = (startTime - ofGetElapsedTimef()) * 10;
                             points += timeBonus;
@@ -64,14 +79,6 @@ bool ShootingCans::draw(bool hit, Vector &hitPoint) {
                             signs.push_back(Sign(minus, Vector((WIDTH - gameFont->stringWidth(minus)) / 2, HEIGHT / 2 + 40), 4.0));
                         }
                     }
-                }
-            }
-            
-            // draw
-            for (int i = 0; i < cans.size(); i++) {
-                if (!cans[i].draw()) {
-                    cans.erase(cans.begin() + i);
-                    i--;
                 }
             }
             
@@ -90,6 +97,14 @@ bool ShootingCans::draw(bool hit, Vector &hitPoint) {
             break;
         default:
             break;
+    }
+    
+    // draw
+    for (int i = 0; i < cans.size(); i++) {
+        if (!cans[i].draw()) {
+            cans.erase(cans.begin() + i);
+            i--;
+        }
     }
     
     drawSigns();

@@ -13,6 +13,8 @@ class ShootingCans : public Game {
 private:
     class Can;
     vector<Can> cans;
+    vector<Can> shootedCans;
+    
     Texture canTexture;
     Texture shelfTexture;
     
@@ -48,8 +50,10 @@ public:
         
         ofPushMatrix();
         ofTranslate(pos.x, pos.y, 0.0);
-        if (flying)
+        if (flying) {
             ofRotateZ((ofGetElapsedTimef() - time) * pos.x);
+            ofScale(1.0 - (ofGetElapsedTimef() - time) / 3, 1.0 - (ofGetElapsedTimef() - time) / 3, 0);
+        }
         sprite.draw(0, 0);
         ofPopMatrix();
         
