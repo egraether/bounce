@@ -16,11 +16,14 @@ Tracker::Tracker(Infobox* i, Console* c) :
     trackStop(false),
 
     derivationWidth(2),
-    bangLevel(3), 
+    bangLevel(7), 
     bangCounter(0),
 
-    camWaitFrames(3),
-    camWaitCounter(10) {
+    camWaitFrames(4),
+    camWaitCounter(10),
+    
+    overlayAlpha(50),
+    whiteOverlay(false) {
     
     console->addInformation("lastBlobSize", &lastBlobSize);
     console->addRegulation("screenStoreSize", &screenStoreSize, 1, 10);    
@@ -29,6 +32,8 @@ Tracker::Tracker(Infobox* i, Console* c) :
     console->addRegulation("threshold", &threshold, 0, 255);
     console->addRegulation("derivationWidth", &derivationWidth, 0, 10);
     console->addRegulation("bangLevel", &bangLevel, 0, 50);
+        
+    console->addRegulation("overlayAlpha", &overlayAlpha, 0, 255);
     
     videoCapture.setVerbose(true);
     videoCapture.initGrabber(WIDTH,HEIGHT);
@@ -203,6 +208,12 @@ bool Tracker::draw(bool hit, Vector hitPoint) {
 void Tracker::drawPics() {
     
     ofSetColor(255, 255, 255);
+    if (whiteOverlay) {
+        ofEnableAlphaBlending();
+        ofSetColor(255, 255, 255, overlayAlpha);
+        ofRect(0, 0, WIDTH, HEIGHT);
+        ofDisableAlphaBlending();
+    }
     if (showColorImg)
         camImg.draw(0, 0);
     if (showGrayImg)
@@ -231,6 +242,9 @@ void Tracker::keyPressed(int key) {
             showScreenImg = false;
             showCamImg = false;
             break;
+        case 'w':
+            whiteOverlay = !whiteOverlay;
+			break;
         case 'x':
             showContours = !showContours;
 			break;

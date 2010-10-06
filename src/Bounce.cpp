@@ -99,6 +99,14 @@ void Bounce::draw() {
                 ofSetColor(220, 220, 220, 125);
                 ofRect(0, 0, WIDTH, HEIGHT);
                 ofDisableAlphaBlending();
+                
+                ofSetColor(0x384585);
+                string s = "Game";
+                Game::bigFont.drawString(s, (WIDTH - Game::bigFont.stringWidth(s)) / 2, HEIGHT / 2 - 30);
+                s = "Paused";
+                Game::bigFont.drawString(s, (WIDTH - Game::bigFont.stringWidth(s)) / 2, HEIGHT / 2 + 30);
+                s = "press space-bar to continue.";
+                Game::gameFont.drawString(s, (WIDTH - Game::gameFont.stringWidth(s)) / 2, HEIGHT / 2 + 100);
             }
             break;
     }
@@ -113,8 +121,6 @@ void Bounce::draw() {
     hit = false;
     
     console.draw();
-    ofSetColor(0x000000);
-    ofDrawBitmapString("Framerate: " + ofToString(ofGetFrameRate()), WIDTH - 150, 40);
     
     if (!gamePaused)
         hit = tracker.getHitPoint(hitPoint);

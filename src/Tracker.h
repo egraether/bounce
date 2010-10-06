@@ -74,6 +74,9 @@ private:
     bool showCamImg;
     bool showContours;
     
+    bool whiteOverlay;
+    int overlayAlpha;
+    
     Infobox* infobox;
     Console* console;
     

@@ -15,6 +15,8 @@ void Console::draw() {
         for (int i = 0; i < infos.size(); i++) {
             ofDrawBitmapString(infos[i].name + " " + ofToString(*infos[i].value), 15, 25 + i * 20);
         }
+        
+        ofDrawBitmapString("Framerate: " + ofToString(ofGetFrameRate()), WIDTH - 200, 40);
     }
 } 
 
