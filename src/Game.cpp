@@ -1,10 +1,10 @@
 #include "Game.h"
 
 Texture* Game::panel = 0;
-ofTrueTypeFont* Game::titelFont = 0;
-ofTrueTypeFont* Game::gameFont = 0;
-ofTrueTypeFont* Game::scoreFont = 0;
-ofTrueTypeFont* Game::bigFont = 0;
+ofTrueTypeFont Game::titelFont;
+ofTrueTypeFont Game::gameFont;
+ofTrueTypeFont Game::scoreFont;
+ofTrueTypeFont Game::bigFont;
 
 //class Game {
 //protected:

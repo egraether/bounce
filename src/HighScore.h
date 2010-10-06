@@ -13,9 +13,13 @@ class HighScore {
 private:    
     multimap<int, string, greater<int> > scores;
     multimap<int, string, greater<int> >::iterator it, at;
+    unsigned char alpha;
+    bool blink;
     
 public:
     bool checkScore(int score) {
+        at = 0;
+        blink = false;
         return score > scores.rbegin()->first;
     }
     
@@ -23,6 +27,7 @@ public:
         if (checkScore(score)) {
             at = scores.insert(pair<int, string>(score, name));
             scores.erase(--scores.end());
+            blink = true;
         }
     }
     
@@ -62,7 +67,8 @@ public:
             file << it->second << ' ' << it->first << '\n';
         
         file.close();
-        at = 0;
+        blink = false;
+        alpha = 255;
     }
     
     void printScores() {
@@ -70,14 +76,14 @@ public:
             cout << it->first << ' ' << it->second << '\n';
     }
     
-    void draw(ofTrueTypeFont* font, int x, int y) {
+    void draw(ofTrueTypeFont &font, int x, int y) {
         ofPushMatrix();
         ofTranslate(x, y, 0);
         ofFill();
         
         ofEnableAlphaBlending();
         ofSetColor(220, 220, 255, 200);
-        ofRect(0, 0, 200, (font->getLineHeight() + 10) * 10);
+        ofRect(0, 0, 200, (font.getLineHeight() + 10) * 10);
         ofDisableAlphaBlending();
         
         int row = 20;
@@ -85,14 +91,18 @@ public:
         
         for (it = scores.begin(); it != scores.end(); it++) {
             if (it == at) {
-                ofSetColor(0xccccff);
+                ofEnableAlphaBlending();
+                if (blink)
+                    alpha = char((sin(ofGetElapsedTimef() * 3) + 1) / 2 * 255);
+                ofSetColor(180, 180, 255, alpha);
                 ofRect(0, row - 15, 200, 20);
+                ofDisableAlphaBlending();
                 ofSetColor(0x384585);
             }
             
-            font->drawString(ofToString(it->first), 40 - font->stringWidth(ofToString(it->first)) / 2, row);
-            font->drawString(it->second, 140 - font->stringWidth(it->second) / 2, row);
-            row += font->getLineHeight() + 10;
+            font.drawString(ofToString(it->first), 40 - font.stringWidth(ofToString(it->first)) / 2, row);
+            font.drawString(it->second, 140 - font.stringWidth(it->second) / 2, row);
+            row += font.getLineHeight() + 10;
         }
         ofPopMatrix();
     }

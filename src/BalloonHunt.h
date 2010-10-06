@@ -69,7 +69,7 @@ public:
         
         color = colors[rand() % 6];
         pos.set(rand() % (WIDTH - 300) + 150, HEIGHT + size);
-        sprite.setAnimation(0, 0, 0, 0, true);
+        sprite.setAnimation(0, 0, 0, 1, true);
         counter++;
     }
     

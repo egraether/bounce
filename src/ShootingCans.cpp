@@ -5,7 +5,7 @@ ShootingCans::ShootingCans(const char* titel, Infobox* infobox, const char* scor
     Game(titel, infobox, scoresFileName) {
     
     textColor = 0xededed;
-    canTexture.load("can.png", true, GL_CLAMP, GL_CLAMP);
+    canTexture.load("cans.png", true, GL_CLAMP, GL_CLAMP);
     shelfTexture.load("body.png", true, GL_CLAMP, GL_CLAMP);
     background = new Texture();
     background->load("cans_bg2.png", true, GL_CLAMP, GL_CLAMP);
@@ -18,13 +18,13 @@ void ShootingCans::reset() {
     shootedCans.clear();
     
     for (int i = 0; i < 3; i++) {
-        cans.push_back(Can((3 + i * 2) * WIDTH / 10, HEIGHT / 4 - 30, &canTexture, 100, 100, 1, 4));
+        cans.push_back(Can((4 + i * 2) * WIDTH / 12, HEIGHT / 4 + 5, &canTexture, 150, 125, 1, 3));
     }
     for (int i = 1; i <= 4; i++) {
-        cans.push_back(Can(i * WIDTH / 5, HEIGHT / 2, &canTexture, 100, 100, 1, 4));
+        cans.push_back(Can(i * WIDTH / 5, HEIGHT / 2 - 20, &canTexture, 150, 125, 1, 3));
     }
     for (int i = 0; i < 3; i++) {
-        cans.push_back(Can((3 + i * 2) * WIDTH / 10, HEIGHT / 4 * 3 + 30, &canTexture, 100, 100, 1, 4));
+        cans.push_back(Can((4 + i * 2) * WIDTH / 12, HEIGHT / 4 * 3 - 45, &canTexture, 150, 125, 1, 3));
     }
     
     gameStarted = false;
@@ -35,22 +35,15 @@ void ShootingCans::reset() {
    
 bool ShootingCans::draw(bool hit, Vector &hitPoint) {
     
-    for (int i = 0; i < shootedCans.size(); i++) {
-        if (!shootedCans[i].draw()) {
-            shootedCans.erase(shootedCans.begin() + i);
-            i--;
-        }
-    }
-    shelfTexture.draw(150, 250, WIDTH - 300, HEIGHT - 300);
-    background->draw(0, 0, WIDTH, HEIGHT);
-    
     switch (mode) {
         case INIT:
             startGame();
+            infobox->set("bounce at the cans.");
             break;
         case PLAY:
             // check hit
             if (hit) {
+                infobox->clear();
                 ballHits++;
                 
                 if (!gameStarted) {
@@ -72,11 +65,11 @@ bool ShootingCans::draw(bool hit, Vector &hitPoint) {
                             points += timeBonus;
                             
                             string bonus = "timebonus: +" + ofToString(timeBonus);
-                            signs.push_back(Sign(bonus, Vector((WIDTH - gameFont->stringWidth(bonus)) / 2, HEIGHT / 2), 3.0));
+                            signs.push_back(Sign(bonus, Vector((WIDTH - gameFont.stringWidth(bonus)) / 2, HEIGHT / 2), 3.0));
                             
                             points -= ballHits * 10;
                             string minus = "ballthrows: -" + ofToString(ballHits * 10);
-                            signs.push_back(Sign(minus, Vector((WIDTH - gameFont->stringWidth(minus)) / 2, HEIGHT / 2 + 40), 4.0));
+                            signs.push_back(Sign(minus, Vector((WIDTH - gameFont.stringWidth(minus)) / 2, HEIGHT / 2 + 40), 4.0));
                         }
                     }
                 }
@@ -87,8 +80,17 @@ bool ShootingCans::draw(bool hit, Vector &hitPoint) {
             
             if ((cans.size() == 0 && signs.size() == 0) || screenTime <= 0)
                 stopGame();
+            
+            for (int i = 0; i < shootedCans.size(); i++) {
+                if (!shootedCans[i].draw()) {
+                    shootedCans.erase(shootedCans.begin() + i);
+                    i--;
+                }
+            }
+            drawBg();
             break;
         case PANEL:
+            drawBg();
             drawPanel();
             
             if (hit && !insertName)
@@ -99,6 +101,14 @@ bool ShootingCans::draw(bool hit, Vector &hitPoint) {
             break;
     }
     
+    drawSigns();
+    
+    return true;
+}
+
+void ShootingCans::drawBg() {
+    shelfTexture.draw(150, 250, WIDTH - 300, HEIGHT - 300);
+    background->draw(0, 0, WIDTH, HEIGHT);
     // draw
     for (int i = 0; i < cans.size(); i++) {
         if (!cans[i].draw()) {
@@ -106,10 +116,5 @@ bool ShootingCans::draw(bool hit, Vector &hitPoint) {
             i--;
         }
     }
-    
-    drawSigns();
-    
-    return true;
 }
-
 

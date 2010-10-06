@@ -16,7 +16,7 @@ private:
     int counter, period, laserTime;
     float speed;
     Vector cannon;
-    Texture robotTexture[2];
+    Texture robotTexture[3];
     Texture cannonTexture;
     Texture laserTexture;
     
@@ -79,7 +79,7 @@ public:
     }
     
     void destroy() {
-        sprite.setAnimation(0, 2, 0, 13, false, 3);
+        sprite.setAnimation(0, 1, 0, 13, false, 3);
         stop = true;
     }
 };

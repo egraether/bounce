@@ -9,7 +9,7 @@ int BalloonHunt::Balloon::colors[6] = {
 BalloonHunt::BalloonHunt(const char* titel, Infobox* infobox, const char* scoresFileName) : 
     Game(titel, infobox, scoresFileName) {
     
-    balloonTexture.load("balloon2.png", true, GL_CLAMP, GL_CLAMP);
+    balloonTexture.load("balloon3.png", true, GL_CLAMP, GL_CLAMP);
     background = new Texture();
     background->load("balloon_bg2.png", false, GL_CLAMP, GL_CLAMP);
 }
@@ -31,6 +31,7 @@ bool BalloonHunt::draw(bool hit, Vector &hitPoint) {
             startGame();
             startTime = ofGetElapsedTimef() + 120;
             counter = 99;
+            infobox->set("bounce at the balloons.");
             break;
         case PLAY:
             // new balloons
@@ -42,6 +43,7 @@ bool BalloonHunt::draw(bool hit, Vector &hitPoint) {
             
             // check hit
             if (hit) {
+                infobox->clear();
                 for (int i = 0; i < balloons.size(); i++) {
                     if (balloons[i].checkHit(hitPoint)) {
                         points += balloons[i].points;

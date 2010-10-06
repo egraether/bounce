@@ -48,7 +48,10 @@ private:
     Texture background;
     Texture bounceLogo;
     Texture fhLogo;
-    Texture mmaMmtLogo;
+    Texture mmtLogo;
+    Texture mmaLogo;
+    
+    ofTrueTypeFont font, font2;
 
 public:
     Bounce();

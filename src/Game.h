@@ -40,10 +40,10 @@ protected:
     int textColor;
     
 public:
-    static ofTrueTypeFont* titelFont;
-    static ofTrueTypeFont* gameFont;
-    static ofTrueTypeFont* scoreFont;
-    static ofTrueTypeFont* bigFont;
+    static ofTrueTypeFont titelFont;
+    static ofTrueTypeFont gameFont;
+    static ofTrueTypeFont scoreFont;
+    static ofTrueTypeFont bigFont;
     static Texture* panel;
     
     Game(string _titel, Infobox* _infobox, string _scoresFileName) : 
@@ -80,7 +80,7 @@ public:
         
         if (highScore.checkScore(points)) {
             highScore.insertScore(name, points);
-            infobox->set("you got a new highScore, insert your name at the keyboard and press enter.");
+            infobox->set("you have a new highScore, insert your name at the keyboard and press enter.");
             insertName = true;
         }
         lastScore.insertScore(points);
@@ -88,21 +88,21 @@ public:
     
     void drawPanel() {
         ofPushMatrix();
-        ofTranslate((WIDTH - 500) / 2, (HEIGHT - 700) / 2, 0);
+        ofTranslate((WIDTH - 500) / 2, (HEIGHT - 600) / 2, 0);
         
-        panel->draw(0, 0, 500, 700);
+        panel->draw(0, 0, 500, 630);
         
         ofSetColor(0x384585);
-        titelFont->drawString(titel, 50, 70);
+        titelFont.drawString(titel, 50, 70);
         
-        gameFont->drawString("your score:", 50, 150);
-        bigFont->drawString(ofToString(points), (500 - bigFont->stringWidth(ofToString(points))) / 2, 220);
+        gameFont.drawString("your score:", 50, 130);
+        bigFont.drawString(ofToString(points), (500 - bigFont.stringWidth(ofToString(points))) / 2, 200);
         
         ofSetColor(0x584585);
-        scoreFont->drawString("Highcores:", 50, 300);
-        scoreFont->drawString("Last Players:", 310, 300);
-        highScore.draw(scoreFont, 50, 320);
-        lastScore.draw(scoreFont, 310, 320);
+        scoreFont.drawString("Highcores:", 50, 250);
+        scoreFont.drawString("Last Players:", 310, 250);
+        highScore.draw(scoreFont, 50, 270);
+        lastScore.draw(scoreFont, 310, 270);
         
         ofPopMatrix();
     }
@@ -116,9 +116,9 @@ public:
         }
         
         ofSetColor(textColor);
-        gameFont->drawString("points: " + ofToString(points), 20, 40);
+        gameFont.drawString("points: " + ofToString(points), 20, 40);
         string t = "time: " + ofToString(screenTime);
-        gameFont->drawString(t, WIDTH - 20 - gameFont->stringWidth(t), 40);
+        gameFont.drawString(t, WIDTH - 20 - gameFont.stringWidth(t), 40);
     }
     
     bool keyPressed(int key) {
@@ -131,7 +131,6 @@ public:
                     highScore.updateNewName(name);
                     break;
                 case OF_KEY_RETURN:
-                    //highScore.insertScore(name, points);
                     highScore.writeFile(scoresFileName.c_str());
                     insertName = false;
                     infobox->set("bounce to continue.");
@@ -164,14 +163,10 @@ public:
     static void initializeStatics() {
         panel = new Texture();
         panel->load("wordbubble2.png", true, GL_CLAMP, GL_CLAMP);
-        titelFont = new ofTrueTypeFont();
-        titelFont->loadFont("keypuncn.ttf", 40);
-        gameFont = new ofTrueTypeFont();
-        gameFont->loadFont("microgme.ttf", 26);
-        scoreFont = new ofTrueTypeFont();
-        scoreFont->loadFont("microgme.ttf", 16);
-        bigFont = new ofTrueTypeFont();
-        bigFont->loadFont("microgme.ttf", 46);
+        titelFont.loadFont("keypuncn.ttf", 40);
+        gameFont.loadFont("microgme.ttf", 26);
+        scoreFont.loadFont("microgme.ttf", 16);
+        bigFont.loadFont("microgme.ttf", 46);
     }
 };
 

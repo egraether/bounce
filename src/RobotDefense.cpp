@@ -8,6 +8,7 @@ RobotDefense::RobotDefense(const char* titel, Infobox* infobox, const char* scor
     
     robotTexture[0].load("robo_a.png", true, GL_CLAMP, GL_CLAMP);
     robotTexture[1].load("robo_b.png", true, GL_CLAMP, GL_CLAMP);
+    robotTexture[2].load("robo_c.png", true, GL_CLAMP, GL_CLAMP);
     cannonTexture.load("gun2.png", true, GL_CLAMP, GL_CLAMP);
     laserTexture.load("laser.png", true, GL_CLAMP, GL_CLAMP);
     background = new Texture();
@@ -33,10 +34,12 @@ bool RobotDefense::draw(bool hit, Vector &hitPoint) {
         case INIT:
             startGame();
             counter = 99;
+            infobox->set("bounce at the robots.");
             break;
         case PLAY:
             // destroy hit robots
             if (hit) {
+                infobox->clear();
                 int comboCounter = 0;
                 laserTime = 0;
                 
@@ -57,7 +60,7 @@ bool RobotDefense::draw(bool hit, Vector &hitPoint) {
                     }
                     
                     combo = "combo: x" + ofToString(comboCounter);
-                    signs.push_back(Sign(combo, Vector((WIDTH - gameFont->stringWidth(combo)) / 2, HEIGHT / 2), 2.0));
+                    signs.push_back(Sign(combo, Vector((WIDTH - gameFont.stringWidth(combo)) / 2, HEIGHT / 2), 2.0));
                 }
             }
             
@@ -68,7 +71,7 @@ bool RobotDefense::draw(bool hit, Vector &hitPoint) {
                 int x = cannon.x + cos(angle) * WIDTH * 3 / 4 * (rand() % 2 ? 1 : -1), 
                 y = cannon.y - sin(angle) * WIDTH * 3 / 4;
                 
-                robots.push_back(Robot(x, y, 100, 100, &robotTexture[rand() % 2], 1, 14));
+                robots.push_back(Robot(x, y, 100, 100, &robotTexture[rand() % 3], 1, 14));
                 
                 counter = 0;
                 speed += 0.1;
@@ -86,7 +89,7 @@ bool RobotDefense::draw(bool hit, Vector &hitPoint) {
                         points += timeBonus;
                         
                         string bonus = "timebonus: +" + ofToString(timeBonus);
-                        signs.push_back(Sign(bonus, Vector((WIDTH - gameFont->stringWidth(bonus)) / 2, HEIGHT / 2), 3.0));
+                        signs.push_back(Sign(bonus, Vector((WIDTH - gameFont.stringWidth(bonus)) / 2, HEIGHT / 2), 3.0));
                         
                         for (int j = 0; j < robots.size(); j++) {
                             robots[j].destroy();

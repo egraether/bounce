@@ -26,17 +26,20 @@ void Bounce::setup() {
     background.load("menu_bg.png", false, GL_CLAMP, GL_CLAMP);
     bounceLogo.load("logo_bounce.png", true, GL_CLAMP, GL_CLAMP);
     fhLogo.load("logo_fh.png", true, GL_CLAMP, GL_CLAMP);
-    mmaMmtLogo.load("logo_mmammt.png", true, GL_CLAMP, GL_CLAMP);
+    mmtLogo.load("logo_mmt.jpg", false, GL_CLAMP, GL_CLAMP);
+    mmaLogo.load("logo_mma.jpg", false, GL_CLAMP, GL_CLAMP);
     
-    calibrateButton.set("calibrate_button.png", WIDTH - 350, HEIGHT - 150, 250, 100);
-    creditsButton.set("credits_button.png", 100, HEIGHT - 150, 250, 100);
+    calibrateButton.set("calibrate_button.png", WIDTH - 300, HEIGHT - 150, 250, 100);
+    creditsButton.set("credits_button.png", 150, HEIGHT - 180, 250, 100);
     
-    shootingCansButton.set("cans_button.png", (WIDTH / 3 - 300) / 2, 250, 300, 300);
+    shootingCansButton.set("cans_button.png", (WIDTH / 3 - 300) / 2 + 50, 250, 300, 300);
     robotDefenseButton.set("robot_button.png", (WIDTH / 3 - 300) / 2 + WIDTH / 3, 250, 300, 300);
-    balloonHuntButton.set("balloon_button.png", (WIDTH / 3 - 300) / 2 + WIDTH / 3 * 2, 250, 300, 300);
+    balloonHuntButton.set("balloon_button.png", (WIDTH / 3 - 300) / 2 + WIDTH / 3 * 2 - 50, 250, 300, 300);
     risingNinjaButton.set("wordbubble2.png", (WIDTH / 3 - 300) / 2 + WIDTH / 3, 500, 300, 300);
     
     Game::initializeStatics();
+    font2.loadFont("microgme.ttf", 20);
+    font.loadFont("microgme.ttf", 13);
 }
 
 void Bounce::update() {}
@@ -46,15 +49,29 @@ void Bounce::draw() {
         case MENU:
             background.draw(0, 0, WIDTH, HEIGHT);
             bounceLogo.draw(20, 20);
-            fhLogo.draw(WIDTH - 400, 20);
-            mmaMmtLogo.draw(WIDTH - 375, 150);
+            fhLogo.draw(WIDTH - 300, 20, 300, 100);
+            mmaLogo.draw(WIDTH - 225, 120, 200, 40);
+            mmtLogo.draw(WIDTH - 450, 120, 200, 40);
             
             calibrateButton.draw();
-            creditsButton.draw();
+            //creditsButton.draw();
             shootingCansButton.draw();
             robotDefenseButton.draw();
             balloonHuntButton.draw();
 //            risingNinjaButton.draw();
+            
+            ofSetColor(0x384585);
+            Game::scoreFont.drawString("developed by:", 50, HEIGHT - 185);
+            font2.drawString("Eberhard Graether", 70, HEIGHT - 150);
+            
+            Game::scoreFont.drawString("graphic design:", 500, HEIGHT - 185);
+            font2.drawString("Dominik Wiesauer", 520, HEIGHT - 150);
+            
+            Game::scoreFont.drawString("special thanks:", 50, HEIGHT - 110);
+            font.drawString( 
+                "Felix Hummel        Martin Ortner       Malte Langkabel     David Strausz\nChristian Winkler     Marius Schebella     Manuel Gottstein    Franz Lanzendorfer\nThomas Buchoester  Andreas Stallinger", 
+                70, HEIGHT - 80
+            );
             
             if (calibrateButton.checkHit(hit, hitPoint))
                 changeMode(CALIBRATE);

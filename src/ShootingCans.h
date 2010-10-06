@@ -20,6 +20,8 @@ private:
     
     bool gameStarted;
     
+    void drawBg();
+    
 public:
     ShootingCans(const char* titel, Infobox* infobox, const char* scoresFileName);
     
@@ -39,7 +41,8 @@ public:
         pos(x, y), flying(false),
         sprite(t, w, h, r, c) {
             
-        sprite.setAnimation(0, 0, 0, 0, true);
+        int canType = rand() % 3;
+        sprite.setAnimation(0, canType, 0, canType, true);
     }
     
     bool draw() {
@@ -51,9 +54,11 @@ public:
         ofPushMatrix();
         ofTranslate(pos.x, pos.y, 0.0);
         if (flying) {
-            ofRotateZ((ofGetElapsedTimef() - time) * pos.x);
+            ofRotateZ((ofGetElapsedTimef() - time) * flight.x * 20);
             ofScale(1.0 - (ofGetElapsedTimef() - time) / 3, 1.0 - (ofGetElapsedTimef() - time) / 3, 0);
         }
+        ofSetColor(255, 255, 255);
+//        ofRect(-sprite.getWidth() / 2, -sprite.getHeight() * 2 / 3, sprite.getWidth(), sprite.getHeight() * 4 / 3);
         sprite.draw(0, 0);
         ofPopMatrix();
         
@@ -64,12 +69,12 @@ public:
         if (!flying && 
             hitPoint.x > pos.x - sprite.getWidth() / 2 && 
             hitPoint.x < pos.x + sprite.getWidth() / 2 &&
-            hitPoint.y > pos.y - sprite.getHeight() / 2 &&
-            hitPoint.y < pos.y + sprite.getHeight() / 2) {
+            hitPoint.y > pos.y - sprite.getHeight() * 2 / 3 &&
+            hitPoint.y < pos.y + sprite.getHeight() * 2 / 3) {
             
             flying = true;
             flight = ((Vector(0, -sprite.getHeight() / 3 * 2) + pos) - hitPoint) / 5;
-            sprite.setAnimation(0, 1, 0, 3, true);
+            //sprite.setAnimation(0, 1, 0, 3, true);
             time = ofGetElapsedTimef();
             
             return true;
