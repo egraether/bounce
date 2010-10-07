@@ -6,10 +6,10 @@
 RobotDefense::RobotDefense(const char* titel, Infobox* infobox, const char* scoresFileName) : 
     Game(titel, infobox, scoresFileName), cannon(WIDTH / 2, HEIGHT - 80) {
     
-    robotTexture[0].load("robo_a.png", true, GL_CLAMP, GL_CLAMP);
-    robotTexture[1].load("robo_b.png", true, GL_CLAMP, GL_CLAMP);
-    robotTexture[2].load("robo_c.png", true, GL_CLAMP, GL_CLAMP);
-    cannonTexture.load("gun2.png", true, GL_CLAMP, GL_CLAMP);
+    robotTexture[0].load("robot_a.png", true, GL_CLAMP, GL_CLAMP);
+    robotTexture[1].load("robot_b.png", true, GL_CLAMP, GL_CLAMP);
+    robotTexture[2].load("robot_c.png", true, GL_CLAMP, GL_CLAMP);
+    cannonTexture.load("gun.png", true, GL_CLAMP, GL_CLAMP);
     laserTexture.load("laser.png", true, GL_CLAMP, GL_CLAMP);
     background = new Texture();
     background->load("robot_bg.png", false, GL_CLAMP, GL_CLAMP);
@@ -38,7 +38,7 @@ bool RobotDefense::draw(bool hit, Vector &hitPoint) {
             break;
         case PLAY:
             // destroy hit robots
-            if (hit) {
+            if (hit && !gameOver) {
                 infobox->clear();
                 int comboCounter = 0;
                 laserTime = 0;

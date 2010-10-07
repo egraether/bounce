@@ -8,7 +8,7 @@ ShootingCans::ShootingCans(const char* titel, Infobox* infobox, const char* scor
     canTexture.load("cans.png", true, GL_CLAMP, GL_CLAMP);
     shelfTexture.load("body.png", true, GL_CLAMP, GL_CLAMP);
     background = new Texture();
-    background->load("cans_bg2.png", true, GL_CLAMP, GL_CLAMP);
+    background->load("cans_bg.png", true, GL_CLAMP, GL_CLAMP);
 }
 
 void ShootingCans::reset() {

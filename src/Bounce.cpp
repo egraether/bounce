@@ -35,7 +35,7 @@ void Bounce::setup() {
     shootingCansButton.set("cans_button.png", (WIDTH / 3 - 300) / 2 + 50, 250, 300, 300);
     robotDefenseButton.set("robot_button.png", (WIDTH / 3 - 300) / 2 + WIDTH / 3, 250, 300, 300);
     balloonHuntButton.set("balloon_button.png", (WIDTH / 3 - 300) / 2 + WIDTH / 3 * 2 - 50, 250, 300, 300);
-    risingNinjaButton.set("wordbubble2.png", (WIDTH / 3 - 300) / 2 + WIDTH / 3, 500, 300, 300);
+    risingNinjaButton.set("wordbubble.png", (WIDTH / 3 - 300) / 2 + WIDTH / 3, 500, 300, 300);
     
     Game::initializeStatics();
     font2.loadFont("microgme.ttf", 20);

@@ -162,7 +162,7 @@ public:
     
     static void initializeStatics() {
         panel = new Texture();
-        panel->load("wordbubble2.png", true, GL_CLAMP, GL_CLAMP);
+        panel->load("wordbubble.png", true, GL_CLAMP, GL_CLAMP);
         titelFont.loadFont("keypuncn.ttf", 40);
         gameFont.loadFont("microgme.ttf", 26);
         scoreFont.loadFont("microgme.ttf", 16);

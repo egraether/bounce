@@ -9,9 +9,9 @@ int BalloonHunt::Balloon::colors[6] = {
 BalloonHunt::BalloonHunt(const char* titel, Infobox* infobox, const char* scoresFileName) : 
     Game(titel, infobox, scoresFileName) {
     
-    balloonTexture.load("balloon3.png", true, GL_CLAMP, GL_CLAMP);
+    balloonTexture.load("balloon.png", true, GL_CLAMP, GL_CLAMP);
     background = new Texture();
-    background->load("balloon_bg2.png", false, GL_CLAMP, GL_CLAMP);
+    background->load("balloon_bg.png", false, GL_CLAMP, GL_CLAMP);
 }
 
 void BalloonHunt::reset() {

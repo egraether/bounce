@@ -31,23 +31,27 @@ void Console::addRegulation(string name, int* value, int min, int max) {
 }
 
 void Console::next(bool toNext) {
-    if (toNext) {
-        if (it == --values.end())
-            it = values.begin();
-        else 
-            it++;
-    }
-    else {
-        if (it == values.begin())
-            it = --values.end();
-        else 
-            it--;
+    if (show) {
+        if (toNext) {
+            if (it == --values.end())
+                it = values.begin();
+            else 
+                it++;
+        }
+        else {
+            if (it == values.begin())
+                it = --values.end();
+            else 
+                it--;
+        }
     }
 }
 
 void Console::change(bool increase) {
-    if (increase)
-        *it->value = *it->value + 1 > it->max ? it->max : *it->value + 1;
-    else
-        *it->value = *it->value - 1 < it->min ? it->min : *it->value - 1;
+    if (show) {
+        if (increase)
+            *it->value = *it->value + 1 > it->max ? it->max : *it->value + 1;
+        else
+            *it->value = *it->value - 1 < it->min ? it->min : *it->value - 1;
+    }
 }
