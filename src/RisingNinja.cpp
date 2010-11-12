@@ -11,13 +11,13 @@ Game(titel, infobox, scoresFileName), hookSize(5), ninjaSize(10), width(600), pl
 void RisingNinja::reset() {
     resetGame();
     
-    ninjaPosition.set(width / 2, HEIGHT - 50);
+    ninjaPosition.set(width / 2, ofGetHeight() - 50);
     ninjaMotion.set(0, 0);
     hook = false;
     line = false;
     started = false;
     
-    int startY = HEIGHT - 10;
+    int startY = ofGetHeight() - 10;
     while (startY > 0) {
         platforms.push_back(Platform(width, width / 2, startY));
         startY -= platformDistance;
@@ -27,8 +27,8 @@ void RisingNinja::reset() {
 bool RisingNinja::draw(bool hit, Vector &hitPoint) {
     
     ofSetColor(0x777777);
-    ofRect((WIDTH - width) / 2 - 5, 0, 5, HEIGHT);
-    ofRect((WIDTH - width) / 2 + width, 0, 5, HEIGHT);
+    ofRect((ofGetWidth() - width) / 2 - 5, 0, 5, ofGetHeight());
+    ofRect((ofGetWidth() - width) / 2 + width, 0, 5, ofGetHeight());
     
     switch (mode) {
         case INIT:
@@ -36,12 +36,12 @@ bool RisingNinja::draw(bool hit, Vector &hitPoint) {
             break;
         case PLAY:
             ofPushMatrix();
-            ofTranslate((WIDTH - width) / 2, 0, 0);
+            ofTranslate((ofGetWidth() - width) / 2, 0, 0);
             
             if (hit) {
                 started = true;
                 ninjaHitPoint = hitPoint;
-                ninjaHitPoint.x -= (WIDTH - width) / 2;
+                ninjaHitPoint.x -= (ofGetWidth() - width) / 2;
                 
                 if (ninjaHitPoint.y < ninjaPosition.y - 50) {
                     hook = true;
@@ -65,7 +65,7 @@ bool RisingNinja::draw(bool hit, Vector &hitPoint) {
             ofSetColor(0x999999);
             ofRect(ninjaPosition.x - ninjaSize, ninjaPosition.y - ninjaSize, ninjaSize * 2, ninjaSize * 2);
             
-            if (ninjaPosition.y > HEIGHT)
+            if (ninjaPosition.y > ofGetHeight())
                 stopGame();
             
             // draw Hook

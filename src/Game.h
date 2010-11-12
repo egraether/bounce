@@ -8,7 +8,6 @@
 #include "Infobox.h"
 #include "HighScore.h"
 #include "LastScore.h"
-#include "constants.h"
 #include "Sign.h"
 
 #include <vector>

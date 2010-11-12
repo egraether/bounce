@@ -16,14 +16,17 @@ void ShootingCans::reset() {
     cans.clear();
     shootedCans.clear();
     
+    int width = ofGetWidth();
+    int height = ofGetHeight();
+    
     for (int i = 0; i < 3; i++) {
-        cans.push_back(Can((4 + i * 2) * WIDTH / 12, HEIGHT / 4 + 5, &canTexture, 150, 125, 1, 3));
+        cans.push_back(Can((4 + i * 2) * width / 12, height / 4 + 5, &canTexture, 150, 125, 1, 3));
     }
     for (int i = 1; i <= 4; i++) {
-        cans.push_back(Can(i * WIDTH / 5, HEIGHT / 2 - 20, &canTexture, 150, 125, 1, 3));
+        cans.push_back(Can(i * width / 5, height / 2 - 20, &canTexture, 150, 125, 1, 3));
     }
     for (int i = 0; i < 3; i++) {
-        cans.push_back(Can((4 + i * 2) * WIDTH / 12, HEIGHT / 4 * 3 - 45, &canTexture, 150, 125, 1, 3));
+        cans.push_back(Can((4 + i * 2) * width / 12, height / 4 * 3 - 45, &canTexture, 150, 125, 1, 3));
     }
     
     gameStarted = false;
@@ -64,11 +67,11 @@ bool ShootingCans::draw(bool hit, Vector &hitPoint) {
                             points += timeBonus;
                             
                             string bonus = "timebonus: +" + ofToString(timeBonus);
-                            signs.push_back(Sign(bonus, Vector((WIDTH - gameFont.stringWidth(bonus)) / 2, HEIGHT / 2), 3.0));
+                            signs.push_back(Sign(bonus, Vector((ofGetWidth() - gameFont.stringWidth(bonus)) / 2, ofGetHeight() / 2), 3.0));
                             
                             points -= ballHits * 10;
                             string minus = "ballthrows: -" + ofToString(ballHits * 10);
-                            signs.push_back(Sign(minus, Vector((WIDTH - gameFont.stringWidth(minus)) / 2, HEIGHT / 2 + 40), 4.0));
+                            signs.push_back(Sign(minus, Vector((ofGetWidth() - gameFont.stringWidth(minus)) / 2, ofGetHeight() / 2 + 40), 4.0));
                         }
                     }
                 }
@@ -106,8 +109,8 @@ bool ShootingCans::draw(bool hit, Vector &hitPoint) {
 }
 
 void ShootingCans::drawBg() {
-    shelfTexture.draw(150, 250, WIDTH - 300, HEIGHT - 300);
-    background.draw(0, 0, WIDTH, HEIGHT);
+    shelfTexture.draw(150, 250, ofGetWidth() - 300, ofGetHeight() - 300);
+    background.draw(0, 0, ofGetWidth(), ofGetHeight());
     // draw
     for (int i = 0; i < cans.size(); i++) {
         if (!cans[i].draw()) {
@@ -142,7 +145,7 @@ bool ShootingCans::Can::draw() {
     sprite.draw(0, 0);
     ofPopMatrix();
     
-    return pos.y < HEIGHT + 100;
+    return pos.y < ofGetHeight() + 100;
 }
 
 bool ShootingCans::Can::checkHit(Vector &hitPoint) {

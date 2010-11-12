@@ -1,10 +1,12 @@
 #include "ofMain.h"
 #include "ofAppGlutWindow.h"
 #include "Bounce.h"
-#include "constants.h"
 
 int main() {
+    int windowWidth = 1280;
+    int windowHeight = 800;
+    
     ofAppGlutWindow window;
-	ofSetupOpenGL(&window, WIDTH, HEIGHT, OF_WINDOW);
+	ofSetupOpenGL(&window, windowWidth, windowHeight, OF_WINDOW);
 	ofRunApp(new Bounce());
 }

@@ -1,5 +1,4 @@
 #include "Bounce.h"
-#include "constants.h"
 
 Bounce::Bounce() : 
     tracker(&infobox, &console),
@@ -33,31 +32,29 @@ void Bounce::setup() {
     mmaLogo.load("logo_mma.jpg", false, GL_CLAMP, GL_CLAMP);
     
     // buttons
-    calibrateButton.set("calibrate_button.png", WIDTH - 300, HEIGHT - 150, 250, 100);
-    creditsButton.set("credits_button.png", 150, HEIGHT - 180, 250, 100);
+    calibrateButton.set("calibrate_button.png", ofGetWidth() - 300, ofGetHeight() - 150, 250, 100);
+    creditsButton.set("credits_button.png", 150, ofGetHeight() - 180, 250, 100);
     
-    shootingCansButton.set("cans_button.png", (WIDTH / 3 - 300) / 2 + 50, 250, 300, 300);
-    robotDefenseButton.set("robot_button.png", (WIDTH / 3 - 300) / 2 + WIDTH / 3, 250, 300, 300);
-    balloonHuntButton.set("balloon_button.png", (WIDTH / 3 - 300) / 2 + WIDTH / 3 * 2 - 50, 250, 300, 300);
-    risingNinjaButton.set("wordbubble.png", (WIDTH / 3 - 300) / 2 + WIDTH / 3, 500, 300, 300);
+    shootingCansButton.set("cans_button.png", (ofGetWidth() / 3 - 300) / 2 + 50, 250, 300, 300);
+    robotDefenseButton.set("robot_button.png", (ofGetWidth()/ 3 - 300) / 2 + ofGetWidth() / 3, 250, 300, 300);
+    balloonHuntButton.set("balloon_button.png", (ofGetWidth() / 3 - 300) / 2 + ofGetWidth() / 3 * 2 - 50, 250, 300, 300);
+    risingNinjaButton.set("wordbubble.png", (ofGetWidth() / 3 - 300) / 2 + ofGetWidth() / 3, 500, 300, 300);
     
     // fonts
     font2.loadFont("microgme.ttf", 20);
     font.loadFont("microgme.ttf", 13);
 }
 
-void Bounce::update() {
-
-}
+void Bounce::update() {}
 
 void Bounce::draw() {
     switch (mode) {
         case MENU:
-            background.draw(0, 0, WIDTH, HEIGHT);
+            background.draw(0, 0, ofGetWidth(), ofGetHeight());
             bounceLogo.draw(20, 20);
-            fhLogo.draw(WIDTH - 300, 20, 300, 100);
-            mmaLogo.draw(WIDTH - 225, 120, 200, 40);
-            mmtLogo.draw(WIDTH - 450, 120, 200, 40);
+            fhLogo.draw(ofGetWidth() - 300, 20, 300, 100);
+            mmaLogo.draw(ofGetWidth() - 225, 120, 200, 40);
+            mmtLogo.draw(ofGetWidth() - 450, 120, 200, 40);
             
             calibrateButton.draw();
             //creditsButton.draw();
@@ -67,16 +64,16 @@ void Bounce::draw() {
 //            risingNinjaButton.draw();
             
             ofSetColor(0x384585);
-            Game::scoreFont.drawString("developed by:", 50, HEIGHT - 185);
-            font2.drawString("Eberhard Graether", 70, HEIGHT - 150);
+            Game::scoreFont.drawString("developed by:", 50, ofGetHeight() - 185);
+            font2.drawString("Eberhard Graether", 70, ofGetHeight()- 150);
             
-            Game::scoreFont.drawString("graphic design:", 500, HEIGHT - 185);
-            font2.drawString("Dominik Wiesauer", 520, HEIGHT - 150);
+            Game::scoreFont.drawString("graphic design:", 500, ofGetHeight()- 185);
+            font2.drawString("Dominik Wiesauer", 520, ofGetHeight() - 150);
             
-            Game::scoreFont.drawString("special thanks:", 50, HEIGHT - 110);
+            Game::scoreFont.drawString("special thanks:", 50, ofGetHeight() - 110);
             font.drawString( 
                 "Felix Hummel        Martin Ortner       Malte Langkabel     David Strausz\nChristian Winkler     Marius Schebella     Manuel Gottstein    Franz Lanzendorfer\nThomas Buchoester  Andreas Stallinger", 
-                70, HEIGHT - 80
+                70, ofGetHeight() - 80
             );
             
             if (calibrateButton.checkHit(hit, hitPoint))
@@ -103,16 +100,16 @@ void Bounce::draw() {
                 tracker.drawPauseScreen();
                 ofEnableAlphaBlending();
                 ofSetColor(220, 220, 220, 125);
-                ofRect(0, 0, WIDTH, HEIGHT);
+                ofRect(0, 0, ofGetWidth(), ofGetHeight());
                 ofDisableAlphaBlending();
                 
                 ofSetColor(0x384585);
                 string s = "Game";
-                Game::bigFont.drawString(s, (WIDTH - Game::bigFont.stringWidth(s)) / 2, HEIGHT / 2 - 30);
+                Game::bigFont.drawString(s, (ofGetWidth() - Game::bigFont.stringWidth(s)) / 2, ofGetHeight() / 2 - 30);
                 s = "Paused";
-                Game::bigFont.drawString(s, (WIDTH - Game::bigFont.stringWidth(s)) / 2, HEIGHT / 2 + 30);
+                Game::bigFont.drawString(s, (ofGetWidth() - Game::bigFont.stringWidth(s)) / 2, ofGetHeight() / 2 + 30);
                 s = "press space-bar to continue.";
-                Game::gameFont.drawString(s, (WIDTH - Game::gameFont.stringWidth(s)) / 2, HEIGHT / 2 + 100);
+                Game::gameFont.drawString(s, (ofGetWidth() - Game::gameFont.stringWidth(s)) / 2, ofGetHeight() / 2 + 100);
             }
             break;
     }
@@ -122,7 +119,7 @@ void Bounce::draw() {
     
     ofFill();
     ofSetColor(0, 255, 0);
-    ofCircle(hitPoint.x, hitPoint.y, HITPOINT_SIZE);
+    ofCircle(hitPoint.x, hitPoint.y, 3);
     
     hit = false;
     

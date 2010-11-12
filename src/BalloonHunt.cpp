@@ -24,7 +24,7 @@ void BalloonHunt::reset() {
 }
    
 bool BalloonHunt::draw(bool hit, Vector &hitPoint) {
-    background.draw(0, 0, WIDTH, HEIGHT);
+    background.draw(0, 0, ofGetWidth(), ofGetHeight());
     
     switch (mode) {
         case INIT:
@@ -113,7 +113,7 @@ BalloonHunt::Balloon::Balloon(Texture* tex, int rows, int columns) :
     }
     
     color = colors[rand() % 6];
-    pos.set(rand() % (WIDTH - 300) + 150, HEIGHT + size);
+    pos.set(rand() % (ofGetWidth() - 300) + 150, ofGetHeight() + size);
     sprite.setAnimation(0, 0, 0, 1, true);
     counter++;
 }

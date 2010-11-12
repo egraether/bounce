@@ -2,7 +2,6 @@
 #define _SPRITE_ANIMATION_
 
 #include "Texture.h"
-#include "constants.h"
 
 class SpriteAnimation {
 private:
@@ -18,6 +17,8 @@ private:
     unsigned int frameSpeed, frameCounter;
     
     unsigned int width, height;
+    
+    const static int animationSpeed = 7;
     
 public:
     SpriteAnimation() : 
@@ -45,7 +46,6 @@ public:
     
     bool draw(int x, int y, bool white = true) {
         if (isAnimationSet) {
-            
             frameCounter++;
             if (frameCounter == frameSpeed) {
                 frameCounter = 0;
@@ -73,7 +73,7 @@ public:
                 else if (actualRow == toRow && actualColumn == toColumn)
                     isLastFrame = true;
             }
-                        
+            
             texture->draw(
                 x - width / 2, y - height / 2, 
                 width, height,
@@ -96,7 +96,7 @@ public:
     
     void setAnimation(unsigned int _fromRow, unsigned int _fromColumn, 
                       unsigned int _toRow, unsigned int _toColumn, 
-                      bool _repeat = false, unsigned int _frameSpeed = ANIMATION_SPEED) {
+                      bool _repeat = false, unsigned int _frameSpeed = animationSpeed) {
         
         actualRow = fromRow = _fromRow; 
         actualColumn = fromColumn = _fromColumn;

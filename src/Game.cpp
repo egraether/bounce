@@ -54,7 +54,7 @@ void Game::stopGame() {
 
 void Game::drawPanel() {
     ofPushMatrix();
-    ofTranslate((WIDTH - 500) / 2, (HEIGHT - 600) / 2, 0);
+    ofTranslate((ofGetWidth() - 500) / 2, (ofGetHeight() - 600) / 2, 0);
     
     panel->draw(0, 0, 500, 630);
     
@@ -84,7 +84,7 @@ void Game::drawSigns() {
     ofSetColor(textColor);
     gameFont.drawString("points: " + ofToString(points), 20, 40);
     string t = "time: " + ofToString(screenTime);
-    gameFont.drawString(t, WIDTH - 20 - gameFont.stringWidth(t), 40);
+    gameFont.drawString(t, ofGetWidth() - 20 - gameFont.stringWidth(t), 40);
 }
 
 bool Game::keyPressed(int key) {

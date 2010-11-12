@@ -46,6 +46,7 @@ private:
     
     int counter;
     int numCorners;
+    const int calibrationWaitFrames;
     
     CvMat* homography;
     
@@ -59,6 +60,8 @@ private:
     int bangCounter;
     
     void drawAudioPlots();
+    
+    const int audioPlotSize;
     
     // other
     bool showColorImg;

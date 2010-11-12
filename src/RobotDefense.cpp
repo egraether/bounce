@@ -4,7 +4,7 @@
 #include <cmath>
 
 RobotDefense::RobotDefense(const char* titel, Infobox* infobox, const char* scoresFileName) : 
-    Game(titel, infobox, scoresFileName), cannon(WIDTH / 2, HEIGHT - 80) {
+    Game(titel, infobox, scoresFileName), cannon(ofGetWidth() / 2, ofGetHeight() - 80) {
     
     robotTexture[0].load("robot_a.png", true, GL_CLAMP, GL_CLAMP);
     robotTexture[1].load("robot_b.png", true, GL_CLAMP, GL_CLAMP);
@@ -27,7 +27,7 @@ void RobotDefense::reset() {
 }
    
 bool RobotDefense::draw(bool hit, Vector &hitPoint) {
-    background.draw(0, 0, WIDTH, HEIGHT);
+    background.draw(0, 0, ofGetWidth(), ofGetHeight());
     
     switch (mode) {
         case INIT:
@@ -59,7 +59,7 @@ bool RobotDefense::draw(bool hit, Vector &hitPoint) {
                     }
                     
                     combo = "combo: x" + ofToString(comboCounter);
-                    signs.push_back(Sign(combo, Vector((WIDTH - gameFont.stringWidth(combo)) / 2, HEIGHT / 2), 2.0));
+                    signs.push_back(Sign(combo, Vector((ofGetWidth() - gameFont.stringWidth(combo)) / 2, ofGetHeight() / 2), 2.0));
                 }
             }
             
@@ -67,8 +67,8 @@ bool RobotDefense::draw(bool hit, Vector &hitPoint) {
             counter++;
             if (counter == period && !gameOver) {
                 float angle = float(rand() % 61 + 30) / 180 * PI;
-                int x = cannon.x + cos(angle) * WIDTH * 3 / 4 * (rand() % 2 ? 1 : -1), 
-                y = cannon.y - sin(angle) * WIDTH * 3 / 4;
+                int x = cannon.x + cos(angle) * ofGetWidth() * 3 / 4 * (rand() % 2 ? 1 : -1), 
+                y = cannon.y - sin(angle) * ofGetWidth() * 3 / 4;
                 
                 robots.push_back(Robot(x, y, 100, 100, &robotTexture[rand() % 3], 1, 14));
                 
@@ -88,7 +88,7 @@ bool RobotDefense::draw(bool hit, Vector &hitPoint) {
                         points += timeBonus;
                         
                         string bonus = "timebonus: +" + ofToString(timeBonus);
-                        signs.push_back(Sign(bonus, Vector((WIDTH - gameFont.stringWidth(bonus)) / 2, HEIGHT / 2), 3.0));
+                        signs.push_back(Sign(bonus, Vector((ofGetWidth() - gameFont.stringWidth(bonus)) / 2, ofGetHeight() / 2), 3.0));
                         
                         for (int j = 0; j < robots.size(); j++) {
                             robots[j].destroy();
@@ -126,7 +126,7 @@ bool RobotDefense::draw(bool hit, Vector &hitPoint) {
                         ofSetColor(255, 255, 255, 255);
                     else
                         ofSetColor(255, 255, 255, (1.0 - (laserTime - 10) / 10.0) * 255);
-                    laserTexture.draw(cannon.x - 75, cannon.y - WIDTH - laserTime * 5 + 50, 150, WIDTH, false);
+                    laserTexture.draw(cannon.x - 75, cannon.y - ofGetWidth() - laserTime * 5 + 50, 150, ofGetWidth(), false);
                     ofDisableAlphaBlending();
                     
                 }

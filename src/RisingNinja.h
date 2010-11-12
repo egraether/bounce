@@ -34,7 +34,7 @@ private:
             ofSetColor(0xaaaaaa);
             ofRect(position.x - width / 2, position.y, width, 30);
             
-            if (position.y > HEIGHT) 
+            if (position.y > ofGetHeight()) 
                 return false;
             
             return true;

@@ -10,13 +10,13 @@ Console::Console() :
 void Console::draw() {
     if (show) {
         ofSetColor(0, 0, 0);
-        ofDrawBitmapString(it->name + " " + ofToString(*it->value), 15, HEIGHT - 20);
+        ofDrawBitmapString(it->name + " " + ofToString(*it->value), 15, ofGetHeight() - 20);
         
         for (int i = 0; i < infos.size(); i++) {
             ofDrawBitmapString(infos[i].name + " " + ofToString(*infos[i].value), 15, 25 + i * 20);
         }
         
-        ofDrawBitmapString("Framerate: " + ofToString(ofGetFrameRate()), WIDTH - 200, 40);
+        ofDrawBitmapString("Framerate: " + ofToString(ofGetFrameRate()), ofGetWidth() - 200, 40);
     }
 } 
 
