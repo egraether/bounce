@@ -7,7 +7,9 @@
 
 #include "Tracker.h"
 
-Tracker::Tracker(Infobox* i, Console* c) : 
+Tracker::Tracker(Infobox* i, Console* c, int _width, int _height) : 
+    width(_width),
+    height(_height),
     infobox(i),  
     console(c),
 
@@ -40,13 +42,13 @@ Tracker::Tracker(Infobox* i, Console* c) :
     console->addRegulation("bangLevel", &bangLevel, 0, 50);
     
     videoCapture.setVerbose(true);
-    videoCapture.initGrabber(ofGetWidth(), ofGetHeight());
+    videoCapture.initGrabber(width, height);
 
-    colorImg.allocate(ofGetWidth(), ofGetHeight());
-    camImg.allocate(ofGetWidth(), ofGetHeight());
-    grayImg.allocate(ofGetWidth(), ofGetHeight());
-    grayBg.allocate(ofGetWidth(), ofGetHeight());
-    grayDiff.allocate(ofGetWidth(), ofGetHeight());
+    colorImg.allocate(width, height);
+    camImg.allocate(width, height);
+    grayImg.allocate(width, height);
+    grayBg.allocate(width, height);
+    grayDiff.allocate(width, height);
     
     showColorImg = false;
     showGrayImg = false;
@@ -60,9 +62,9 @@ Tracker::Tracker(Infobox* i, Console* c) :
     screenCorner = new Vector[4];
     
     screenCorner[0].set(30, 30);
-    screenCorner[1].set(ofGetWidth() - 30, 30);
-    screenCorner[2].set(ofGetWidth() - 30, ofGetHeight() - 30);
-    screenCorner[3].set(30, ofGetHeight() - 30);
+    screenCorner[1].set(width - 30, 30);
+    screenCorner[2].set(width - 30, height - 30);
+    screenCorner[3].set(30, height - 30);
     
     homography = cvCreateMat(3, 3, CV_32FC1);
     
@@ -275,7 +277,7 @@ bool Tracker::getHitPoint(Vector &hitPoint) {
         if (mode == COMPLETE) {
             
             grayImg = camImg;
-            colorImg.setFromPixels(screenImgStore.front()->getPixels(), ofGetWidth(), ofGetHeight());
+            colorImg.setFromPixels(screenImgStore.front()->getPixels(), width, height);
             grayBg = colorImg;
             
             cvWarpPerspective(grayImg.getCvImage(), grayDiff.getCvImage(), homography);
@@ -312,14 +314,14 @@ bool Tracker::getNewCamImage() {
     newFrame = videoCapture.isFrameNew();
     
     if (newFrame)
-        camImg.setFromPixels(videoCapture.getPixels(), ofGetWidth(), ofGetHeight());
+        camImg.setFromPixels(videoCapture.getPixels(), width, height);
         
     return newFrame;
 }
 
 void Tracker::getNewScreenImage() {
     ofImage* screenImg = new ofImage();
-    screenImg->grabScreen(0, 0, ofGetWidth(), ofGetHeight());
+    screenImg->grabScreen(0, 0, width, height);
     screenImgStore.push_back(screenImg);
     
     while (screenImgStore.size() > screenStoreSize) {
@@ -336,7 +338,7 @@ void Tracker::getBrightnessContour() {
         grayDiff.absDiff(grayBg, grayImg);
         grayDiff.threshold(threshold);
         
-        contourFinder.findContours(grayDiff, 20, (ofGetWidth() * ofGetHeight()) / 3, 10, true);
+        contourFinder.findContours(grayDiff, 20, (width * height) / 3, 10, true);
     }
 }
 
@@ -368,17 +370,17 @@ void Tracker::audioInput(float energy) {
 
 void Tracker::drawAudioPlots() {
     ofSetColor(255, 0, 0);
-    ofLine((ofGetWidth() - audioPlotSize) / 2, ofGetHeight() / 2 + 50 - bangLevel, 
-           (ofGetWidth() + audioPlotSize) / 2, ofGetHeight() / 2 + 50 - bangLevel);
+    ofLine((width - audioPlotSize) / 2, height / 2 + 50 - bangLevel, 
+           (width + audioPlotSize) / 2, height / 2 + 50 - bangLevel);
     
     ofSetColor(0, 0, 0);
     for (int i = 0; i < energyPlot.size() - 1; i++) {
-        ofLine((ofGetWidth() - audioPlotSize) / 2 + i, ofGetHeight() / 2 - 50 - energyPlot[i], 
-               (ofGetWidth() - audioPlotSize) / 2 + 1 + i, ofGetHeight() / 2 - 50 - energyPlot[i + 1]);
+        ofLine((width - audioPlotSize) / 2 + i, height / 2 - 50 - energyPlot[i], 
+               (width - audioPlotSize) / 2 + 1 + i, height / 2 - 50 - energyPlot[i + 1]);
     }
     for (int i = 0; i < energyDiffPlot.size() - 1; i++) {
-        ofLine((ofGetWidth() - audioPlotSize) / 2 + i, ofGetHeight() / 2 + 50 - energyDiffPlot[i], 
-               (ofGetWidth()- audioPlotSize) / 2 + 1 + i, ofGetHeight() / 2 + 50 - energyDiffPlot[i + 1]);
+        ofLine((width - audioPlotSize) / 2 + i, height / 2 + 50 - energyDiffPlot[i], 
+               (width- audioPlotSize) / 2 + 1 + i, height / 2 + 50 - energyDiffPlot[i + 1]);
     }
 }
 

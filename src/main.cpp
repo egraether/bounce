@@ -15,5 +15,5 @@ int main() {
     
     ofAppGlutWindow window;
 	ofSetupOpenGL(&window, windowWidth, windowHeight, OF_WINDOW);
-	ofRunApp(new Bounce());
+	ofRunApp(new Bounce(windowWidth, windowHeight));
 }

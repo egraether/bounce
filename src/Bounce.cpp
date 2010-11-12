@@ -7,8 +7,8 @@
 
 #include "Bounce.h"
 
-Bounce::Bounce() : 
-    tracker(&infobox, &console),
+Bounce::Bounce(int width, int height) : 
+    tracker(&infobox, &console, width, height),
     mode(MENU),
     hit(false),
     gamePaused(false),
@@ -25,6 +25,7 @@ void Bounce::setup() {
     
     ofBackground(220, 220, 255);
     ofSetFrameRate(60.0f);
+    ofSetLogLevel(OF_LOG_VERBOSE);
     
     srand(time(NULL));
     

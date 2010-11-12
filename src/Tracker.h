@@ -21,6 +21,8 @@ class Tracker {
 private:    
     enum {CALIBRATION_NULL, BACKGROUND, COUNT, POINT, COMPLETE} mode;
     
+    const int width, height;
+    
     // image capture
     ofVideoGrabber videoCapture;
     ofxCvColorImage colorImg;
@@ -81,7 +83,7 @@ private:
     Console* console;
     
 public:
-    Tracker(Infobox* i, Console* c);
+    Tracker(Infobox* i, Console* c, int _width, int _height);
     ~Tracker();
     
     void reset();

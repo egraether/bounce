@@ -63,7 +63,7 @@ private:
     ofTrueTypeFont font, font2;
 
 public:
-    Bounce();
+    Bounce(int width, int height);
     
     void setup();
     void update();
