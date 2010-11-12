@@ -67,7 +67,6 @@ private:
     bool showColorImg;
     bool showGrayImg;
     bool showGrayDiff;
-    bool showScreenImg;
     bool showCamImg;
     bool showContours;
     

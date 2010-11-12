@@ -44,7 +44,6 @@ Tracker::Tracker(Infobox* i, Console* c) :
     showColorImg = false;
     showGrayImg = false;
     showGrayDiff = false;
-    showScreenImg = false;
     showCamImg = false;
     showContours = true;
     
@@ -212,42 +211,44 @@ void Tracker::drawPics() {
         grayDiff.draw(0, 0);
     if (showCamImg)
         grayImg.draw(0, 0);
-        //camImg.draw(0, 0);
-    if (showScreenImg)
-        screenImgStore.front()->draw(0, 0);
     if (showContours)
         contourFinder.draw(0, 0);
 }
 
 void Tracker::keyPressed(int key) {
-	switch (key){
-        case 'r':
-            reset();
-			break;
+	switch (key) {
+        // set all to false when returning to menu
         case 'm':
             showContours = false;
             showColorImg = false;
             showGrayImg = false;
             showGrayDiff = false;
-            showScreenImg = false;
             showCamImg = false;
             break;
-        case 'x':
-            showContours = !showContours;
+            
+        // delete calibration
+        case '0':
+            reset();
 			break;
-        case 'c':
+        
+        // draw images
+        case '1':
             showColorImg = !showColorImg;
 			break;
-        case 'v':
+        
+        case '2':
+            showContours = !showContours;
+			break;
+
+        case '3':
             showGrayImg = !showGrayImg;
 			break;
-        case 'b':
+            
+        case '4':
             showGrayDiff = !showGrayDiff;
 			break;
-        case 's':
-            showScreenImg = !showScreenImg;
-            break;
-        case 'a':
+            
+        case '5':
             showCamImg = !showCamImg;
             break;
         default:
