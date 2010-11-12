@@ -1,3 +1,10 @@
+/*
+ *  MIT License
+ *  Copyright (c) 2010 Eberhard Gräther (http://egraether.multimediatechnology.at)
+ *
+ *  Salzburg University of Applied Sciences
+ */
+
 #include "RobotDefense.h"
 #include "ofMain.h"
 

@@ -1,3 +1,10 @@
+/*
+ *  MIT License
+ *  Copyright (c) 2010 Eberhard Gräther (http://egraether.multimediatechnology.at)
+ *
+ *  Salzburg University of Applied Sciences
+ */
+
 #include "Tracker.h"
 
 Tracker::Tracker(Infobox* i, Console* c) : 
@@ -251,6 +258,12 @@ void Tracker::keyPressed(int key) {
         case '5':
             showCamImg = !showCamImg;
             break;
+        
+        // camera settings
+        case 's':
+            videoCapture.videoSettings();
+            break;
+        
         default:
             break;
 	}

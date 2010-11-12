@@ -1,6 +1,12 @@
+/*
+ *  MIT License
+ *  Copyright (c) 2010 Eberhard Gräther (http://egraether.multimediatechnology.at)
+ *
+ *  Salzburg University of Applied Sciences
+ */
+
 #include "Console.h"
 #include "ofMain.h"
-#include "constants.h"
 
 Console::Console() : 
     show(false),

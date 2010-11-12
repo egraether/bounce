@@ -1,3 +1,10 @@
+/*
+ *  MIT License
+ *  Copyright (c) 2010 Eberhard Gräther (http://egraether.multimediatechnology.at)
+ *
+ *  Salzburg University of Applied Sciences
+ */
+
 #include "BalloonHunt.h"
 #include "ofMain.h"
 
@@ -127,7 +134,7 @@ bool BalloonHunt::Balloon::draw() {
     
     ofPushMatrix();
     ofTranslate(pos.x, pos.y, 0.0);
-    ofCircle(balloonCenter.x, balloonCenter.y, size);
+    //ofCircle(balloonCenter.x, balloonCenter.y, size);
     ofSetColor(color);
     bool destroyed = sprite.draw(0, 0, false);
     ofPopMatrix();

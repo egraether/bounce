@@ -1,3 +1,9 @@
+/*
+ *  MIT License
+ *  Copyright (c) 2010 Eberhard Gräther (http://egraether.multimediatechnology.at)
+ *
+ *  Salzburg University of Applied Sciences
+ */
 
 // not finished, do not try to start
 

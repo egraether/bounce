@@ -1,3 +1,10 @@
+/*
+ *  MIT License
+ *  Copyright (c) 2010 Eberhard Gräther (http://egraether.multimediatechnology.at)
+ *
+ *  Salzburg University of Applied Sciences
+ */
+
 #include "ofMain.h"
 #include "ofAppGlutWindow.h"
 #include "Bounce.h"
