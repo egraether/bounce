@@ -34,11 +34,10 @@ Tracker::Tracker(Infobox* i, Console* c, int _width, int _height) :
     audioPlotSize(500) {
     
     console->addInformation("lastBlobSize", &lastBlobSize);
-    console->addRegulation("screenStoreSize", &screenStoreSize, 1, 10);    
+    console->addRegulation("screenStoreSize", &screenStoreSize, 1, 10); 
     console->addRegulation("camWaitFrames", &camWaitFrames, 0, 30);
     
     console->addRegulation("threshold", &threshold, 0, 255);
-    console->addRegulation("derivationWidth", &derivationWidth, 0, 10);
     console->addRegulation("bangLevel", &bangLevel, 0, 50);
     
     videoCapture.setVerbose(true);

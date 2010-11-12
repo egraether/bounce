@@ -72,16 +72,16 @@ void Bounce::draw() {
 //            risingNinjaButton.draw();
             
             ofSetColor(0x384585);
-            Game::scoreFont.drawString("developed by:", 50, ofGetHeight() - 185);
-            font2.drawString("Eberhard Graether", 70, ofGetHeight()- 150);
+            Game::scoreFont.drawString("developed by:", 50, ofGetHeight() - 180);
+            font2.drawString("Eberhard Graether", 70, ofGetHeight()- 145);
             
-            Game::scoreFont.drawString("graphic design:", 500, ofGetHeight()- 185);
-            font2.drawString("Dominik Wiesauer", 520, ofGetHeight() - 150);
+            Game::scoreFont.drawString("graphic design:", 500, ofGetHeight()- 180);
+            font2.drawString("Dominik Wiesauer", 520, ofGetHeight() - 145);
             
-            Game::scoreFont.drawString("special thanks:", 50, ofGetHeight() - 110);
+            Game::scoreFont.drawString("special thanks:", 50, ofGetHeight() - 95);
             font.drawString( 
-                "Felix Hummel        Martin Ortner       Malte Langkabel     David Strausz\nChristian Winkler     Marius Schebella     Manuel Gottstein    Franz Lanzendorfer\nThomas Buchoester  Andreas Stallinger", 
-                70, ofGetHeight() - 80
+                "Felix Hummel        Martin Ortner       Malte Langkabel     David Strausz\nChristian Winkler     Marius Schebella     Manuel Gottstein    Franz Lanzendorfer", 
+                70, ofGetHeight() - 65
             );
             
             if (calibrateButton.checkHit(hit, hitPoint))
@@ -180,7 +180,7 @@ void Bounce::keyPressed(int key) {
             break;
             
         // show the console
-        case 'k':
+        case 'c':
             console.show = !console.show;
             break;
         

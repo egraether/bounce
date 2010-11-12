@@ -15,14 +15,19 @@ Console::Console() :
 
 void Console::draw() {
     if (show) {
+        ofSetColor(255, 255, 255);
+        ofRect(0, ofGetHeight() - 50, 250, 50);
+        ofRect(0, 0, 250, infos.size() * 20 + 25);
+        ofRect(ofGetWidth() - 250, 0, 250, 30);
+        
         ofSetColor(0, 0, 0);
-        ofDrawBitmapString(it->name + " " + ofToString(*it->value), 15, ofGetHeight() - 20);
+        ofDrawBitmapString(it->name + " = " + ofToString(*it->value), 15, ofGetHeight() - 20);
         
         for (int i = 0; i < infos.size(); i++) {
             ofDrawBitmapString(infos[i].name + " " + ofToString(*infos[i].value), 15, 25 + i * 20);
         }
         
-        ofDrawBitmapString("Framerate: " + ofToString(ofGetFrameRate()), ofGetWidth() - 200, 40);
+        ofDrawBitmapString("Framerate: " + ofToString(ofGetFrameRate()), ofGetWidth() - 200, 20);
     }
 } 
 
