@@ -7,6 +7,7 @@ Bounce::Bounce() :
     hit(false),
     gamePaused(false),
     activeGame(0),
+
     shootingCans("Shooting Cans", &infobox, "cans.txt"),
     robotDefense("Robot Defense", &infobox, "robots.txt"),
     balloonHunt("BalloonHunt", &infobox, "balloons.txt"),
@@ -14,6 +15,8 @@ Bounce::Bounce() :
 }
 
 void Bounce::setup() {
+    Game::initializeStatics();
+    
     ofBackground(220, 220, 255);
     ofSetFrameRate(60.0f);
     
@@ -21,14 +24,15 @@ void Bounce::setup() {
     
     // audio
     ofSoundStreamSetup(0, 1, this);
-    fullScreen = false;
     
+    // pictures
     background.load("menu_bg.png", false, GL_CLAMP, GL_CLAMP);
     bounceLogo.load("logo_bounce.png", true, GL_CLAMP, GL_CLAMP);
     fhLogo.load("logo_fh.png", true, GL_CLAMP, GL_CLAMP);
     mmtLogo.load("logo_mmt.jpg", false, GL_CLAMP, GL_CLAMP);
     mmaLogo.load("logo_mma.jpg", false, GL_CLAMP, GL_CLAMP);
     
+    // buttons
     calibrateButton.set("calibrate_button.png", WIDTH - 300, HEIGHT - 150, 250, 100);
     creditsButton.set("credits_button.png", 150, HEIGHT - 180, 250, 100);
     
@@ -37,12 +41,14 @@ void Bounce::setup() {
     balloonHuntButton.set("balloon_button.png", (WIDTH / 3 - 300) / 2 + WIDTH / 3 * 2 - 50, 250, 300, 300);
     risingNinjaButton.set("wordbubble.png", (WIDTH / 3 - 300) / 2 + WIDTH / 3, 500, 300, 300);
     
-    Game::initializeStatics();
+    // fonts
     font2.loadFont("microgme.ttf", 20);
     font.loadFont("microgme.ttf", 13);
 }
 
-void Bounce::update() {}
+void Bounce::update() {
+
+}
 
 void Bounce::draw() {
     switch (mode) {
@@ -127,6 +133,8 @@ void Bounce::draw() {
 }
 
 void Bounce::audioReceived (float* input, int bufferSize, int nChannels) {
+    
+    // summing up the squares of each bufferbin to get full energy of audio input
     float energy = .0f;
 	for (int i = 0, ii = bufferSize * nChannels; i < ii; i++) {
         energy += input[i] * input[i];
@@ -135,21 +143,25 @@ void Bounce::audioReceived (float* input, int bufferSize, int nChannels) {
     tracker.audioInput(energy);
 }
 
+
 void Bounce::keyPressed(int key) {
+    
+    // true when typing a new name at the highscores
     if (activeGame && activeGame->keyPressed(key))
         return;
     
     switch (key) {
+        // end running game and return to menu
         case 'm':
             changeMode(MENU);
             break;
+            
+        // switch fullscreen
         case 'f':
-            fullScreen = !fullScreen;
-            ofSetFullscreen(fullScreen);
+            ofToggleFullscreen();
             break;
-        case 'k':
-            console.show = !console.show;
-            break;
+            
+        // pause the game
         case ' ':
             if (activeGame) {
                 if (gamePaused) {
@@ -161,6 +173,13 @@ void Bounce::keyPressed(int key) {
                 }
             }
             break;
+            
+        // show the console
+        case 'k':
+            console.show = !console.show;
+            break;
+        
+        // console interface
         case OF_KEY_LEFT:
             console.next(false);
             break;
@@ -178,16 +197,13 @@ void Bounce::keyPressed(int key) {
     tracker.keyPressed(key);
 }
 
-void Bounce::mouseMoved(int x, int y ) {}
+// every mouseclick is a bounce
 void Bounce::mousePressed(int x, int y, int button) {
     if (button == 0) {
         hitPoint.set(x, y);
         hit = true;
     }
 }
-void Bounce::mouseDragged(int x, int y, int button) {}
-void Bounce::mouseReleased(int x, int y, int button) {}
-void Bounce::windowResized(int w, int h) {}
 
 void Bounce::changeMode(Mode m) {
     mode = m;
@@ -219,3 +235,8 @@ void Bounce::changeMode(Mode m) {
     if (activeGame)
         activeGame->reset();
 }
+
+void Bounce::mouseMoved(int x, int y ) {}
+void Bounce::mouseDragged(int x, int y, int button) {}
+void Bounce::mouseReleased(int x, int y, int button) {}
+void Bounce::windowResized(int w, int h) {}

@@ -14,6 +14,7 @@
 #include "RisingNinja.h"
 
 class Bounce : public ofBaseApp{
+    
 private:
     Vector hitPoint;
     bool hit;
@@ -28,11 +29,13 @@ private:
     Game* activeGame;
     bool gamePaused;
     
+    // games
     ShootingCans shootingCans;
     RobotDefense robotDefense;
     BalloonHunt balloonHunt;
     RisingNinja risingNinja;
     
+    // buttons
     PushButton calibrateButton;
     PushButton creditsButton;
     PushButton shootingCansButton;
@@ -42,9 +45,8 @@ private:
     
     // audio
     void audioReceived(float* input, int bufferSize, int nChannels);
-    bool fullScreen;
     
-    // menu
+    // pictures
     Texture background;
     Texture bounceLogo;
     Texture fhLogo;

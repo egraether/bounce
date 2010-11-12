@@ -1,3 +1,5 @@
+// not finished, do not try to start
+
 #include "RisingNinja.h"
 #include "ofMain.h"
 

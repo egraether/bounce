@@ -20,14 +20,10 @@ private:
     
     deque<ofImage*> screenImgStore;
     int screenStoreSize;
-    int screenStoreIndex;
     
     int camWaitFrames;
     int camWaitCounter;
     ofxCvColorImage camImg;
-    
-    bool imageSwitch;
-    bool trackStop;
     
     ofxCvGrayscaleImage grayImg, grayBg, grayDiff;
     
@@ -53,8 +49,6 @@ private:
     
     CvMat* homography;
     
-    bool equalize;
-    
     // audio
     deque<float> energyPlot;
     deque<float> energyDiff;
@@ -73,9 +67,6 @@ private:
     bool showScreenImg;
     bool showCamImg;
     bool showContours;
-    
-    bool whiteOverlay;
-    int overlayAlpha;
     
     Infobox* infobox;
     Console* console;

@@ -7,8 +7,7 @@ ShootingCans::ShootingCans(const char* titel, Infobox* infobox, const char* scor
     textColor = 0xededed;
     canTexture.load("cans.png", true, GL_CLAMP, GL_CLAMP);
     shelfTexture.load("body.png", true, GL_CLAMP, GL_CLAMP);
-    background = new Texture();
-    background->load("cans_bg.png", true, GL_CLAMP, GL_CLAMP);
+    background.load("cans_bg.png", true, GL_CLAMP, GL_CLAMP);
 }
 
 void ShootingCans::reset() {
@@ -108,7 +107,7 @@ bool ShootingCans::draw(bool hit, Vector &hitPoint) {
 
 void ShootingCans::drawBg() {
     shelfTexture.draw(150, 250, WIDTH - 300, HEIGHT - 300);
-    background->draw(0, 0, WIDTH, HEIGHT);
+    background.draw(0, 0, WIDTH, HEIGHT);
     // draw
     for (int i = 0; i < cans.size(); i++) {
         if (!cans[i].draw()) {
@@ -116,5 +115,50 @@ void ShootingCans::drawBg() {
             i--;
         }
     }
+}
+
+ShootingCans::Can::Can(int x, int y, Texture* t, int w, int h, int r, int c) :
+    pos(x, y), flying(false),
+    sprite(t, w, h, r, c) {
+    
+    int canType = rand() % 3;
+    sprite.setAnimation(0, canType, 0, canType, true);
+}
+
+bool ShootingCans::Can::draw() {
+    pos = flight + pos;
+    
+    if (flying)
+        flight.y += (ofGetElapsedTimef() - time) * 10;
+    
+    ofPushMatrix();
+    ofTranslate(pos.x, pos.y, 0.0);
+    if (flying) {
+        ofRotateZ((ofGetElapsedTimef() - time) * flight.x * 20);
+        ofScale(1.0 - (ofGetElapsedTimef() - time) / 3, 1.0 - (ofGetElapsedTimef() - time) / 3, 0);
+    }
+    ofSetColor(255, 255, 255);
+    //        ofRect(-sprite.getWidth() / 2, -sprite.getHeight() * 2 / 3, sprite.getWidth(), sprite.getHeight() * 4 / 3);
+    sprite.draw(0, 0);
+    ofPopMatrix();
+    
+    return pos.y < HEIGHT + 100;
+}
+
+bool ShootingCans::Can::checkHit(Vector &hitPoint) {
+    if (!flying && 
+        hitPoint.x > pos.x - sprite.getWidth() / 2 && 
+        hitPoint.x < pos.x + sprite.getWidth() / 2 &&
+        hitPoint.y > pos.y - sprite.getHeight() * 2 / 3 &&
+        hitPoint.y < pos.y + sprite.getHeight() * 2 / 3) {
+        
+        flying = true;
+        flight = ((Vector(0, -sprite.getHeight() / 3 * 2) + pos) - hitPoint) / 5;
+        time = ofGetElapsedTimef();
+        
+        return true;
+    }
+    
+    return false;
 }
 

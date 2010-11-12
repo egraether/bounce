@@ -37,7 +37,6 @@ public:
     void addRegulation(string name, int* value, int min, int max);
     void next(bool toNext);
     void change(bool increase);
-    //~Console() {}
 };
 
 #endif

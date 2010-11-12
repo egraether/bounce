@@ -1,3 +1,6 @@
+
+// not finished, do not try to start
+
 #ifndef _RISING_NINJA_
 #define _RISING_NINJA_
 

@@ -10,8 +10,7 @@ BalloonHunt::BalloonHunt(const char* titel, Infobox* infobox, const char* scores
     Game(titel, infobox, scoresFileName) {
     
     balloonTexture.load("balloon.png", true, GL_CLAMP, GL_CLAMP);
-    background = new Texture();
-    background->load("balloon_bg.png", false, GL_CLAMP, GL_CLAMP);
+    background.load("balloon_bg.png", false, GL_CLAMP, GL_CLAMP);
 }
 
 void BalloonHunt::reset() {
@@ -19,17 +18,18 @@ void BalloonHunt::reset() {
     
     balloons.clear();
     counter = 0;
+    
     Balloon::counter = 1;
-    screenTime = 120;
+    screenTime = 60;
 }
    
 bool BalloonHunt::draw(bool hit, Vector &hitPoint) {
-    background->draw(0, 0, WIDTH, HEIGHT);
+    background.draw(0, 0, WIDTH, HEIGHT);
     
     switch (mode) {
         case INIT:
             startGame();
-            startTime = ofGetElapsedTimef() + 120;
+            startTime = ofGetElapsedTimef() + 60;
             counter = 99;
             infobox->set("bounce at the balloons.");
             break;
@@ -81,6 +81,71 @@ bool BalloonHunt::draw(bool hit, Vector &hitPoint) {
     drawSigns();
     
     return true;
+}
+
+BalloonHunt::Balloon::Balloon(Texture* tex, int rows, int columns) : 
+    explode(false) {
+        
+    switch (counter % 3) {
+        case 0:
+            sprite.load(tex, 300, 300, rows, columns);
+            size = 120;
+            points = 10;
+            speed = 5;
+            balloonCenter.set(0, -50);
+            break;
+        case 1:
+            sprite.load(tex, 200, 200, rows, columns);
+            size = 80;
+            points = 50;
+            speed = 2;
+            balloonCenter.set(0, -36);
+            break;
+        case 2:
+            sprite.load(tex, 120, 120, rows, columns);
+            size = 60;
+            points = 100;
+            speed = 1;
+            balloonCenter.set(0, -17);
+            break;
+        default:
+            break;
+    }
+    
+    color = colors[rand() % 6];
+    pos.set(rand() % (WIDTH - 300) + 150, HEIGHT + size);
+    sprite.setAnimation(0, 0, 0, 1, true);
+    counter++;
+}
+
+bool BalloonHunt::Balloon::draw() {
+    if (!explode)
+        pos.y -= speed;
+    
+    if (pos.y < -100)
+        return false;
+    
+    ofPushMatrix();
+    ofTranslate(pos.x, pos.y, 0.0);
+    ofCircle(balloonCenter.x, balloonCenter.y, size);
+    ofSetColor(color);
+    bool destroyed = sprite.draw(0, 0, false);
+    ofPopMatrix();
+    
+    return destroyed;
+}
+
+bool BalloonHunt::Balloon::checkHit(Vector &hitPoint) {
+    if (!explode && Vector::distance(hitPoint, pos + balloonCenter) <= size) {
+        explode = true;
+        sprite.setAnimation(0, 2, 0, 5, false, 3);
+        return true;
+    }
+    return false;
+}
+
+Vector BalloonHunt::Balloon::getPosition() {
+    return pos;
 }
 
 
