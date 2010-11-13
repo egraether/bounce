@@ -15,6 +15,7 @@
 #include "Infobox.h"
 #include "PushButton.h"
 
+#include <vector>
 #include <deque>
 
 class Tracker {
@@ -60,9 +61,9 @@ private:
     CvMat* homography;
     
     // audio
-    deque<float> energyPlot;
-    deque<float> energyDiff;
-    deque<float> energyDiffPlot;
+    vector<float> energyPlot;
+    vector<float> energyDiff;
+    vector<float> energyDiffPlot;
     
     int derivationWidth;
     int bangLevel;

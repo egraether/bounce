@@ -9,8 +9,7 @@
 #include "ofMain.h"
 
 Console::Console() : 
-    show(false),
-    it(0) {
+    show(false) {
 }
 
 void Console::draw() {
@@ -35,8 +34,8 @@ void Console::addInformation(string name, int* value) {
     infos.push_back(Information(name, value));
 }
 
-void Console::addRegulation(string name, int* value, int min, int max) {
-    values.push_back(Regulation(name, value, min, max));
+void Console::addRegulation(string name, int* value, int minValue, int maxValue) {
+    values.push_back(Regulation(name, value, minValue, maxValue));
     it = values.begin();
     addInformation(name, value);
 }
@@ -61,8 +60,8 @@ void Console::next(bool toNext) {
 void Console::change(bool increase) {
     if (show) {
         if (increase)
-            *it->value = *it->value + 1 > it->max ? it->max : *it->value + 1;
+            *it->value = *it->value + 1 > it->maxValue ? it->maxValue : *it->value + 1;
         else
-            *it->value = *it->value - 1 < it->min ? it->min : *it->value - 1;
+            *it->value = *it->value - 1 < it->minValue ? it->minValue : *it->value - 1;
     }
 }

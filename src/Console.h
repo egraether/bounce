@@ -25,9 +25,9 @@ private:
     struct Regulation {
         string name;
         int* value;
-        int min, max;
+        int minValue, maxValue;
         Regulation(string n, int* v, int m, int x) : 
-            name(n), value(v), min(m), max(x) {
+            name(n), value(v), minValue(m), maxValue(x) {
         }
     };
     
@@ -41,7 +41,7 @@ public:
     Console();
     void draw();
     void addInformation(string name, int* value);
-    void addRegulation(string name, int* value, int min, int max);
+    void addRegulation(string name, int* value, int minValue, int maxValue);
     void next(bool toNext);
     void change(bool increase);
 };

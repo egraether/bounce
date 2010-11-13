@@ -5,8 +5,8 @@
  *  Salzburg University of Applied Sciences
  */
 
-#ifndef _VECTOR_
-#define _VECTOR_
+#ifndef _VECTOR_H_
+#define _VECTOR_H_
 
 #include <iostream>
 #include <cmath>

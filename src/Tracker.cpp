@@ -34,6 +34,9 @@ Tracker::Tracker(Infobox* i, Console* c, int _width, int _height) :
     audioPlotSize(500) {
     
     console->addInformation("lastBlobSize", &lastBlobSize);
+    console->addRegulation("minBlobSize", &minBlobSize, 0, 10000);
+    console->addRegulation("maxBlobSize", &maxBlobSize, 0, 10000);
+    
     console->addRegulation("screenStoreSize", &screenStoreSize, 1, 10); 
     console->addRegulation("camWaitFrames", &camWaitFrames, 0, 30);
     
@@ -41,6 +44,13 @@ Tracker::Tracker(Infobox* i, Console* c, int _width, int _height) :
     console->addRegulation("bangLevel", &bangLevel, 0, 50);
     
     videoCapture.setVerbose(true);
+    videoCapture.listDevices();
+    
+    int a;
+    cout << "type in device ID: ";
+    cin >> a;
+    
+    videoCapture.setDeviceID(a);
     videoCapture.initGrabber(width, height);
 
     colorImg.allocate(width, height);
@@ -68,6 +78,7 @@ Tracker::Tracker(Infobox* i, Console* c, int _width, int _height) :
     homography = cvCreateMat(3, 3, CV_32FC1);
     
     energyPlot.push_back(.0f);
+    energyDiffPlot.push_back(.0f);
 }
 
 Tracker::~Tracker() {
@@ -75,6 +86,8 @@ Tracker::~Tracker() {
     delete [] projCorner;
     
     cvReleaseMat(&homography);
+    
+    videoCapture.close();
 }
 
 void Tracker::reset() {
@@ -138,7 +151,6 @@ void Tracker::calibrate() {
                     countChecked = true;
                 else
                     reset();
-                    infobox->set("counting of corners failed check if camera is directed to screen");
             }
             break;
         case POINT:
@@ -344,12 +356,12 @@ void Tracker::getBrightnessContour() {
 void Tracker::audioInput(float energy) {
     energyDiff.push_back(energy - energyPlot[energyPlot.size() - 1]);
     while (energyDiff.size() > derivationWidth) {
-        energyDiff.pop_front();
+        energyDiff.erase(energyDiff.begin());
     }
     
     energyPlot.push_back(energy);
     if (energyPlot.size() > audioPlotSize)
-        energyPlot.pop_front();
+        energyPlot.erase(energyPlot.begin());
     
     float averageEnergyDiff = 0;
     for (int i = 0; i < energyDiff.size(); i++) {
@@ -358,7 +370,7 @@ void Tracker::audioInput(float energy) {
     
     energyDiffPlot.push_back(averageEnergyDiff);
     if (energyDiffPlot.size() > audioPlotSize)
-        energyDiffPlot.pop_front();
+        energyDiffPlot.erase(energyDiffPlot.begin());
     
     bangCounter++;
     if (averageEnergyDiff >= bangLevel && bangCounter > 20) {
@@ -371,15 +383,17 @@ void Tracker::drawAudioPlots() {
     ofSetColor(255, 0, 0);
     ofLine((width - audioPlotSize) / 2, height / 2 + 50 - bangLevel, 
            (width + audioPlotSize) / 2, height / 2 + 50 - bangLevel);
+           
+    int w = (width - audioPlotSize) / 2;
     
     ofSetColor(0, 0, 0);
     for (int i = 0; i < energyPlot.size() - 1; i++) {
-        ofLine((width - audioPlotSize) / 2 + i, height / 2 - 50 - energyPlot[i], 
-               (width - audioPlotSize) / 2 + 1 + i, height / 2 - 50 - energyPlot[i + 1]);
+        ofLine(w + i, height / 2 - 50 - energyPlot[i], 
+               w + 1 + i, height / 2 - 50 - energyPlot[i + 1]);
     }
     for (int i = 0; i < energyDiffPlot.size() - 1; i++) {
-        ofLine((width - audioPlotSize) / 2 + i, height / 2 + 50 - energyDiffPlot[i], 
-               (width- audioPlotSize) / 2 + 1 + i, height / 2 + 50 - energyDiffPlot[i + 1]);
+        ofLine(w + i, height / 2 + 50 - energyDiffPlot[i], 
+               w + 1 + i, height / 2 + 50 - energyDiffPlot[i + 1]);
     }
 }
 

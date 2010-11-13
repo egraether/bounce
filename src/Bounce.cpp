@@ -25,7 +25,7 @@ void Bounce::setup() {
     
     ofBackground(220, 220, 255);
     ofSetFrameRate(60.0f);
-    ofSetLogLevel(OF_LOG_VERBOSE);
+    //ofSetLogLevel(OF_LOG_VERBOSE);
     
     srand(time(NULL));
     
@@ -136,6 +136,8 @@ void Bounce::draw() {
     if (!gamePaused)
         hit = tracker.getHitPoint(hitPoint);
 }
+
+void Bounce::exit() {}
 
 void Bounce::audioReceived (float* input, int bufferSize, int nChannels) {
     

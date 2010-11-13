@@ -25,7 +25,7 @@ private:
     
 public:
     bool checkScore(int score) {
-        at = 0;
+        at = scores.end();
         blink = false;
         return score > scores.rbegin()->first;
     }
@@ -64,7 +64,7 @@ public:
         }
         
         file.close();
-        at = 0;
+        at = scores.end();
     }
     
     void writeFile(const char* fileName) {
