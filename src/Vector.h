@@ -5,8 +5,8 @@
  *  Salzburg University of Applied Sciences
  */
 
-#ifndef _VECTOR_H_
-#define _VECTOR_H_
+#ifndef _BOUNCE_VECTOR_
+#define _BOUNCE_VECTOR_
 
 #include <iostream>
 #include <cmath>

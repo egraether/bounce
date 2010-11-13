@@ -4,7 +4,9 @@ Bounce is an augmented reality installation, allowing the user to interact with 
 
 It was developed as a student project using [OpenFrameworks](http://www.openframeworks.cc/download) and the included OpenCV-Addon.
 
-[video](http://www.youtube.com/watch?v=-ie6amFUwQU)
+Programming and functionalities are quite prototypical.
+
+[watch video](http://www.youtube.com/watch?v=-ie6amFUwQU)
 
 
 ### What you need: ###
@@ -45,6 +47,33 @@ To change the window's size you need to change the `windowWidth` and `windowHeig
 * use black beanbags or tennisballs in black duct tape.
 
 
+### interface ###
+
+**start**:
+
+* Windows: When starting the program, a console window is opened and gives you a list of camera devices. Type in the ID of the device you want to use.
+
+* MacOS: If you want to choose a device, start from Terminal, otherwise the first available device is chosen.
+
+* Linux: not tested
+
+
+**menu**:
+
+* After the start you see the menu
+* Mouseclicking has the same effect as a bounce of a ball.
+* You can click or bounce on the buttons to start games or calibration.
+
+
+**games**:
+
+* The games start immediately or after the first bounce.
+* after the game is finished you see a scores table
+* on the left side are all-time highscores, on the right side the scores of the last ten players.
+* if you get inserted in the highscores, you have to type in your name.
+* the highscores get saved in `game.txt` in the bounce directory
+
+
 ### calibration ###
 
 After the launch of Bounce it is nessesary to calibrate before the balls get recognised.
@@ -61,32 +90,16 @@ After the launch of Bounce it is nessesary to calibrate before the balls get rec
 It is also recommended to calibrate while playing.
 
 
-### interface ###
-
-**menu**:
-
-* After the start you see the menu
-* Mouseclicking has the same effect as a bounce of a ball.
-* You can click or bounce on the buttons to start games or calibration.
-
-**games**:
-
-* The games start immediately or after the first bounce.
-* after the game is finished you see a scores table
-* on the left side are all-time highscores, on the right side the scores of the last ten players.
-* if you get inserted in the highscores, you have to type in your name.
-* the highscores get saved in `game.txt` in the bounce directory
-
-
 ### keys ###
 
 * SPACE - pauses/proceeds the game
 * M - back to menu
 * F - fullscreen
 * S - open camera settings window
-* C - shows/hides the Console (see Console)
+* C - shows/hides the Console (see console)
 * 1 to 5 - shows processed images
-* 0 - reset Calibration.
+* 0 - reset calibration
+* ESC - end program
 
 
 ### console ###
