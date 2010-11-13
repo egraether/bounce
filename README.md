@@ -105,7 +105,9 @@ It is also recommended to calibrate while playing.
 ### console ###
 
 used to change specific values (left bottom)
+
 press 'c' to show/hide
+
 use LEFT and RIGHT arrow to navigate between values and UP and DOWN to change the value
 
 **values**:
